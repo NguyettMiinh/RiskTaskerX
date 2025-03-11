@@ -1,29 +1,37 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
-import { Flex, Button, Checkbox, Form, Input } from 'antd';
+import { Flex, Button, Checkbox, Form, Input } from "antd";
 import "../../styles/login.css";
 import Logo from "../../assets/images/logo.png";
 
-
-
 // Schema validation
 const loginSchema = yup.object().shape({
-  email: yup.string().email("Invalid email format").required("Email is required"),
-  password: yup.string()
-  .min(8, "Password must be at least 8 characters").required("Password is required")
-  .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .matches(/[0-9]/, "Password must contain at least one number")
-  .matches(/[@$!%*?&]/, "Password must contain at least one special character (@$!%*?&)"),
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[@$!%*?&]/,
+      "Password must contain at least one special character (@$!%*?&)"
+    ),
 });
 
-
-
 const LoginPage = () => {
-  const {handleSubmit, control, formState: { errors} } = useForm({
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -34,10 +42,7 @@ const LoginPage = () => {
   const onSubmit = (data) => console.log(data);
 
   return (
-  
-    <section
-      className='login-page-section'
-    >
+    <section className="login-page-section">
       <Flex gap="middle" vertical>
         <Form
           className="login-form"
@@ -45,22 +50,21 @@ const LoginPage = () => {
           initialValues={{
             remember: true,
           }}
-
           onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className='form-image'>
-            <img 
-                  src={Logo} 
-                  alt="Logo"
-                />
+          <div className="form-image">
+            <img src={Logo} alt="Logo" />
           </div>
-          <div style={{
-            textAlign: 'center' ,
-            fontSize: "30px",
-            fontWeight: 700
-
-          }}>Sign in</div>
+          <div
+            style={{
+              textAlign: "center",
+              fontSize: "30px",
+              fontWeight: 700,
+            }}
+          >
+            Sign in
+          </div>
           <Form.Item
             validateStatus={errors.email ? "error" : ""}
             help={errors.email?.message}
@@ -69,7 +73,12 @@ const LoginPage = () => {
               name="email"
               control={control}
               render={({ field }) => (
-                <Input {...field} placeholder="Enter your email" className='form-input' autoComplete="email" />
+                <Input
+                  {...field}
+                  placeholder="Enter your email"
+                  className="form-input"
+                  autoComplete="email"
+                />
               )}
             />
           </Form.Item>
@@ -82,36 +91,46 @@ const LoginPage = () => {
               name="password"
               control={control}
               render={({ field }) => (
-                <Input.Password {...field} placeholder="********" className='form-input' autoComplete="current-password" />
+                <Input.Password
+                  {...field}
+                  placeholder="********"
+                  className="form-input"
+                  autoComplete="current-password"
+                />
               )}
             />
           </Form.Item>
 
           <Form.Item>
-            <div className='form-bottom'>
-              <Controller 
+            <div className="form-bottom">
+              <Controller
                 name="remember"
                 control={control}
-                render={({field}) => (
-                  <Checkbox {...field} checked={field.value}>Remember me</Checkbox>
+                render={({ field }) => (
+                  <Checkbox {...field} checked={field.value}>
+                    Remember me
+                  </Checkbox>
                 )}
               />
-              <Link to="/password" className='forgot-link'>Forgot password?</Link>
+              <Link to="/password" className="forgot-link">
+                Forgot password?
+              </Link>
             </div>
-            
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block className='btn-sign-in'>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              className="btn-sign-in"
+            >
               Sign in
-            </Button> 
+            </Button>
           </Form.Item>
         </Form>
       </Flex>
-
-      
     </section>
-
   );
 };
 
