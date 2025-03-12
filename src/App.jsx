@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route} from 'react-router';
-import LoginPage from './components/pages/LoginPage';
-import ForgotPasswordForm from './components/pages/ForgotPage';
-import OtpPage from './components/pages/OtpPage';
+import LoginPage from './pages/LoginPage';
+import ForgotPasswordForm from './pages/ForgotPage';
+import OtpPage from './pages/OtpPage';
 
 
 const App = () =>{

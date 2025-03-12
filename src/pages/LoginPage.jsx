@@ -4,10 +4,10 @@ import { Link } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
-import { Flex, Button, Checkbox, Form, Input } from "antd";
-import "../../styles/login.css";
-import Logo from "../../assets/images/logo.png";
-
+import { Flex, Checkbox, Form, Input } from "antd";
+import "../styles/auth.css";
+import Logo from "../assets/images/logo.png";
+import Button from "../components/Button";
 // Schema validation
 const loginSchema = yup.object().shape({
   email: yup
@@ -42,8 +42,8 @@ const LoginPage = () => {
   const onSubmit = (data) => console.log(data);
 
   return (
-    <section className="login-page-section">
-      <Flex gap="middle" vertical>
+    <Flex justify="center" align="center" style={{height: "100vh"}}>
+      <div className="auth-form">
         <Form
           className="login-form"
           name="basic"
@@ -119,18 +119,11 @@ const LoginPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              className="btn-sign-in"
-            >
-              Sign in
-            </Button>
+            <Button content="sign In"/>
           </Form.Item>
         </Form>
-      </Flex>
-    </section>
+      </div>
+    </Flex>
   );
 };
 

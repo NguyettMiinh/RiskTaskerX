@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
-import { Flex, Button, Form, Input } from "antd";
+import { Flex, Form, Input } from "antd";
 import { Link } from "react-router-dom";
-import "../../styles/login.css";
-import Logo from "../../assets/images/logo.png";
-
+import "../styles/auth.css";
+import Logo from "../assets/images/logo.png";
+import Button from "../components/Button";
 // Schema validation
 const resetPasswordSchema = yup.object().shape({
   email: yup
@@ -27,8 +27,8 @@ export default function ForgotPasswordForm() {
   const onSubmit = (data) => console.log(data);
 
   return (
-    <section className="login-page-section">
-      <Flex gap="middle" vertical>
+    <Flex justify="center" align="center" style={{height: "100vh"}}>
+      <div className="auth-form">
         <Form
           className="login-form"
           name="basic"
@@ -84,18 +84,11 @@ export default function ForgotPasswordForm() {
 
           <Form.Item>
             <Link to="/otppage">
-              <Button
-                type="primary"
-                htmlType="submit"
-                block
-                className="btn-sign-in"
-              >
-                Continue
-              </Button>
+              <Button content="Continue"/>
             </Link>
           </Form.Item>
         </Form>
-      </Flex>
-    </section>
+      </div>
+    </Flex>
   );
 }

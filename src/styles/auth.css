@@ -18,23 +18,11 @@ body {
     border-color: rgba(96, 85, 242, 1) !important;
   }
 
- .login-page-section {
-    height: 100vh;
-    width: 100vw;
-    background-image: linear-gradient(107.44deg, #E2E0FF 1.96%, #EBEAFA 16.15%, #F4F4F5 30.33%, #F5F5F5 71.54%, #E4E2FE 100%);
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-.login-form {
-    max-width: 524;
-    background: white;
-    padding: 50px;
-    border-radius: 25px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-
+.auth-form {
+  background: white;
+  padding: 50px 80px 50px 80px; 
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  border-radius: 25px;
 
 }
 
@@ -82,3 +70,10 @@ img {
 }
 
 /* ------------------------------- */
+.resend-otp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(99, 99, 100, 1);
+
+}
