@@ -4,12 +4,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Form, Input } from "antd";
-import { Link } from "react-router-dom";
-import "../styles/auth.css";
+// import { Link } from "react-router-dom";
+import "../styles/forgot.css";
 import Logo from "../assets/images/logo.png";
-import Button from "../components/Button";
+import { UserOutlined } from '@ant-design/icons';
+import ButtonComponent from "../components/ButtonComponent";
 // Schema validation
-const resetPasswordSchema = yup.object().shape({
+const forgotPasswordSchema = yup.object().shape({
   email: yup
     .string()
     .email("Invalid email format")
@@ -22,13 +23,13 @@ export default function ForgotPasswordForm() {
     control,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(resetPasswordSchema),
+    resolver: yupResolver(forgotPasswordSchema),
   });
   const onSubmit = (data) => console.log(data);
 
   return (
     <Flex justify="center" align="center" style={{height: "100vh"}}>
-      <div className="auth-form">
+      <div className="auth-form-2">
         <Form
           className="login-form"
           name="basic"
@@ -51,6 +52,7 @@ export default function ForgotPasswordForm() {
               style={{
                 fontSize: "30px",
                 fontWeight: 700,
+                paddingBottom: 20,
               }}
             >
               Forgot password
@@ -58,6 +60,7 @@ export default function ForgotPasswordForm() {
             <div
               style={{
                 color: "rgba(99, 99, 100, 1)",
+                paddingBottom: 22,
               }}
             >
               Do not worry! We will help you recover your password
@@ -73,6 +76,8 @@ export default function ForgotPasswordForm() {
               control={control}
               render={({ field }) => (
                 <Input
+                  size="large"
+                  prefix={<UserOutlined />}
                   {...field}
                   placeholder="Enter your email"
                   className="form-input"
@@ -83,9 +88,7 @@ export default function ForgotPasswordForm() {
           </Form.Item>
 
           <Form.Item>
-            <Link to="/otppage">
-              <Button content="Continue"/>
-            </Link>
+              <ButtonComponent block  htmlType="submit" content="Continue"/>
           </Form.Item>
         </Form>
       </div>

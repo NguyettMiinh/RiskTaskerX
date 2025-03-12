@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Link } from "react-router";
 import { Controller } from "react-hook-form";
-import { Flex, Form, Input } from "antd";
+import { Flex, Form, Input} from "antd";
 import Logo from "../assets/images/logo.png";
-import "../styles/auth.css";
-import Button from "../components/Button";
+import "../styles/otp.css";
+import ButtonComponent from "../components/ButtonComponent";
 
 // Schema validation
 const otpSchema = yup.object().shape({
@@ -62,9 +63,9 @@ export default function OtpPage() {
     <Flex justify="center" align="center"
        style={{ 
         height: "100vh"}}>
-      <div className="auth-form">
+      <div className="auth-form-3">
         <Form
-          className="login-form"
+          className="login-form "
           name="basic"
           initialValues={{
             remember: true,
@@ -108,13 +109,16 @@ export default function OtpPage() {
                 control={control}
                 render={({ field }) => (
                   <Input.OTP
+                    size="large"
                     length={4}
                     {...field}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
+                    
+                    // style={{
+                    //   width: "250px", 
+                    //   minWidth: "200px",
+                    //   textAlign: "center",
+                    //   flex: "0 0 auto", 
+                    // }}
                   />
                 )}
               />
@@ -134,7 +138,7 @@ export default function OtpPage() {
          
 
           <Form.Item>
-            <Button content="Continue" />
+            <ButtonComponent content="Continue"/>
           </Form.Item>
         </Form>
       </div>

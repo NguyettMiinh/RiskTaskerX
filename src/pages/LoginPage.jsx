@@ -4,10 +4,12 @@ import { Link } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
-import { Flex, Checkbox, Form, Input } from "antd";
+import { Flex, Checkbox, Form, Input, Button } from "antd";
 import "../styles/auth.css";
 import Logo from "../assets/images/logo.png";
-import Button from "../components/Button";
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import ButtonComponent from "../components/ButtonComponent";
+import InputComponent from "../components/InputComponent";
 // Schema validation
 const loginSchema = yup.object().shape({
   email: yup
@@ -39,7 +41,12 @@ const LoginPage = () => {
     },
     resolver: yupResolver(loginSchema),
   });
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    console.log( 'data',data);
+    
+  };
+
+
 
   return (
     <Flex justify="center" align="center" style={{height: "100vh"}}>
@@ -59,8 +66,9 @@ const LoginPage = () => {
           <div
             style={{
               textAlign: "center",
-              fontSize: "30px",
+              fontSize: "32px",
               fontWeight: 700,
+              paddingBottom: 10,
             }}
           >
             Sign in
@@ -73,11 +81,13 @@ const LoginPage = () => {
               name="email"
               control={control}
               render={({ field }) => (
-                <Input
+                <InputComponent
+                  prefix={<UserOutlined />}
                   {...field}
                   placeholder="Enter your email"
                   className="form-input"
                   autoComplete="email"
+                  size="large"
                 />
               )}
             />
@@ -92,17 +102,19 @@ const LoginPage = () => {
               control={control}
               render={({ field }) => (
                 <Input.Password
+                  prefix={<LockOutlined />}
                   {...field}
                   placeholder="********"
                   className="form-input"
                   autoComplete="current-password"
+                  size="large"
                 />
               )}
             />
           </Form.Item>
 
           <Form.Item>
-            <div className="form-bottom">
+            <Flex justify="space-between" align="center">
               <Controller
                 name="remember"
                 control={control}
@@ -115,11 +127,14 @@ const LoginPage = () => {
               <Link to="/password" className="forgot-link">
                 Forgot password?
               </Link>
-            </div>
+            </Flex>
           </Form.Item>
 
-          <Form.Item>
-            <Button content="sign In"/>
+          <Form.Item label={null}>
+            <ButtonComponent htmlType="submit" block content="Sign In"/>
+            {/* <Button type="primary" block htmlType="submit">
+              Submit
+            </Button> */}
           </Form.Item>
         </Form>
       </div>
