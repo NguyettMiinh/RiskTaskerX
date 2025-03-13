@@ -79,7 +79,6 @@ export default function OtpPage() {
           initialValues={{
             remember: true,
           }}
-          // onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
           <div className="form-image">

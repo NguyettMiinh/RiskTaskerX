@@ -86,6 +86,7 @@ export default function ForgotPasswordForm() {
           <Form.Item>
             <ButtonComponent
               block
+              className="btn-forgot"
               onClick={handleGoOTP}
               htmlType="submit"
               content="Continue"

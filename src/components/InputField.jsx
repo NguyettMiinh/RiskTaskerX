@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import { Input } from "antd";
+import { Input, Form, message } from "antd";
 const InputField = ({
   name,
   control,
@@ -12,12 +12,16 @@ const InputField = ({
   error,
   style,
   length,
+  
 }) => {
   let InputOption;
   switch (name) {
     case "password":
       InputOption = Input.Password;
       break;
+    case "confirm":
+        InputOption = Input.Password;
+        break;
     case "otp":
       InputOption = Input.OTP;
       break;
@@ -25,7 +29,10 @@ const InputField = ({
       InputOption = Input;
   }
   return (
-    <div>
+    <Form.Item
+      validateStatus={error ? "error" : ""}
+      help={error?.message}
+    >
       <Controller
         name={name}
         control={control}
@@ -42,18 +49,7 @@ const InputField = ({
           />
         )}
       />
-      {error && (
-        <div>
-          <span
-            style={{
-              color: "red",
-            }}
-          >
-            {error.message}
-          </span>
-        </div>
-      )}
-    </div>
+    </Form.Item>
   );
 };
 

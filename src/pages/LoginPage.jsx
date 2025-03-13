@@ -118,7 +118,7 @@ const LoginPage = () => {
 
           <Form.Item label={null}>
             <ButtonComponent
-             htmlType="submit"  block content="sign in"/>
+             htmlType="submit" className = "btn-sign-in" block content="sign in"/>
           </Form.Item>
         </Form>
       </div>

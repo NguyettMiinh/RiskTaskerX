@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form, } from "antd";
-import "../styles/auth.css";
+import "../styles/reset.css";
 import Logo from "../assets/images/logo.png";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
@@ -82,7 +82,7 @@ const onSubmit = (data) => {
           </Form.Item>
           <Form.Item> 
             <InputField
-              name="password"
+              name="confirm"
               control={control}
               placeholder= "Confirm password"
               autoComplete= "confirm-password"
@@ -92,7 +92,7 @@ const onSubmit = (data) => {
           </Form.Item>
   
           <Form.Item>
-            <ButtonComponent content="sign In" htmlType="submit" block/>
+            <ButtonComponent className="btn-reset" content="sign In" htmlType="submit" block/>
           </Form.Item>
         </Form>
       </div>
