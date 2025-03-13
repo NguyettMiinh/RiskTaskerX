@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Form, Input } from "antd";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../styles/forgot.css";
 import Logo from "../assets/images/logo.png";
 import { UserOutlined } from '@ant-design/icons';
@@ -21,7 +21,7 @@ export default function ForgotPasswordForm() {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
@@ -88,7 +88,10 @@ export default function ForgotPasswordForm() {
           </Form.Item>
 
           <Form.Item>
-              <ButtonComponent block  htmlType="submit" content="Continue"/>
+              <Link to ="/otppage">
+                <ButtonComponent block disabled={isSubmitting}  htmlType="submit" content="Continue"/>
+              </Link>
+             
           </Form.Item>
         </Form>
       </div>

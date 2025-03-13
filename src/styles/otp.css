@@ -38,9 +38,10 @@ img {
 }
 
 
-.btn-sign-in {
+.btn-otp {
   background-color: rgba(96, 85, 242, 1);
   height: 41px;
+  width: 427px;
 }
 
 /* ------------------------------- */

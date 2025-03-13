@@ -21,6 +21,7 @@ export default function OtpPage() {
   const [time, setTime] = useState(10);
   const [resend, setResend] = useState(false);
   const [timer, setTimer] = useState(30);
+  const [active, setActive] = useState(true);
   const [timeResend, setTimeResend] = useState(false);
   useEffect(() => {
     if (time > 0) {
@@ -58,7 +59,9 @@ export default function OtpPage() {
     resolver: yupResolver(otpSchema),
   });
   const onSubmit = (data) => console.log(data);
+  const handleNext = () => {
 
+  }
   return (
     <Flex justify="center" align="center"
        style={{ 
@@ -103,7 +106,11 @@ export default function OtpPage() {
             validateStatus={errors.otp ? "error" : ""}
             help={errors.otp?.message}
           >
-            <div>
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
               <Controller
                 name="otp"
                 control={control}
@@ -112,13 +119,11 @@ export default function OtpPage() {
                     size="large"
                     length={4}
                     {...field}
-                    
-                    // style={{
-                    //   width: "250px", 
-                    //   minWidth: "200px",
-                    //   textAlign: "center",
-                    //   flex: "0 0 auto", 
-                    // }}
+                    style={{
+                      height: 40,
+                      width: 300,
+                    }}
+                                        
                   />
                 )}
               />
@@ -138,8 +143,9 @@ export default function OtpPage() {
          
 
           <Form.Item>
-            <ButtonComponent content="Continue"/>
+            <ButtonComponent className="btn-otp" onClick={handleNext} content="Continue"/>
           </Form.Item>
+          
         </Form>
       </div>
        

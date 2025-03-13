@@ -2,6 +2,7 @@ import React from 'react'
 import {Button} from "antd";
 
 const ButtonComponent = ({ 
+  className,
   content, 
   type = 'primary', 
   size = 'large', 
@@ -16,6 +17,7 @@ const ButtonComponent = ({
 }) => {
   return (
     <Button 
+      className={className}
       block={block}
       type={type}
       size={size}

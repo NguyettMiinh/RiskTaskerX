@@ -4,12 +4,14 @@ import { Link } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
-import { Flex, Checkbox, Form, Input, Button } from "antd";
+import { Flex, Checkbox, Form, Input } from "antd";
 import "../styles/auth.css";
 import Logo from "../assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "../components/ButtonComponent";
-import InputComponent from "../components/InputComponent";
+import InputField from "../components/InputField";
+import { fields } from "@hookform/resolvers/ajv/src/__tests__/__fixtures__/data.js";
+
 // Schema validation
 const loginSchema = yup.object().shape({
   email: yup
@@ -74,24 +76,36 @@ const LoginPage = () => {
             Sign in
           </div>
           <Form.Item
-            validateStatus={errors.email ? "error" : ""}
-            help={errors.email?.message}
+            // validateStatus={errors.email ? "error" : ""}
+            // help={errors.email?.message}
           >
-            <Controller
+            {/* <Controller
               name="email"
               control={control}
               render={({ field }) => (
-                <InputComponent
+                <InputField
                   prefix={<UserOutlined />}
                   {...field}
+                  ref={field.ref}
                   placeholder="Enter your email"
                   className="form-input"
                   autoComplete="email"
                   size="large"
+                  error={errors.email}
                 />
               )}
+            /> */}
+            <InputField
+              name="email"
+              control={control}
+              prefix={<UserOutlined/>}
+              placeholder= "Enter your email"
+              autoComplete= "email"
+              error={errors.email}
             />
           </Form.Item>
+
+          
 
           <Form.Item
             validateStatus={errors.password ? "error" : ""}
@@ -131,10 +145,8 @@ const LoginPage = () => {
           </Form.Item>
 
           <Form.Item label={null}>
-            <ButtonComponent htmlType="submit" block content="Sign In"/>
-            {/* <Button type="primary" block htmlType="submit">
-              Submit
-            </Button> */}
+            <ButtonComponent
+             htmlType="submit"  block content="sign in"/>
           </Form.Item>
         </Form>
       </div>

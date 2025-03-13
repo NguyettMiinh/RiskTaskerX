@@ -9,7 +9,7 @@ import "../styles/auth.css";
 import Logo from "../assets/images/logo.png";
 import Button from "../components/ButtonComponent";
 import ButtonComponent from "../components/ButtonComponent";
-import InputComponent from "../components/InputComponent";
+
 // Schema validation
 const resetSchema = yup.object().shape({
     password: yup
