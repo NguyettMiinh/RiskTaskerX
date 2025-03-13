@@ -2,26 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Link } from "react-router";
-import { Controller } from "react-hook-form";
-import { Flex, Form, Input} from "antd";
+import { Flex, Form} from "antd";
 import Logo from "../assets/images/logo.png";
 import "../styles/otp.css";
 import ButtonComponent from "../components/ButtonComponent";
+import InputField from "../components/InputField";
+import { Link } from "react-router";
 
 // Schema validation
 const otpSchema = yup.object().shape({
   otp: yup
     .string()
-    .matches(/^\d{4}$/, "OTP is incorrect. Please try again.")
-    .required("Please enter your OTP. "),
+    .matches(/^\d{4}$/, "Invalid OTP format")
+    .required("Please enter your OTP."),
 });
 
 export default function OtpPage() {
   const [time, setTime] = useState(10);
   const [resend, setResend] = useState(false);
   const [timer, setTimer] = useState(30);
-  const [active, setActive] = useState(true);
   const [timeResend, setTimeResend] = useState(false);
   useEffect(() => {
     if (time > 0) {
@@ -59,9 +58,7 @@ export default function OtpPage() {
     resolver: yupResolver(otpSchema),
   });
   const onSubmit = (data) => console.log(data);
-  const handleNext = () => {
-
-  }
+ 
   return (
     <Flex justify="center" align="center"
        style={{ 
@@ -102,31 +99,23 @@ export default function OtpPage() {
             </div>
           </div>
 
-          <Form.Item
-            validateStatus={errors.otp ? "error" : ""}
-            help={errors.otp?.message}
-          >
+          <Form.Item> 
             <div style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
             }}>
-              <Controller
-                name="otp"
-                control={control}
-                render={({ field }) => (
-                  <Input.OTP
-                    size="large"
-                    length={4}
-                    {...field}
-                    style={{
-                      height: 40,
-                      width: 300,
-                    }}
-                                        
-                  />
-                )}
-              />
+            <InputField
+              name="otp"
+              control={control}
+              className="email-input"
+              error={errors.otp}
+              length={4}
+              style={{
+                height: 40,
+                width: 300,
+              }}
+            />
             </div>
           </Form.Item>
 
@@ -143,7 +132,10 @@ export default function OtpPage() {
          
 
           <Form.Item>
-            <ButtonComponent className="btn-otp" onClick={handleNext} content="Continue"/>
+            <Link to="/reset-password">
+                <ButtonComponent className="btn-otp" content="Continue" htmlType="submit"/>
+            </Link>
+            
           </Form.Item>
           
         </Form>

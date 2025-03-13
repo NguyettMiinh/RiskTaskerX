@@ -1,14 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Controller } from "react-hook-form";
-import { Flex, Checkbox, Form, Input } from "antd";
+import { Flex, Form, } from "antd";
 import "../styles/auth.css";
 import Logo from "../assets/images/logo.png";
-import Button from "../components/ButtonComponent";
 import ButtonComponent from "../components/ButtonComponent";
+import InputField from "../components/InputField";
 
 // Schema validation
 const resetSchema = yup.object().shape({
@@ -70,48 +68,29 @@ const ResetPassword = () => {
           </div>
 
           
-          <Form.Item
-            validateStatus={errors.password ? "error" : ""}
-            help={errors.password?.message}
-          >
-            <Controller
+          <Form.Item> 
+            <InputField
               name="password"
               control={control}
-              render={({ field }) => (
-                <InputComponent.Password
-                  size="large"
-                  {...field}
-                  placeholder="New password"
-                  className="form-input"
-                  autoComplete="current-password"
-                  
-                />
-              )}
-              
+              placeholder= "New password"
+              autoComplete= "new-password"
+              className="password-input"
+              error={errors.password}
             />
           </Form.Item>
-
-          <Form.Item
-            validateStatus={errors.password ? "error" : ""}
-            help={errors.password?.message}
-          >
-            <Controller
-              name="confirm"
+          <Form.Item> 
+            <InputField
+              name="password"
               control={control}
-              render={({ field }) => (
-                <Input.Password
-                size="large"
-                  {...field}
-                  placeholder= "Confirm password"
-                  className="form-input"
-                  autoComplete="current-password"
-                />
-              )}
+              placeholder= "Confirm password"
+              autoComplete= "confirm-password"
+              className="password-input"
+              error={errors.confirmPassword}
             />
           </Form.Item>
-
+  
           <Form.Item>
-            <ButtonComponent content="sign In"/>
+            <ButtonComponent content="sign In" htmlType="submit" block/>
           </Form.Item>
         </Form>
       </div>

@@ -2,13 +2,15 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Controller } from "react-hook-form";
-import { Flex, Form, Input } from "antd";
+import { Flex, Form} from "antd";
 import { Link } from "react-router-dom";
 import "../styles/forgot.css";
 import Logo from "../assets/images/logo.png";
 import { UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "../components/ButtonComponent";
+import InputField from "../components/InputField";
+
+
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup
@@ -67,23 +69,15 @@ export default function ForgotPasswordForm() {
             </div>
           </div>
 
-          <Form.Item
-            validateStatus={errors.email ? "error" : ""}
-            help={errors.email?.message}
-          >
-            <Controller
+          <Form.Item> 
+            <InputField
               name="email"
               control={control}
-              render={({ field }) => (
-                <Input
-                  size="large"
-                  prefix={<UserOutlined />}
-                  {...field}
-                  placeholder="Enter your email"
-                  className="form-input"
-                  autoComplete="email"
-                />
-              )}
+              prefix={<UserOutlined/>}
+              placeholder= "Enter your email"
+              autoComplete= "email"
+              className="email-input"
+              error={errors.email}
             />
           </Form.Item>
 
