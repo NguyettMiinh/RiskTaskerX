@@ -75,7 +75,7 @@ const LoginPage = () => {
           >
             Sign in
           </div>
-          <Form.Item> 
+
             <InputField
               name="email"
               control={control}
@@ -85,9 +85,8 @@ const LoginPage = () => {
               className="email-input"
               error={errors.email}
             />
-          </Form.Item>
 
-          <Form.Item> 
+  
             <InputField
               name="password"
               control={control}
@@ -97,7 +96,6 @@ const LoginPage = () => {
               className="password-input"
               error={errors.password}
             />
-          </Form.Item>
 
           <Form.Item>
             <Flex justify="space-between" align="center">

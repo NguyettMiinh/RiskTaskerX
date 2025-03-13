@@ -70,7 +70,6 @@ const onSubmit = (data) => {
           </div>
 
           
-          <Form.Item> 
             <InputField
               name="password"
               control={control}
@@ -79,8 +78,7 @@ const onSubmit = (data) => {
               className="password-input"
               error={errors.password}
             />
-          </Form.Item>
-          <Form.Item> 
+
             <InputField
               name="confirm"
               control={control}
@@ -89,7 +87,6 @@ const onSubmit = (data) => {
               className="password-input"
               error={errors.confirmPassword}
             />
-          </Form.Item>
   
           <Form.Item>
             <ButtonComponent className="btn-reset" content="sign In" htmlType="submit" block/>

@@ -107,7 +107,6 @@ export default function OtpPage() {
             </div>
           </div>
 
-          <Form.Item>
             <div
               style={{
                 display: "flex",
@@ -127,7 +126,6 @@ export default function OtpPage() {
                 }}
               />
             </div>
-          </Form.Item>
 
           <div className="resend-otp">
             {resend && (

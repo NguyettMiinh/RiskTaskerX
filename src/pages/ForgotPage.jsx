@@ -71,7 +71,7 @@ export default function ForgotPasswordForm() {
             </div>
           </div>
 
-          <Form.Item>
+  
             <InputField
               name="email"
               control={control}
@@ -81,7 +81,6 @@ export default function ForgotPasswordForm() {
               className="email-input"
               error={errors.email}
             />
-          </Form.Item>
 
           <Form.Item>
             <ButtonComponent
