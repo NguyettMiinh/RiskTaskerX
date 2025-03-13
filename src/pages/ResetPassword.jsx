@@ -28,8 +28,10 @@ const ResetPassword = () => {
       } = useForm({
         resolver: yupResolver(resetSchema),
       });
-  const onSubmit = (data) => console.log(data);
 
+const onSubmit = (data) => {
+  console.log(data)
+}
   return (
     <Flex justify="center" align="center" style={{height: "100vh"}}>
       <div className="auth-form">

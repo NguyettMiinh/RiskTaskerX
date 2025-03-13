@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Flex, Form} from "antd";
+import { Flex, Form } from "antd";
 import Logo from "../assets/images/logo.png";
 import "../styles/otp.css";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 // Schema validation
 const otpSchema = yup.object().shape({
@@ -57,12 +57,21 @@ export default function OtpPage() {
   } = useForm({
     resolver: yupResolver(otpSchema),
   });
-  const onSubmit = (data) => console.log(data);
- 
+  let navigate = useNavigate();
+
+  const handleGoReset = handleSubmit((data) => {
+    navigate('/reset-password'); 
+    console.log(data);
+});
+  
   return (
-    <Flex justify="center" align="center"
-       style={{ 
-        height: "100vh"}}>
+    <Flex
+      justify="center"
+      align="center"
+      style={{
+        height: "100vh",
+      }}
+    >
       <div className="auth-form-3">
         <Form
           className="login-form "
@@ -70,7 +79,7 @@ export default function OtpPage() {
           initialValues={{
             remember: true,
           }}
-          onFinish={handleSubmit(onSubmit)}
+          // onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
           <div className="form-image">
@@ -99,48 +108,49 @@ export default function OtpPage() {
             </div>
           </div>
 
-          <Form.Item> 
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}>
-            <InputField
-              name="otp"
-              control={control}
-              className="email-input"
-              error={errors.otp}
-              length={4}
+          <Form.Item>
+            <div
               style={{
-                height: 40,
-                width: 300,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
-            />
+            >
+              <InputField
+                name="otp"
+                control={control}
+                className="email-input"
+                error={errors.otp}
+                length={4}
+                style={{
+                  height: 40,
+                  width: 300,
+                }}
+              />
             </div>
           </Form.Item>
 
           <div className="resend-otp">
-              {resend && (
-                <div>
-                  Didn't receive the code?
-                  <a onClick={handleResend}>Re-send</a>
-                </div>
-              )}
-              
+            {resend && (
+              <div>
+                Didn't receive the code?
+                <a onClick={handleResend}>Re-send</a>
+              </div>
+            )}
+
             {timeResend && <div>Resend {timer}...</div>}
           </div>
-         
 
           <Form.Item>
-            <Link to="/reset-password">
-                <ButtonComponent className="btn-otp" content="Continue" htmlType="submit"/>
-            </Link>
-            
+            <ButtonComponent
+              className="btn-otp"
+              onClick={handleGoReset} 
+              content="Continue"
+              htmlType="submit"
+            />
           </Form.Item>
-          
         </Form>
       </div>
-       
-      </Flex>
+    </Flex>
   );
 }

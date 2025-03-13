@@ -2,14 +2,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Flex, Form} from "antd";
-import { Link } from "react-router-dom";
+import { Flex, Form } from "antd";
 import "../styles/forgot.css";
 import Logo from "../assets/images/logo.png";
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from "@ant-design/icons";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
-
+import { useNavigate } from "react-router";
 
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
@@ -23,14 +22,18 @@ export default function ForgotPasswordForm() {
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors},
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
-  const onSubmit = (data) => console.log(data);
+  let navigate = useNavigate();
 
+  const handleGoOTP = handleSubmit((data) => {
+    navigate('/otppage'); 
+    console.log(data);
+  });
   return (
-    <Flex justify="center" align="center" style={{height: "100vh"}}>
+    <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="auth-form-2">
         <Form
           className="login-form"
@@ -38,7 +41,6 @@ export default function ForgotPasswordForm() {
           initialValues={{
             remember: true,
           }}
-          onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
           <div className="form-image">
@@ -69,23 +71,25 @@ export default function ForgotPasswordForm() {
             </div>
           </div>
 
-          <Form.Item> 
+          <Form.Item>
             <InputField
               name="email"
               control={control}
-              prefix={<UserOutlined/>}
-              placeholder= "Enter your email"
-              autoComplete= "email"
+              prefix={<UserOutlined />}
+              placeholder="Enter your email"
+              autoComplete="email"
               className="email-input"
               error={errors.email}
             />
           </Form.Item>
 
           <Form.Item>
-              <Link to ="/otppage">
-                <ButtonComponent block disabled={isSubmitting}  htmlType="submit" content="Continue"/>
-              </Link>
-             
+            <ButtonComponent
+              block
+              onClick={handleGoOTP}
+              htmlType="submit"
+              content="Continue"
+            />
           </Form.Item>
         </Form>
       </div>
