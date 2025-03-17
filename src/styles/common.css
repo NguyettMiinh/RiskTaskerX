@@ -1,0 +1,63 @@
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background-image: linear-gradient(107.44deg, #E2E0FF 1.96%, #EBEAFA 16.15%, #F4F4F5 30.33%, #F5F5F5 71.54%, #E4E2FE 100%);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .common-form {
+    background: white;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    border-radius: 25px;
+    margin: 0px;
+  
+  }
+/* -----------title--------------- */
+.cm-title{
+    font-size: 32px;
+    font-weight: 700;
+    padding-bottom: 28px;
+    line-height: 22px;
+}
+
+.ct-title {
+  text-align: center;
+}
+
+.sub-title {
+   color: rgba(99, 99, 100, 1);
+   padding-bottom: 28px;
+}
+/* -------------image-------------- */
+.cm-image {
+  display: flex;
+  justify-content: center;
+  padding-top: 39px;  
+  padding-bottom: 28px;
+}
+
+.cm-img {
+max-width: 344px !important ;
+max-height: 116px !important;
+}
+ /* ------------------BTN----------------- */
+.cm-btn {
+    background-color: rgba(96, 85, 242, 1);
+    height: 41px;
+}
+
+.cn-btn {
+  padding-bottom: 15px;
+}
+
+/* -------input--------- */
+
+.cm-input {
+  width: 472px ;
+  padding-bottom: 4px;
+  height: 40px;
+}

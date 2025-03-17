@@ -12,14 +12,15 @@ const InputField = ({
   error,
   style,
   length,
-  
+  onFocus,
+  onBlur,
 }) => {
   let InputOption;
   switch (name) {
     case "password":
       InputOption = Input.Password;
       break;
-    case "confirm":
+    case "confirmPassword":
         InputOption = Input.Password;
         break;
     case "otp":
@@ -32,6 +33,7 @@ const InputField = ({
     <Form.Item
       validateStatus={error ? "error" : ""}
       help={error?.message}
+      style={{paddingBottom: 4}}
     >
       <Controller
         name={name}
@@ -46,6 +48,8 @@ const InputField = ({
             size={size}
             style={style}
             length={length}
+            onFocus={onFocus}
+            onBlur={onBlur}
           />
         )}
       />

@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Checkbox, Form} from "antd";
 import "../styles/auth.css";
+import "../styles/common.css";
 import Logo from "../assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "../components/ButtonComponent";
@@ -52,7 +53,7 @@ const LoginPage = () => {
 
   return (
     <Flex justify="center" align="center" style={{height: "100vh"}}>
-      <div className="auth-form">
+      <div className="common-form">
         <Form
           className="login-form"
           name="basic"
@@ -62,18 +63,11 @@ const LoginPage = () => {
           onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className="form-image">
-            <img src={Logo} alt="Logo" />
+          <div className="cm-image">
+            <img src={Logo} alt="Logo" className="cm-img" />
           </div>
-          <div
-            style={{
-              textAlign: "center",
-              fontSize: "32px",
-              fontWeight: 700,
-              paddingBottom: 10,
-            }}
-          >
-            Sign in
+          <div className="title">
+            Log In
           </div>
 
             <InputField
@@ -82,7 +76,7 @@ const LoginPage = () => {
               prefix={<UserOutlined/>}
               placeholder= "Enter your email"
               autoComplete= "email"
-              className="email-input"
+              className="cm-input"
               error={errors.email}
             />
 
@@ -93,7 +87,7 @@ const LoginPage = () => {
               prefix={<LockOutlined/>}
               placeholder= "********"
               autoComplete= "current-password"
-              className="password-input"
+              className="cm-input"
               error={errors.password}
             />
 
@@ -114,9 +108,9 @@ const LoginPage = () => {
             </Flex>
           </Form.Item>
 
-          <Form.Item label={null}>
+          <Form.Item className="cn-btn">
             <ButtonComponent
-             htmlType="submit" className = "btn-sign-in" block content="sign in"/>
+             htmlType="submit" className = "cm-btn" block content="Log In"/>
           </Form.Item>
         </Form>
       </div>

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import "../styles/forgot.css";
+import "../styles/common.css";
 import Logo from "../assets/images/logo.png";
 import { UserOutlined } from "@ant-design/icons";
 import ButtonComponent from "../components/ButtonComponent";
@@ -34,7 +34,7 @@ export default function ForgotPasswordForm() {
   });
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
-      <div className="auth-form-2">
+      <div className="common-form">
         <Form
           className="login-form"
           name="basic"
@@ -43,30 +43,15 @@ export default function ForgotPasswordForm() {
           }}
           autoComplete="off"
         >
-          <div className="form-image">
-            <img src={Logo} alt="Logo" />
+          <div className="cm-image">
+            <img src={Logo} alt="Logo" className="cm-img" />
           </div>
 
-          <div
-            style={{
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "30px",
-                fontWeight: 700,
-                paddingBottom: 20,
-              }}
-            >
+          <div className="ct-title">
+            <div className="cm-title">
               Forgot password
             </div>
-            <div
-              style={{
-                color: "rgba(99, 99, 100, 1)",
-                paddingBottom: 22,
-              }}
-            >
+            <div className="sub-title">
               Do not worry! We will help you recover your password
             </div>
           </div>
@@ -78,14 +63,14 @@ export default function ForgotPasswordForm() {
               prefix={<UserOutlined />}
               placeholder="Enter your email"
               autoComplete="email"
-              className="email-input"
+              className="cm-input"
               error={errors.email}
             />
 
-          <Form.Item>
+          <Form.Item className="cn-btn">
             <ButtonComponent
               block
-              className="btn-forgot"
+              className="cm-btn"
               onClick={handleGoOTP}
               htmlType="submit"
               content="Continue"

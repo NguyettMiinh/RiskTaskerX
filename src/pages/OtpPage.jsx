@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { Flex, Form } from "antd";
 import Logo from "../assets/images/logo.png";
 import "../styles/otp.css";
+import "../styles/common.css";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
 import { useNavigate } from "react-router";
@@ -72,7 +73,7 @@ export default function OtpPage() {
         height: "100vh",
       }}
     >
-      <div className="auth-form-3">
+      <div className="common-form">
         <Form
           className="login-form "
           name="basic"
@@ -81,28 +82,15 @@ export default function OtpPage() {
           }}
           autoComplete="off"
         >
-          <div className="form-image">
-            <img src={Logo} alt="Logo" />
+          <div className="cm-image">
+            <img src={Logo} alt="Logo" className="cm-img" />
           </div>
 
-          <div
-            style={{
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "30px",
-                fontWeight: 700,
-              }}
-            >
+          <div className="ct-title">
+            <div className="cm-title">
               OTP Verification
             </div>
-            <div
-              style={{
-                color: "rgba(99, 99, 100, 1)",
-              }}
-            >
+            <div className="sub-title">
               Enter the OTP sent to your email
             </div>
           </div>
@@ -129,7 +117,7 @@ export default function OtpPage() {
 
           <div className="resend-otp">
             {resend && (
-              <div>
+              <div className="sub-resend">
                 Didn't receive the code?
                 <a onClick={handleResend}>Re-send</a>
               </div>
@@ -138,9 +126,9 @@ export default function OtpPage() {
             {timeResend && <div>Resend {timer}...</div>}
           </div>
 
-          <Form.Item>
+          <Form.Item className="cn-btn">
             <ButtonComponent
-              className="btn-otp"
+              className="cm-btn otp-btn"
               onClick={handleGoReset} 
               content="Continue"
               htmlType="submit"
