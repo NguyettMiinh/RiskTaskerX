@@ -1,6 +1,6 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { useForm} from "react-hook-form";
+import { Link} from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
@@ -29,9 +29,11 @@ const loginSchema = yup.object().shape({
       /[@$!%*?&]/,
       "Password must contain at least one special character (@$!%*?&)"
     ),
+  remember: yup.boolean().default(true),
 });
 
 const LoginPage = () => {
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const {
     handleSubmit,
     control,
@@ -44,9 +46,16 @@ const LoginPage = () => {
     },
     resolver: yupResolver(loginSchema),
   });
-  const onSubmit = (data) => {
-    console.log( 'data',data);
-    
+
+
+
+  const onSubmit = async data => {
+    await sleep(2000);
+    if (data.email === "nguyet123@gmail.com") {
+      alert(JSON.stringify(data));
+    } else {
+      alert("There is an error");
+    }
   };
 
 

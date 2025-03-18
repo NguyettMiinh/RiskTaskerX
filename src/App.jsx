@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordForm from './pages/ForgotPage';
 import OtpPage from './pages/OtpPage';
 import ResetPassword from './pages/ResetPassword';
+import DashboardPage from './pages/DashboardPage';
 
 
 const App = () =>{
@@ -14,6 +15,7 @@ const App = () =>{
         <Route path="/password" element={<ForgotPasswordForm/>} />
         <Route path="/otppage" element={<OtpPage/>} />
         <Route path="/reset-password" element={<ResetPassword/>} />
+        <Route path="/dashboard" element={<DashboardPage/>} />
       </Routes>
     </div>
   );

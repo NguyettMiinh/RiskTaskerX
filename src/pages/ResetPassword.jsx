@@ -8,6 +8,7 @@ import "../styles/common.css";
 import Logo from "../assets/images/logo.png";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
+import { useNavigate } from "react-router";
 
 // Schema validation
 const resetSchema = yup.object().shape(
@@ -29,6 +30,7 @@ const resetSchema = yup.object().shape(
   { abortEarly: false }
 );
 
+
 const ResetPassword = () => {
   const [showCard, setShowCard] = useState(false);
   const {
@@ -43,12 +45,7 @@ const ResetPassword = () => {
 
   });
   const passwordValue = watch("password") || ""; 
-  const isValidPassword =
-  passwordValue.length >= 8 &&
-  !/\s/.test(passwordValue) &&
-  /[A-Z]/.test(passwordValue) &&
-  /[0-9]/.test(passwordValue) &&
-  /[@$!%*?&]/.test(passwordValue);
+
   useEffect(() => {
     if (passwordValue) {
       setShowCard(true);
@@ -59,6 +56,12 @@ const ResetPassword = () => {
     console.log(data);
   };
 
+let navigate = useNavigate();
+
+const handleGoReset = handleSubmit((data) => {
+  navigate('/dashboard'); 
+  console.log(data);
+});
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="common-form">
@@ -139,6 +142,7 @@ const ResetPassword = () => {
               className="cm-btn"
               content="Submit"
               htmlType="submit"
+              onClick={handleGoReset} 
               block
             />
           </Form.Item>

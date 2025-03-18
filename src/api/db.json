@@ -1,0 +1,118 @@
+{
+  "admins": [
+    {
+      "id": "1",
+      "full_name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone_number": "1234567890",
+      "password": "A1@simple",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": true,
+      "role_id": 1,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "2",
+      "full_name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "phone_number": "0987654321",
+      "password": "B2#strong",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": false,
+      "role_id": 2,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "3",
+      "full_name": "Alice Brown",
+      "email": "alice.brown@example.com",
+      "phone_number": "1122334455",
+      "password": "C3!secure",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": true,
+      "role_id": 1,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "4",
+      "full_name": "Michael Green",
+      "email": "michael.green@example.com",
+      "phone_number": "5566778899",
+      "password": "D4$random",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": true,
+      "role_id": 3,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "5",
+      "full_name": "Emma White",
+      "email": "emma.white@example.com",
+      "phone_number": "6677889900",
+      "password": "E5@custom",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": false,
+      "role_id": 2,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "6",
+      "full_name": "David Black",
+      "email": "david.black@example.com",
+      "phone_number": "7788990011",
+      "password": "F6&special",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": true,
+      "role_id": 1,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "7",
+      "full_name": "Sophia Wilson",
+      "email": "sophia.wilson@example.com",
+      "phone_number": "8899001122",
+      "password": "G7*unique",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": false,
+      "role_id": 3,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "8",
+      "full_name": "James Taylor",
+      "email": "james.taylor@example.com",
+      "phone_number": "9900112233",
+      "password": "H8^stronger",
+      "profile_img": "https://via.placeholder.com/150",
+      "is_active": true,
+      "role_id": 2,
+      "created_at": "2025-03-18T08:00:00Z",
+      "updated_at": "2025-03-18T08:00:00Z"
+    },
+    {
+      "id": "21a3",
+      "email": "nnguyettmiinh@gmail.com",
+      "password": "Nguyet123@",
+      "remember": false
+    },
+    {
+      "id": "af25",
+      "email": "nnguyettmiinh@gmail.com",
+      "password": "Nguyet1223@",
+      "remember": false
+    },
+    {
+      "id": "b2c4",
+      "email": "nnguyettmiinh@gmail.com",
+      "password": "Nguyet123@",
+      "remember": false
+    }
+  ]
+}

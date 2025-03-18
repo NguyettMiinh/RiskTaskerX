@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { Flex, Form } from "antd";
 import "../styles/common.css";
 import Logo from "../assets/images/logo.png";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, CloseOutlined } from "@ant-design/icons";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
 import { useNavigate } from "react-router";
@@ -22,16 +22,19 @@ export default function ForgotPasswordForm() {
   const {
     handleSubmit,
     control,
-    formState: { errors},
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
   let navigate = useNavigate();
 
   const handleGoOTP = handleSubmit((data) => {
-    navigate('/otppage'); 
+    navigate("/otppage");
     console.log(data);
   });
+  const handleLogin = () => {
+    navigate("/");
+  };
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="common-form">
@@ -43,30 +46,35 @@ export default function ForgotPasswordForm() {
           }}
           autoComplete="off"
         >
+          <Form.Item>
+            <ButtonComponent
+              icon={<CloseOutlined  style={{ color: "#333" }} />}
+              className="no-hover-effect"
+              onClick={handleLogin}
+            ></ButtonComponent>
+          </Form.Item>
+
           <div className="cm-image">
             <img src={Logo} alt="Logo" className="cm-img" />
           </div>
-
+          
           <div className="ct-title">
-            <div className="cm-title">
-              Forgot password
-            </div>
+            <div className="cm-title">Forgot password</div>
             <div className="sub-title">
               Do not worry! We will help you recover your password
             </div>
           </div>
 
-  
-            <InputField
-              name="email"
-              control={control}
-              prefix={<UserOutlined />}
-              placeholder="Enter your email"
-              autoComplete="email"
-              className="cm-input"
-              error={errors.email}
-            />
-
+          <InputField
+            name="email"
+            control={control}
+            prefix={<UserOutlined />}
+            placeholder="Enter your email"
+            autoComplete="email"
+            className="cm-input"
+            error={errors.email}
+          />
+          
           <Form.Item className="cn-btn">
             <ButtonComponent
               block
