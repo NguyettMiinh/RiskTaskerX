@@ -1,16 +1,20 @@
-import React from "react";
+import React,{useState} from "react";
 import { useForm} from "react-hook-form";
-import { Link} from "react-router";
+import { Link, useNavigate} from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Checkbox, Form} from "antd";
 import "../styles/auth.css";
 import "../styles/common.css";
+import { loginApi } from "../services/UserService";
+
+import "react-toastify/dist/ReactToastify.css";
 import Logo from "../assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
+
 
 
 // Schema validation
@@ -33,7 +37,7 @@ const loginSchema = yup.object().shape({
 });
 
 const LoginPage = () => {
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const [loginError, setLoginError] = useState("");
   const {
     handleSubmit,
     control,
@@ -47,16 +51,21 @@ const LoginPage = () => {
     resolver: yupResolver(loginSchema),
   });
 
-
-
-  const onSubmit = async data => {
-    await sleep(2000);
-    if (data.email === "nguyet123@gmail.com") {
-      alert(JSON.stringify(data));
-    } else {
-      alert("There is an error");
+ const navigate = useNavigate();
+ 
+///---------API----------------------
+  const onSubmit = async (data) => {
+    setLoginError("");
+    try {
+     const response =  await loginApi(data.email, data.password);
+      navigate("/dashboard");
+      console.log("Login successful");
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      setLoginError("Invalid email or password. Please try again.");
     }
   };
+  
 
 
 
@@ -116,7 +125,7 @@ const LoginPage = () => {
               </Link>
             </Flex>
           </Form.Item>
-
+          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
              htmlType="submit" className = "cm-btn" block content="Log In"/>
