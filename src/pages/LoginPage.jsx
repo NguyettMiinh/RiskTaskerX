@@ -41,7 +41,7 @@ const LoginPage = () => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       email: "",
@@ -128,7 +128,7 @@ const LoginPage = () => {
           {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
-             htmlType="submit" className = "cm-btn" block content="Log In"/>
+             htmlType="submit" disabled={isSubmitting} className = "cm-btn" block content= {isSubmitting ? "Logging in..." : "Log in"} />
           </Form.Item>
         </Form>
       </div>

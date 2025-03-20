@@ -9,7 +9,8 @@ import "../styles/common.css";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
 import { useNavigate } from "react-router";
-
+import { verifyOtpApi } from "../services/UserService";
+import { useSelector } from "react-redux"; 
 // Schema validation
 const otpSchema = yup.object().shape({
   otp: yup
@@ -19,10 +20,12 @@ const otpSchema = yup.object().shape({
 });
 
 export default function OtpPage() {
+  const [loginError, setLoginError] = useState("");
   const [time, setTime] = useState(10);
   const [resend, setResend] = useState(false);
   const [timer, setTimer] = useState(30);
   const [timeResend, setTimeResend] = useState(false);
+  const email = useSelector((state) => state.email.value);
   useEffect(() => {
     if (time > 0) {
       const timeId = setInterval(() => {
@@ -60,10 +63,18 @@ export default function OtpPage() {
   });
   let navigate = useNavigate();
 
-  const handleGoReset = handleSubmit((data) => {
-    navigate('/reset-password'); 
-    console.log(data);
-});
+
+  const onSubmit = async (data) => {
+    setLoginError("");
+    try {
+     await verifyOtpApi( email, data.otp );
+      navigate("/reset-password");
+      console.log("Login successful");
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      setLoginError("Invalid email or password. Please try again.");
+    }
+  };
   
   return (
     <Flex
@@ -80,6 +91,7 @@ export default function OtpPage() {
           initialValues={{
             remember: true,
           }}
+          onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
           <div className="cm-image">
@@ -125,11 +137,10 @@ export default function OtpPage() {
 
             {timeResend && <div>Resend {timer}...</div>}
           </div>
-
+          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
               className="cm-btn otp-btn"
-              onClick={handleGoReset} 
               content="Continue"
               htmlType="submit"
             />

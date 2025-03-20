@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
-import { Layout, Menu, Row, Col, Avatar, Button, Dropdown } from "antd";
+import { Link, useNavigate  } from "react-router";
+import { Layout, Menu, Row, Col, Avatar, Button, Dropdown, Modal, Space } from "antd";
 import LogoW from "../assets/images/logoW.png";
 import {
   BarChartOutlined,
@@ -16,14 +16,30 @@ import {
   LockOutlined ,
   LogoutOutlined,
   SafetyOutlined,
-
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 
+
+
 const { Header, Content, Footer, Sider } = Layout;
+const { confirm } = Modal;
 
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
+  const showConfirm = () => {
+    confirm({
+      title: "Are you sure you want to logout?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Confirm",
+      cancelText: "Cancel",
+      onOk() {
+        // localStorage.removeItem("token");
+        navigate("/"); 
+      },
+    });
+  };
   const items = [
     { key: "1", icon: <BarChartOutlined />, label: "Dashboard" },
     { key: "2", icon: <SafetyOutlined />, label: "User Roles & Permissions" },
@@ -49,51 +65,19 @@ const itemsUser = [
   {
     key: "2",
     icon: <LockOutlined />,
-    label: <Link to="/reset-password">Change Password</Link>,
+    label: <Link to="/change-password">Change Password</Link>,
   },
   {
     key: "3",
     icon: <LogoutOutlined />,
-    label: <Link to="/logout">Log Out</Link>,
+    label: "Logout",
+    onClick: showConfirm,
   },
 ];
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={setCollapsed}
-        width={294}
-        collapsedWidth={100}
-        style={{ 
-          background: "#080066",        
-         }}
-        
-      >
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-            color: "white",
-            textAlign: "center",
-            fontSize: 18,
-            fontWeight: "bold",
-          }}
-        >
-          {collapsed ? "" :  <img src={LogoW} alt="Dashboard Logo" style={{ height: 50 }} />}
-        </div>
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={["1"]}
-          mode="inline"
-          items={items}
-          style={{ background: "inherit", paddingTop: 10}}
-        />
-      </Sider>
-
-      <Layout>
-        <Header style={{ background: "#fff" }}>
+      <Header style={{ background: "#fff", position: "fixed" }}>
           <Row justify="end" align="middle" gutter={[12, 12]}>
             <Col>
               <Avatar size="default" icon={<UserOutlined />} />
@@ -128,8 +112,46 @@ const itemsUser = [
             </Col>
           </Row>
         </Header>
+        <Space>
+          {/* <Sider
+              collapsible
+              collapsed={collapsed}
+              onCollapse={setCollapsed}
+              width={294}
+              collapsedWidth={100}
+              style={{ 
+                background: "#080066",        
+              }}
+              
+            >
+              <div
+                style={{
+                  height: 32,
+                  margin: 16,
+                  color: "white",
+                  textAlign: "center",
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                {collapsed ? "" :  <img src={LogoW} alt="Dashboard Logo" style={{ height: 50 }} />}
+              </div>
+              <Menu
+                theme="dark"
+                defaultSelectedKeys={["1"]}
+                mode="inline"
+                items={items}
+                style={{ background: "inherit", paddingTop: 10}}
+              />
+            </Sider> */}
 
-        <Content style={{ margin: "16px" }}></Content>
+        </Space>
+      
+        <Content style={{ margin: "16px", marginTop: 64 }}></Content>
+      <Layout>
+        
+
+       
 
         <Footer style={{ textAlign: "center" }}>© 2025 Dashboard</Footer>
       </Layout>

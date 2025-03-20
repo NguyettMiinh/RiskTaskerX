@@ -23,6 +23,9 @@ const InputField = ({
     case "confirmPassword":
         InputOption = Input.Password;
         break;
+    case "currentPassword":
+        InputOption = Input.Password;
+        break;
     case "otp":
       InputOption = Input.OTP;
       break;

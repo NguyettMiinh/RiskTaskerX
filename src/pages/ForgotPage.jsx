@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -9,7 +9,9 @@ import { UserOutlined, CloseOutlined } from "@ant-design/icons";
 import ButtonComponent from "../components/ButtonComponent";
 import InputField from "../components/InputField";
 import { useNavigate } from "react-router";
-
+import { otpApi } from "../services/UserService";
+import { useDispatch } from "react-redux";
+import { setEmail } from "../redux/emailSlice";
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup
@@ -19,22 +21,42 @@ const forgotPasswordSchema = yup.object().shape({
 });
 
 export default function ForgotPasswordForm() {
+   const [loginError, setLoginError] = useState("");
+   const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
   let navigate = useNavigate();
 
-  const handleGoOTP = handleSubmit((data) => {
-    navigate("/otppage");
-    console.log(data);
-  });
   const handleLogin = () => {
     navigate("/");
   };
+  //---------Redux----------------------
+  const emailValue = watch("email");
+  React.useEffect(() => {
+    if (emailValue) {
+      dispatch(setEmail(emailValue));
+    }
+  }, [emailValue, dispatch]);
+    ///---------API----------------------
+    const onSubmit = async (data) => {
+      console.log("Email gửi OTP:", data.email);
+      setLoginError("");
+      try {
+        await otpApi(data.email);
+        navigate("/otppage");
+        
+      } catch (error) {
+        console.error("Error:", error.response?.data || error.message);
+        setLoginError("Invalid email. Please try again.");
+      }
+    };
+    console.log("Email gửi OTP:", emailValue);
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="common-form">
@@ -44,6 +66,7 @@ export default function ForgotPasswordForm() {
           initialValues={{
             remember: true,
           }}
+          onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
           <Form.Item>
@@ -74,12 +97,11 @@ export default function ForgotPasswordForm() {
             className="cm-input"
             error={errors.email}
           />
-          
+          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
               block
               className="cm-btn"
-              onClick={handleGoOTP}
               htmlType="submit"
               content="Continue"
             />
