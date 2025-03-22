@@ -34,7 +34,7 @@ const resetSchema = yup.object().shape(
 );
 
 
-const ResetPassword = () => {
+const ResetPage = () => {
   const email = useSelector((state) => state.email.value);
   const [showCard, setShowCard] = useState(false);
   const {
@@ -165,5 +165,5 @@ const onSubmit = async (data) => {
   );
 };
 
-export default ResetPassword;
+export default ResetPage;
 

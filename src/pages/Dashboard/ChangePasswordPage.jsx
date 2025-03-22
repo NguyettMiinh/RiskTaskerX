@@ -1,175 +1,184 @@
-import React,{useState, useEffect} from "react";
-import { Link, useNavigate } from "react-router";
-import "@assets/styles/dashboard.css";
-import { getUserProfile } from "@/services/userService";
-import {
-  Layout,
-  Menu,
-  Row,
-  Col,
-  Avatar,
-  Button,
-  Dropdown,
-  Modal,
-} from "antd";
-import {
-  BarChartOutlined,
-  UsergroupAddOutlined,
-  CarOutlined,
-  ToolOutlined,
-  NotificationOutlined,
-  ShoppingCartOutlined,
-  ApartmentOutlined,
-  MessageOutlined,
-  CaretDownFilled,
-  UserOutlined,
-  LockOutlined,
-  LogoutOutlined,
-  SafetyOutlined,
-  ExclamationCircleFilled,
-} from "@ant-design/icons";
-import ChangeForm from "./ChangeForm";
+import React from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { Flex, Form, Card } from "antd";
+import "@assets/styles/common.css";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
+import { LockOutlined} from "@ant-design/icons";
+import { changePasswordApi } from "@/services/userService";
 
+// Schema validation
+const resetSchema = yup.object().shape(
+  {
+    currentPassword: yup
+    .string()
+    .required("Please enter your current password"),
+    password: yup
+    .string()
+    .required("Please enter your password")
+    .min(8, "")
+    .test("no-spaces", "", (value) => !value || !/\s/.test(value))
+    .test("uppercase", "", (value) => !value || /[A-Z]/.test(value))
+    .test("number", "", (value) => !value || /[0-9]/.test(value))
+    .test("special-char", "", (value) => !value || /[@$!%*?&]/.test(value)),
+      
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password")], "Passwords do not match")
+      .required("Please confirm your password"),
+  },
+  { abortEarly: false }
+);
 
-const { Header, Content, Footer, Sider } = Layout;
-const { confirm } = Modal;
 
 const ChangePassword = () => {
-  const [userProfile, setUserProfile] = useState(null);
-  const navigate = useNavigate();
-   useEffect(() => {
-      const fetchUserProfile = async () => {
-        try {
-          const response = await getUserProfile(); 
-          setUserProfile(response.data); 
-          console.log("User profile:", response.data);
-        } catch (error) {
-          console.error("Error fetching user profile:", error.response?.data || error.message);
-        }
-      };
+  const [showCard, setShowCard] = useState(false);
+  const {
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+    reset,
+    
+  } = useForm({
+    resolver: yupResolver(resetSchema, { abortEarly: false }),
+    mode: "onChange"
+
+  });
+  const passwordValue = watch("password") || ""; 
+
+  useEffect(() => {
+    if (passwordValue) {
+      setShowCard(true);
+    }
+  }, [passwordValue]);
+
+
+
+  const onSubmit = async (data) => {
+    const payload = {
+      oldPassword: data.currentPassword, // Mật khẩu hiện tại
+      newPassword: data.password, // Mật khẩu mới
+      confirmPassword: data.confirmPassword
+    };
+    console.log("Sending request:", payload);
   
-      fetchUserProfile(); // Gọi hàm khi component được render
-    }, []);
-  const showConfirm = () => {
-    confirm({
-      title: "Are you sure you want to logout?",
-      icon: <ExclamationCircleFilled />,
-      okText: "Confirm",
-      cancelText: "Cancel",
-      onOk() {
-        localStorage.removeItem("token"); 
-        navigate("/");
-      },
-    });
+    try {
+      await changePasswordApi(payload);
+      alert("Password changed successfully!");
+      reset();
+    } catch (error) {
+      console.error("Error changing password:", error.response?.data || error.message);
+      alert("Failed to change password. Please try again.");
+    }
   };
-  const items = [
-    { key: "1", icon: <BarChartOutlined />, label: "Dashboard" },
-    { key: "2", icon: <SafetyOutlined />, label: "User Roles & Permissions" },
-    { key: "3", icon: <UsergroupAddOutlined />, label: "Customer Management" },
-    { key: "4", icon: <CarOutlined />, label: "Car Management" },
-    { key: "5", icon: <ToolOutlined />, label: "Spare Parts Management" },
-    {
-      key: "6",
-      icon: <NotificationOutlined />,
-      label: "Marketing Campaign Management",
-    },
-    { key: "7", icon: <ShoppingCartOutlined />, label: "Order Management" },
-    { key: "8", icon: <ApartmentOutlined />, label: "Branch Management" },
-    { key: "9", icon: <MessageOutlined />, label: "Notification Management" },
-  ];
-  const itemsUser = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to="/">My Profile</Link>,
-    },
-    {
-      key: "2",
-      icon: <LockOutlined />,
-      label: <Link to="/change-password">Change Password</Link>,
-    },
-    {
-      key: "3",
-      icon: <LogoutOutlined />,
-      label: "Logout",
-      onClick: showConfirm,
-    },
-  ];
-
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-      }}
-    >
-      <Sider
-        style={{
-          background: "#1E4C8F",
-        }}
-      >
-        <div style={{
-          color: "white",
-          fontSize: "30px",
-          paddingLeft: "20px",
-          paddingBottom: "10px",
-        }}>MENU</div>
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={["1"]}
-          mode="inline"
-          items={items}
-          style={{ background: "inherit", paddingTop: 10 }}
-        />
-      </Sider>
-
-      <Layout>
-        <Header className="header-layout">
-        <Row align="middle" justify="space-between" gutter={[12, 12]}>
-            <Col>
-              <div style={{
-                color: "#1E4C8F",
-                fontFamily: "'Russo One', sans-serif",
-                fontSize: 35,
-
-              }}>RISTASKERX</div>
-            </Col>
-            <Col style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <Avatar size="default" icon={<UserOutlined />} />
-                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-                <span style={{ fontWeight: "bold" }}>{userProfile?.results?.email || "Loading..."}</span>
-                <span style={{ fontSize: "12px", color: "gray", paddingTop: "5px" }}>Admin</span>
+    <div style={{
+      alignItems: "center",
+      justifyContent: "center",
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+    }}>
+        <Flex justify="center" align="center" style={{ width: "100%"}}>
+          <div className="common-form">
+            <Form
+              className="login-form"
+              name="basic"
+              initialValues={{
+                remember: true,
+              }}
+              onFinish={handleSubmit(onSubmit)}
+              autoComplete="off"
+            >
+              <div className="cm-image" >
+                <LockOutlined style={{ fontSize: "50px", color: "#6055F2" }} />
               </div>
-              <Dropdown menu={{ items: itemsUser }} placement="bottom">
-                <Button
-                  icon={<CaretDownFilled />}
-                  style={{
-                    outline: "none",
-                    background: "transparent",
-                    border: "none",
-                  }}
+              <div className="ct-title">
+                <div className="cm-title">
+                  Change password
+                </div>
+                <div className="sub-title">
+                  Set a new password to secure your account.
+                </div>
+              </div>
+
+              <InputField
+                    name="currentPassword"
+                    control={control}
+                    placeholder="Currnet password "
+                    autoComplete="current-password"
+                    className="cm-input"
+                    error= {errors.currentPassword}
+                  />
+
+
+                  <InputField
+                    name="password"
+                    control={control}
+                    placeholder="New password"
+                    autoComplete="new-password"
+                    className="cm-input"
+                    onFocus={() => {
+                      if (passwordValue) setShowCard(true);
+                    }}
+                    onBlur={() => setTimeout(() => setShowCard(false), 500)}
+                    error= {errors.password}
+                  />
+      
+            
+          
+            {showCard && (
+              <Card>
+                <div>Password must include:</div>
+                <ul>
+                  <li style={{ color: passwordValue.length >= 8 ? "black" : "red" }}>
+                    At least 8 characters
+                  </li>
+                  <li style={{ color: !/\s/.test(passwordValue) ? "black" : "red" }}>
+                    No spaces allowed
+                  </li>
+                  <li style={{ color: /[A-Z]/.test(passwordValue) ? "black" : "red" }}>
+                    At least one uppercase letter
+                  </li>
+                  <li style={{ color: /[0-9]/.test(passwordValue) ? "black" : "red" }}>
+                    At least one number
+                  </li>
+                  <li style={{ color: /[@$!%*?&]/.test(passwordValue) ? "black" : "red" }}>
+                    At least one special character (@$!%*?&)
+                  </li>
+                </ul>
+              </Card>
+            )}
+
+              <InputField
+                name="confirmPassword"
+                control={control}
+                placeholder="Confirm new password"
+                autoComplete="confirm-password"
+                className="cm-input"
+                error={errors.confirmPassword}
+              />
+
+              <Form.Item className="cn-btn">
+                <ButtonComponent
+                  className="cm-btn"
+                  content="Change password"
+                  htmlType="submit"
+                  block
                 />
-              </Dropdown>
-            </Col>
-          </Row>
-        </Header>
-            <Content style={{
-                alignItems: "center",
-                justifyContent: "center",
-                display: "flex",
-                flexDirection: "column",
-                height: "100%", 
-            }}>
-              <ChangeForm />
-          </Content>
-        <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-         
-        </Footer>
-      </Layout>
-    </Layout>
+              </Form.Item>
+            </Form>
+          </div>
+        </Flex>
+
+    </div>
+
   );
 };
+
 export default ChangePassword;
+

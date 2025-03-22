@@ -5,7 +5,7 @@ import config from '@/config';
 import LoginPage from '@pages/auth/LoginPage';
 import ForgotPasswordForm from '@pages/auth/ForgotPage';
 import OtpPage from '@pages/auth/OtpPage';
-import ResetPassword from '@pages/auth/ResetPassword';
+import ResetPage from '@/pages/auth/ResetPage';
 import DashboardPage from '@pages/dashboard/DashboardPage';
 import ChangePassword from '@pages/dashboard/ChangePasswordPage'
 
@@ -15,7 +15,7 @@ const publicRoutes  = [
     {path: config.routes.login,component: LoginPage,layout: null},
     {path: config.routes.forgot, component: ForgotPasswordForm,layout: null},
     {path: config.routes.otp, component: OtpPage, layout: null},
-    {path: config.routes.reset, component: ResetPassword, layout: null},
+    {path: config.routes.reset, component: ResetPage, layout: null},
     {path: config.routes.dashboard, component: DashboardPage},
     {path: config.routes.change, component: ChangePassword}
 ];
