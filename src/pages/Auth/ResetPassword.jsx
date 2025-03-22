@@ -11,6 +11,8 @@ import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
 import { resetPassWordApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
+import config from '@/config';
+
 // Schema validation
 const resetSchema = yup.object().shape(
   {
@@ -67,7 +69,7 @@ const onSubmit = async (data) => {
   
   try {
     await resetPassWordApi(payload.email, payload.newPassword, payload.reNewPassword);
-    navigate("/");
+    navigate(config.login);
     console.log("Password reset successful");
   } catch (error) {
     console.error("Error:", error.response?.data || error.message);

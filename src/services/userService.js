@@ -1,15 +1,12 @@
-import axios from "../config/axios";
+import axios from "@/api/axios";
 
 const loginApi = async (email, password) => {
     return axios.post("/auth/sign-in", { email, password });
 }
 
 const otpApi = async (email) => {
-   try {
-    
-   } catch (error) {
-    
-   }
+    return axios.get("/otp/email/send",
+      { params: { to: email } });
 };
 
 const verifyOtpApi = async (email,otp) => {
