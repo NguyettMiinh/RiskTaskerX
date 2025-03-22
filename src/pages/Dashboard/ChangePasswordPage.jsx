@@ -1,7 +1,7 @@
 import React,{useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router";
-import "../../assets/styles/dashboard.css";
-import { getUserProfile } from "../../services/userService";
+import "@assets/styles/dashboard.css";
+import { getUserProfile } from "@/services/userService";
 import {
   Layout,
   Menu,

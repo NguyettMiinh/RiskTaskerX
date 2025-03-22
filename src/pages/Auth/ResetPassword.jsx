@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form, Card } from "antd";
-import "../../assets/styles/common.css";
-import Logo from "../../assets/images/logo.png";
-import ButtonComponent from "../../components/ui/ButtonComponent";
-import InputField from "../../components/ui/InputField";
+import "@assets/styles/common.css";
+import Logo from "@assets/images/logo.png";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
-import { resetPassWordApi } from "../../services/userService";
+import { resetPassWordApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
 // Schema validation
 const resetSchema = yup.object().shape(

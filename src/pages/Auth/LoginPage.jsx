@@ -5,15 +5,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Checkbox, Form} from "antd";
-import "../../assets/styles/auth.css";
-import "../../assets/styles/common.css";
-import { loginApi } from "../../services/userService";
+import "@assets/styles/auth.css";
+import "@assets/styles/common.css";
+import { loginApi } from "@/services/userService";
 
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../../assets/images/logo.png";
+import Logo from "@/assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import ButtonComponent from "../../components/ui/ButtonComponent";
-import InputField from "../../components/ui/InputField";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
 
 
 

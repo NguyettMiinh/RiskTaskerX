@@ -3,15 +3,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import "../../assets/styles/common.css";
-import Logo from "../../assets/images/logo.png";
+import "@assets/styles/common.css"
+import Logo from "@assets/images/logo.png";
 import { UserOutlined, CloseOutlined } from "@ant-design/icons";
-import ButtonComponent from "../../components/ui/ButtonComponent";
-import InputField from "../../components/ui/InputField";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField"
 import { useNavigate } from "react-router";
-import { otpApi } from "../../services/userService";
+import { otpApi } from "@/services/userService";
 import { useDispatch } from "react-redux";
-import { setEmail } from "../../redux/emailSlice";
+import { setEmail } from "@/redux/emailSlice";
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup

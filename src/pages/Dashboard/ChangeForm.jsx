@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form, Card } from "antd";
-import "../../assets/styles/common.css";
-import ButtonComponent from "../../components/ui/ButtonComponent";
-import InputField from "../../components/ui/InputField";
+import "@assets/styles/common.css";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
 import { LockOutlined} from "@ant-design/icons";
-import { changePasswordApi } from "../../services/userService";
+import { changePasswordApi } from "@/services/userService";
 
 // Schema validation
 const resetSchema = yup.object().shape(

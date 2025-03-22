@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route} from 'react-router';
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
-import LoginPage from './pages/Auth/LoginPage';
-import ForgotPasswordForm from './pages/Auth/ForgotPage';
-import OtpPage from './pages/Auth/OtpPage';
-import ResetPassword from './pages/Auth/ResetPassword';
-import DashboardPage from './pages/Dashboard/DashboardPage';
-import ChangePassword from './pages/Dashboard/ChangePasswordPage';
+import { store } from "@/redux/store";
+import LoginPage from '@pages/auth/LoginPage';
+import ForgotPasswordForm from '@pages/auth/ForgotPage';
+import OtpPage from '@pages/auth/OtpPage';
+import ResetPassword from '@pages/auth/ResetPassword';
+import DashboardPage from '@pages/dashboard/DashboardPage';
+import ChangePassword from '@pages/dashboard/ChangePasswordPage'
 
 
 

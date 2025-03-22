@@ -3,13 +3,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import Logo from "../../assets/images/logo.png";
-import "../../assets/styles/otp.css";
-import "../../assets/styles/common.css";
-import ButtonComponent from "../../components/ui/ButtonComponent";
-import InputField from "../../components/ui/InputField";
+import Logo from "@assets/images/logo.png";
+import "@assets/styles/otp.css";
+import "@assets/styles/common.css";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
-import { otpApi, verifyOtpApi } from "../../services/userService";
+import { otpApi, verifyOtpApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
 // Schema validation
 const otpSchema = yup.object().shape({
