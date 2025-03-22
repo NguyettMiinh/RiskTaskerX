@@ -5,15 +5,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Checkbox, Form} from "antd";
-import "../styles/auth.css";
-import "../styles/common.css";
-import { loginApi } from "../services/UserService";
+import "../../assets/styles/auth.css";
+import "../../assets/styles/common.css";
+import { loginApi } from "../../services/userService";
 
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../assets/images/logo.png";
+import Logo from "../../assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import ButtonComponent from "../components/ButtonComponent";
-import InputField from "../components/InputField";
+import ButtonComponent from "../../components/ui/ButtonComponent";
+import InputField from "../../components/ui/InputField";
 
 
 
@@ -57,7 +57,11 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     setLoginError("");
     try {
-     const response =  await loginApi(data.email, data.password);
+      const response =  await loginApi(data.email, data.password);
+      console.log("API Response:", response);
+      const token = response.data.results.token;
+      localStorage.setItem("authToken", token);
+      console.log("Login successful, token saved:", token);
       navigate("/dashboard");
       console.log("Login successful");
     } catch (error) {
@@ -128,7 +132,7 @@ const LoginPage = () => {
           {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
-             htmlType="submit" disabled={isSubmitting} className = "cm-btn" block content= {isSubmitting ? "Logging in..." : "Log in"} />
+             htmlType="submit" disabled={isSubmitting} className = "cm-btn" block content= {isSubmitting ? "Logging in..." : "Log In"} />
           </Form.Item>
         </Form>
       </div>

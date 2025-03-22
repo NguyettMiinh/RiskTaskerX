@@ -3,13 +3,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import Logo from "../assets/images/logo.png";
-import "../styles/otp.css";
-import "../styles/common.css";
-import ButtonComponent from "../components/ButtonComponent";
-import InputField from "../components/InputField";
+import Logo from "../../assets/images/logo.png";
+import "../../assets/styles/otp.css";
+import "../../assets/styles/common.css";
+import ButtonComponent from "../../components/ui/ButtonComponent";
+import InputField from "../../components/ui/InputField";
 import { useNavigate } from "react-router";
-import { verifyOtpApi } from "../services/UserService";
+import { otpApi, verifyOtpApi } from "../../services/userService";
 import { useSelector } from "react-redux"; 
 // Schema validation
 const otpSchema = yup.object().shape({
@@ -47,12 +47,19 @@ export default function OtpPage() {
       setTimeResend(false);
     }
   }, [timer]);
-
-  const handleResend = () => {
+  let navigate = useNavigate();
+  const handleResend = async(data) => {
     setTimer(30);
     setResend(false);
     setTimeResend(true);
     console.log("Resending OTP...");
+    try {
+      await otpApi(email);
+      console.log("Resend successful");
+     } catch (error) {
+       console.error("Error:", error.response?.data || error.message);
+       setLoginError("Invalid email or password. Please try again.");
+     }
   };
   const {
     handleSubmit,
@@ -61,7 +68,7 @@ export default function OtpPage() {
   } = useForm({
     resolver: yupResolver(otpSchema),
   });
-  let navigate = useNavigate();
+ 
 
 
   const onSubmit = async (data) => {

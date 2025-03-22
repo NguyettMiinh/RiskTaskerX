@@ -3,15 +3,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import "../styles/common.css";
-import Logo from "../assets/images/logo.png";
+import "../../assets/styles/common.css";
+import Logo from "../../assets/images/logo.png";
 import { UserOutlined, CloseOutlined } from "@ant-design/icons";
-import ButtonComponent from "../components/ButtonComponent";
-import InputField from "../components/InputField";
+import ButtonComponent from "../../components/ui/ButtonComponent";
+import InputField from "../../components/ui/InputField";
 import { useNavigate } from "react-router";
-import { otpApi } from "../services/UserService";
+import { otpApi } from "../../services/userService";
 import { useDispatch } from "react-redux";
-import { setEmail } from "../redux/emailSlice";
+import { setEmail } from "../../redux/emailSlice";
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup
@@ -31,10 +31,11 @@ export default function ForgotPasswordForm() {
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
-  let navigate = useNavigate();
+  let navigate = useNavigate();;
+  const [isCancelled, setIsCancelled] = useState(false);
 
   const handleLogin = () => {
-    navigate("/");
+    navigate("/login");
   };
   //---------Redux----------------------
   const emailValue = watch("email");
@@ -45,18 +46,19 @@ export default function ForgotPasswordForm() {
   }, [emailValue, dispatch]);
     ///---------API----------------------
     const onSubmit = async (data) => {
-      console.log("Email gửi OTP:", data.email);
+
       setLoginError("");
       try {
         await otpApi(data.email);
         navigate("/otppage");
         
       } catch (error) {
-        console.error("Error:", error.response?.data || error.message);
-        setLoginError("Invalid email. Please try again.");
+          console.error("Error:", error.response?.data || error.message);
+          setLoginError("Invalid email. Please try again.");
+
       }
     };
-    console.log("Email gửi OTP:", emailValue);
+
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="common-form">

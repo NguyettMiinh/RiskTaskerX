@@ -4,11 +4,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form, Card } from "antd";
-import "../styles/common.css";
-import ButtonComponent from "../components/ButtonComponent";
-import InputField from "../components/InputField";
+import "../../assets/styles/common.css";
+import Logo from "../../assets/images/logo.png";
+import ButtonComponent from "../../components/ui/ButtonComponent";
+import InputField from "../../components/ui/InputField";
 import { useNavigate } from "react-router";
-import { LockOutlined} from "@ant-design/icons";
+import { resetPassWordApi } from "../../services/userService";
+import { useSelector } from "react-redux"; 
 // Schema validation
 const resetSchema = yup.object().shape(
   {
@@ -30,7 +32,8 @@ const resetSchema = yup.object().shape(
 );
 
 
-const ChangeForm = () => {
+const ResetPassword = () => {
+  const email = useSelector((state) => state.email.value);
   const [showCard, setShowCard] = useState(false);
   const {
     handleSubmit,
@@ -51,16 +54,26 @@ const ChangeForm = () => {
     }
   }, [passwordValue]);
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+
 
 let navigate = useNavigate();
 
-const handleGoReset = handleSubmit((data) => {
-  navigate('/dashboard'); 
-  console.log(data);
-});
+const onSubmit = async (data) => {
+  const payload = {
+    email: email,
+    newPassword: data.password,
+    reNewPassword: data.confirmPassword,
+  };
+  
+  try {
+    await resetPassWordApi(payload.email, payload.newPassword, payload.reNewPassword);
+    navigate("/");
+    console.log("Password reset successful");
+  } catch (error) {
+    console.error("Error:", error.response?.data || error.message);
+  }
+  console.log(email,data);
+};
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
       <div className="common-form">
@@ -74,25 +87,16 @@ const handleGoReset = handleSubmit((data) => {
           autoComplete="off"
         >
           <div className="cm-image">
-            {<LockOutlined />}
+            <img src={Logo} alt="Logo" className="cm-img" />
           </div>
           <div className="ct-title">
             <div className="cm-title">
-              Change password
+              Reset password
             </div>
             <div className="sub-title">
-              Set a new password to secure your account.
+              Enter your new password below to reset your account.
             </div>
           </div>
-
-          <InputField
-                name="currentPassword"
-                control={control}
-                placeholder="Currnet password "
-                autoComplete="current-password"
-                className="cm-input"
-                // error= {errors.password}
-              />
 
 
               <InputField
@@ -133,10 +137,13 @@ const handleGoReset = handleSubmit((data) => {
           </Card>
         )}
 
+
+
+
           <InputField
             name="confirmPassword"
             control={control}
-            placeholder="Confirm new password"
+            placeholder="Confirm password"
             autoComplete="confirm-password"
             className="cm-input"
             error={errors.confirmPassword}
@@ -145,9 +152,8 @@ const handleGoReset = handleSubmit((data) => {
           <Form.Item className="cn-btn">
             <ButtonComponent
               className="cm-btn"
-              content="Change password"
+              content="Submit"
               htmlType="submit"
-              onClick={handleGoReset} 
               block
             />
           </Form.Item>
@@ -157,5 +163,5 @@ const handleGoReset = handleSubmit((data) => {
   );
 };
 
-export default ChangeForm;
+export default ResetPassword;
 

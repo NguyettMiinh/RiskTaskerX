@@ -1,0 +1,11 @@
+.header-layout {
+    padding: 0 20px;
+    background: white !important;
+    filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.custom-sider {
+    width: 327px !important;
+    background: #1E4C8F !important;
+  }
+  

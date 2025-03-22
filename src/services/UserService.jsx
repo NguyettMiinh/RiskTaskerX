@@ -1,11 +1,12 @@
-import axios from "../api/axios";
+import axios from "../config/axios";
 
 const loginApi = async (email, password) => {
     return axios.post("/auth/sign-in", { email, password });
 }
 
-const otpApi = async (email) => {
-    return axios.get("/otp-api/email/send-otp", { params: { to: email } });
+const otpApi = async (email,options = {}) => {
+    return axios.get("/otp-api/email/send-otp",
+      { params: { to: email } });
 };
 
 const verifyOtpApi = async (email,otp) => {
@@ -15,4 +16,28 @@ const verifyOtpApi = async (email,otp) => {
 const resetPassWordApi = async (email, newPassword, reNewPassword) => {
     return axios.put("/otp-api/email/forgot-password", {email, newPassword, reNewPassword });
 }
-export { loginApi, otpApi, verifyOtpApi, resetPassWordApi };
+
+const getUserProfile = async () => {
+    const token = localStorage.getItem("authToken");
+  
+    return axios.get("/api/profile");
+  };
+
+  const changePasswordApi = async ({oldPassword, newPassword, confirmPassword}) => {
+
+    const token = localStorage.getItem("authToken"); 
+    console.log(token);
+    console.log(oldPassword, newPassword, confirmPassword)
+    return axios.put(
+      "/auth/change-password",
+      { oldPassword, newPassword, confirmPassword }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    
+  };
+  
+export { loginApi, otpApi, verifyOtpApi, resetPassWordApi, getUserProfile, changePasswordApi };  
