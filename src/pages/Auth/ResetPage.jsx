@@ -41,7 +41,7 @@ const ResetPage = () => {
     handleSubmit,
     control,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     
   } = useForm({
     resolver: yupResolver(resetSchema, { abortEarly: false }),
@@ -157,6 +157,7 @@ const onSubmit = async (data) => {
               content="Submit"
               htmlType="submit"
               block
+              disabled={isSubmitting}
             />
           </Form.Item>
         </Form>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { set, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
@@ -11,6 +11,7 @@ import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
 import { otpApi, verifyOtpApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
+
 // Schema validation
 const otpSchema = yup.object().shape({
   otp: yup
@@ -23,16 +24,17 @@ export default function OtpPage() {
   const [loginError, setLoginError] = useState("");
   const [time, setTime] = useState(10);
   const [resend, setResend] = useState(false);
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(0);
   const [timeResend, setTimeResend] = useState(false);
   const email = useSelector((state) => state.email.value);
+  
   useEffect(() => {
     if (time > 0) {
       const timeId = setInterval(() => {
         setTime((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(timeId);
-    } else {
+    } else if (time === 0) {
       setResend(true);
     }
   }, [time]);
@@ -43,43 +45,50 @@ export default function OtpPage() {
         setTimer((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(timeId);
-    } else {
+    } else if (timer === 0) {
       setTimeResend(false);
     }
   }, [timer]);
   let navigate = useNavigate();
-  const handleResend = async(data) => {
-    setTimer(30);
+  
+  const handleResend = async () => {
     setResend(false);
+    setTimer(10);
     setTimeResend(true);
+    setTime(20);
     console.log("Resending OTP...");
     try {
       await otpApi(email);
-      console.log("Resend successful");
      } catch (error) {
        console.error("Error:", error.response?.data || error.message);
-       setLoginError("Invalid email or password. Please try again.");
      }
   };
+
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(otpSchema),
   });
  
 
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data) => {  
     setLoginError("");
+    const payload = {
+      email: email,
+      otp: data.otp,
+    };
+
     try {
-     await verifyOtpApi( email, data.otp );
-      navigate("/reset-password");
-      console.log("Login successful");
+     const response = await verifyOtpApi(payload.email, payload.otp);
+      if (response.data?.results?.success) {
+        navigate("/reset-password");
+      }
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
-      setLoginError("Invalid email or password. Please try again.");
+      setLoginError("Invalid OTP. Please try again.");
     }
   };
   
@@ -150,6 +159,7 @@ export default function OtpPage() {
               className="cm-btn otp-btn"
               content="Continue"
               htmlType="submit"
+              disabled={isSubmitting}
             />
           </Form.Item>
         </Form>

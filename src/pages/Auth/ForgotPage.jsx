@@ -27,16 +27,19 @@ export default function ForgotPasswordForm() {
     handleSubmit,
     control,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
   let navigate = useNavigate();;
-  const [isCancelled, setIsCancelled] = useState(false);
+
 
   const handleLogin = () => {
-    navigate("/login");
-  };
+    const confirmLeave = window.confirm("Are you sure you want to leave this page?");
+    if (confirmLeave) {
+        navigate("/login");
+    }
+};
   //---------Redux----------------------
   const emailValue = watch("email");
   React.useEffect(() => {
@@ -102,6 +105,7 @@ export default function ForgotPasswordForm() {
           {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
+              disabled={isSubmitting}
               block
               className="cm-btn"
               htmlType="submit"

@@ -40,7 +40,7 @@ const ChangePassword = () => {
     handleSubmit,
     control,
     watch,
-    formState: { errors },
+    formState: { errors , isSubmitting},
     reset,
     
   } = useForm({
@@ -48,6 +48,7 @@ const ChangePassword = () => {
     mode: "onChange"
 
   });
+
   const passwordValue = watch("password") || ""; 
 
   useEffect(() => {
@@ -75,6 +76,7 @@ const ChangePassword = () => {
       alert("Failed to change password. Please try again.");
     }
   };
+  
   return (
     <div style={{
       alignItems: "center",
@@ -169,6 +171,7 @@ const ChangePassword = () => {
                   content="Change password"
                   htmlType="submit"
                   block
+                  disabled={isSubmitting}
                 />
               </Form.Item>
             </Form>

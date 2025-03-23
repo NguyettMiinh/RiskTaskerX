@@ -20,14 +20,15 @@ const resetPassWordApi = async (email, newPassword, reNewPassword) => {
 const getUserProfile = async () => {
     const token = localStorage.getItem("authToken");
   
-    return axios.get("/api/profile");
+    return axios.get("/api/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   };
 
   const changePasswordApi = async ({oldPassword, newPassword, confirmPassword}) => {
-
     const token = localStorage.getItem("authToken"); 
-    console.log(token);
-    console.log(oldPassword, newPassword, confirmPassword)
     return axios.put(
       "/auth/change-password",
       { oldPassword, newPassword, confirmPassword }, 
