@@ -1,6 +1,7 @@
 import axios from "@/api/axios";
 
 const loginApi = async (email, password) => {
+    
     return axios.post("/auth/sign-in", { email, password });
 }
 
@@ -10,33 +11,30 @@ const otpApi = async (email) => {
 };
 
 const verifyOtpApi = async (email,otp) => {
-    return axios.post("/otp/email/verify",{email,otp});
+  const loginRequest = {
+    email: email,
+    otp: otp,
+  };
+  return axios.post("/otp/email/verify",{...loginRequest});
 }
 
 const resetPassWordApi = async (email, newPassword, reNewPassword) => {
-    return axios.put("/otp/email/forgot-password", {email, newPassword, reNewPassword });
+  const resetRequest = {
+    email: email,
+    newPassword: newPassword,
+    reNewPassword: reNewPassword,
+  };
+    return axios.put("/otp/email/forgot-password", {...resetRequest});
 }
 
-const getUserProfile = async () => {
-    const token = localStorage.getItem("authToken");
-  
-    return axios.get("/api/profile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+const getUserProfile = async () => { 
+    return axios.get("/api/profile");
   };
 
   const changePasswordApi = async ({oldPassword, newPassword, confirmPassword}) => {
-    const token = localStorage.getItem("authToken"); 
-    return axios.put(
-      "/auth/change-password",
-      { oldPassword, newPassword, confirmPassword }, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    return axios.put("/auth/change-password",
+      {oldPassword,newPassword,confirmPassword}
+      
     );
     
   };

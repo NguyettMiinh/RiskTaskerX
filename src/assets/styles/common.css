@@ -50,9 +50,27 @@ max-height: 116px !important;
     height: 41px;
 }
 
-.cn-btn {
+/* .cn-btn {
   padding-bottom: 15px;
+} */
+
+.sub-btn {
+  background-color: white;
+  color: #6055F2;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  padding-left: 5px;
+  font-size: 14px;
 }
+
+.sub-btn:hover {
+    color: #6055F2!important;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important; 
+}
+  
 
 /* -------input--------- */
 
@@ -60,4 +78,17 @@ max-height: 116px !important;
   width: 472px ;
   padding-bottom: 4px;
   height: 40px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); 
+  z-index: 999; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

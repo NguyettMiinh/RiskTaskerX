@@ -8,14 +8,12 @@ import { Flex, Checkbox, Form} from "antd";
 import "@assets/styles/auth.css";
 import "@assets/styles/common.css";
 import { loginApi } from "@/services/userService";
-
-import "react-toastify/dist/ReactToastify.css";
+import { setPassword } from "@/redux/userSlice";
 import Logo from "@/assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
-
-
+import { useDispatch } from "react-redux";
 
 // Schema validation
 const loginSchema = yup.object().shape({
@@ -38,9 +36,11 @@ const loginSchema = yup.object().shape({
 
 const LoginPage = () => {
   const [loginError, setLoginError] = useState("");
+   const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -52,16 +52,22 @@ const LoginPage = () => {
   });
 
  const navigate = useNavigate();
- 
+ //---------Redux----------------------
+   const passwordValue = watch("password");
+
+   React.useEffect(() => {
+     if (passwordValue) {
+       dispatch(setPassword(passwordValue));
+     }
+   }, [passwordValue, dispatch]);
 ///---------API----------------------
   const onSubmit = async (data) => {
     setLoginError("");
     try {
       const response =  await loginApi(data.email, data.password);
-      console.log("API Response:", response);
+      console.log(data.password);
       const token = response.data.results.token;
       localStorage.setItem("authToken", token);
-      console.log("Login successful, token saved:", token);
       navigate("/dashboard");
       console.log("Login successful");
     } catch (error) {
@@ -132,7 +138,11 @@ const LoginPage = () => {
           {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
-             htmlType="submit" disabled={isSubmitting} className = "cm-btn" block content= {isSubmitting ? "Logging in..." : "Log In"} />
+             htmlType="submit" 
+             disabled={isSubmitting} 
+             className = "cm-btn"
+              block 
+              content= {isSubmitting ? "Logging in..." : "Log In"} />
           </Form.Item>
         </Form>
       </div>

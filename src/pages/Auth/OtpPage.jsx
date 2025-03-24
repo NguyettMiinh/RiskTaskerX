@@ -26,7 +26,7 @@ export default function OtpPage() {
   const [resend, setResend] = useState(false);
   const [timer, setTimer] = useState(0);
   const [timeResend, setTimeResend] = useState(false);
-  const email = useSelector((state) => state.email.value);
+  const email = useSelector((state) => state.user.email);
   
   useEffect(() => {
     if (time > 0) {
@@ -72,23 +72,22 @@ export default function OtpPage() {
     resolver: yupResolver(otpSchema),
   });
  
-
+  const handleLogin = () => {
+    navigate("/login");   
+};
 
   const onSubmit = async (data) => {  
     setLoginError("");
-    const payload = {
-      email: email,
-      otp: data.otp,
-    };
-
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     try {
-     const response = await verifyOtpApi(payload.email, payload.otp);
-      if (response.data?.results?.success) {
-        navigate("/reset-password");
+     const response = await verifyOtpApi(email, data.otp);
+     if (response.data?.results?.success) {
+      navigate("/reset-password");
+      } else {
+      setLoginError("OTP is incorrect!");
       }
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
-      setLoginError("Invalid OTP. Please try again.");
+      console.log(error);
     }
   };
   
@@ -100,6 +99,8 @@ export default function OtpPage() {
         height: "100vh",
       }}
     >
+      {isSubmitting && <div className="overlay"></div>}
+      
       <div className="common-form">
         <Form
           className="login-form "
@@ -157,10 +158,29 @@ export default function OtpPage() {
           <Form.Item className="cn-btn">
             <ButtonComponent
               className="cm-btn otp-btn"
-              content="Continue"
-              htmlType="submit"
               disabled={isSubmitting}
+              content={isSubmitting ? "Verifying..." : "Continue"}
+              htmlType="submit"
+  
             />
+          </Form.Item>
+          <Form.Item style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            boxSizing: "border-box",
+          }}>
+            <div style={{
+              color: "#636364",
+              fontSize: 14,
+            }}>Do you remember the password?
+               <span>
+                <ButtonComponent 
+                className="sub-btn"
+                onClick={handleLogin}
+                content="Login" />
+              </span>
+            </div>
           </Form.Item>
         </Form>
       </div>

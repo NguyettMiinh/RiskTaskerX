@@ -11,7 +11,6 @@ import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
 import { resetPassWordApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
-import config from '@/config';
 
 // Schema validation
 const resetSchema = yup.object().shape(
@@ -27,7 +26,7 @@ const resetSchema = yup.object().shape(
       
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password")], "Passwords do not match")
+      .oneOf([yup.ref("password")], "Confirmation password does not match.")
       .required("Please confirm your password"),
   },
   { abortEarly: false }
@@ -56,20 +55,16 @@ const ResetPage = () => {
     }
   }, [passwordValue]);
 
-
+  const handleLogin = () => {
+    navigate("/login");   
+};
 
 let navigate = useNavigate();
 
 const onSubmit = async (data) => {
-  const payload = {
-    email: email,
-    newPassword: data.password,
-    reNewPassword: data.confirmPassword,
-  };
-  
   try {
-    await resetPassWordApi(payload.email, payload.newPassword, payload.reNewPassword);
-    navigate(config.login);
+    await resetPassWordApi(email, data.password, data.confirmPassword);
+    navigate("/login");
     console.log("Password reset successful");
   } catch (error) {
     console.error("Error:", error.response?.data || error.message);
@@ -78,6 +73,7 @@ const onSubmit = async (data) => {
 };
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
+      {isSubmitting && <div className="overlay"></div>}
       <div className="common-form">
         <Form
           className="login-form"
@@ -159,6 +155,24 @@ const onSubmit = async (data) => {
               block
               disabled={isSubmitting}
             />
+          </Form.Item>
+          <Form.Item style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            boxSizing: "border-box",
+          }}>
+            <div style={{
+              color: "#636364",
+              fontSize: 14,
+            }}>Do you remember the password?
+               <span>
+                <ButtonComponent 
+                className="sub-btn"
+                onClick={handleLogin}
+                content="Login" />
+              </span>
+            </div>
           </Form.Item>
         </Form>
       </div>

@@ -5,13 +5,13 @@ import * as yup from "yup";
 import { Flex, Form } from "antd";
 import "@assets/styles/common.css"
 import Logo from "@assets/images/logo.png";
-import { UserOutlined, CloseOutlined } from "@ant-design/icons";
+import { UserOutlined} from "@ant-design/icons";
 import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField"
 import { useNavigate } from "react-router";
 import { otpApi } from "@/services/userService";
 import { useDispatch } from "react-redux";
-import { setEmail } from "@/redux/emailSlice";
+import { setEmail } from "@/redux/userSlice";
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup
@@ -35,10 +35,7 @@ export default function ForgotPasswordForm() {
 
 
   const handleLogin = () => {
-    const confirmLeave = window.confirm("Are you sure you want to leave this page?");
-    if (confirmLeave) {
-        navigate("/login");
-    }
+    navigate("/login");   
 };
   //---------Redux----------------------
   const emailValue = watch("email");
@@ -53,8 +50,7 @@ export default function ForgotPasswordForm() {
       setLoginError("");
       try {
         await otpApi(data.email);
-        navigate("/otppage");
-        
+        navigate("/otppage");         
       } catch (error) {
           console.error("Error:", error.response?.data || error.message);
           setLoginError("Invalid email. Please try again.");
@@ -64,6 +60,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <Flex justify="center" align="center" style={{ height: "100vh" }}>
+      {isSubmitting && <div className="overlay"></div>}
       <div className="common-form">
         <Form
           className="login-form"
@@ -74,13 +71,6 @@ export default function ForgotPasswordForm() {
           onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <Form.Item>
-            <ButtonComponent
-              icon={<CloseOutlined  style={{ color: "#333" }} />}
-              className="no-hover-effect"
-              onClick={handleLogin}
-            ></ButtonComponent>
-          </Form.Item>
 
           <div className="cm-image">
             <img src={Logo} alt="Logo" className="cm-img" />
@@ -112,7 +102,27 @@ export default function ForgotPasswordForm() {
               content="Continue"
             />
           </Form.Item>
+
+          <Form.Item style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            boxSizing: "border-box",
+          }}>
+            <div style={{
+              color: "#636364",
+              fontSize: 14,
+            }}>Do you remember the password?
+               <span>
+                <ButtonComponent 
+                className="sub-btn"
+                onClick={handleLogin}
+                content="Login" />
+              </span>
+            </div>
+          </Form.Item>
         </Form>
+        
       </div>
     </Flex>
   );

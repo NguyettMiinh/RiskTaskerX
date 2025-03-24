@@ -3,23 +3,30 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Flex, Form, Card } from "antd";
+import { Flex, Form, Card, Modal } from "antd";
 import "@assets/styles/common.css";
 import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
 import { LockOutlined} from "@ant-design/icons";
 import { changePasswordApi } from "@/services/userService";
+import { useSelector } from "react-redux";
 
 // Schema validation
-const resetSchema = yup.object().shape(
+const resetSchema = (storedPassword) => yup.object().shape(
   {
     currentPassword: yup
     .string()
-    .required("Please enter your current password"),
+    .required("Please enter your current password")
+    .test("match-password", "The current password is incorrect. Please try again.", (value) => {
+      return value === storedPassword; 
+    }),
     password: yup
     .string()
     .required("Please enter your password")
     .min(8, "")
+    .test("match-password", "New password cannot be the same as the current password.", (value) => {
+      return value !== storedPassword; 
+    })
     .test("no-spaces", "", (value) => !value || !/\s/.test(value))
     .test("uppercase", "", (value) => !value || /[A-Z]/.test(value))
     .test("number", "", (value) => !value || /[0-9]/.test(value))
@@ -27,7 +34,7 @@ const resetSchema = yup.object().shape(
       
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password")], "Passwords do not match")
+      .oneOf([yup.ref("password")], "Confirmation password does not match.")
       .required("Please confirm your password"),
   },
   { abortEarly: false }
@@ -36,6 +43,8 @@ const resetSchema = yup.object().shape(
 
 const ChangePassword = () => {
   const [showCard, setShowCard] = useState(false);
+  const storedPassword = useSelector((state) => state.user.password);
+  console.log(storedPassword);
   const {
     handleSubmit,
     control,
@@ -44,7 +53,7 @@ const ChangePassword = () => {
     reset,
     
   } = useForm({
-    resolver: yupResolver(resetSchema, { abortEarly: false }),
+    resolver: yupResolver(resetSchema(storedPassword), { abortEarly: false }),
     mode: "onChange"
 
   });
@@ -57,19 +66,24 @@ const ChangePassword = () => {
     }
   }, [passwordValue]);
 
+  const showSuccess = () => {
+    Modal.success({
+      title: "Password Changed Successfully!"
+    });
+  };
 
 
   const onSubmit = async (data) => {
+    console.log(data.currentPassword);
     const payload = {
-      oldPassword: data.currentPassword, // Mật khẩu hiện tại
-      newPassword: data.password, // Mật khẩu mới
+      oldPassword: data.currentPassword, 
+      newPassword: data.password,
       confirmPassword: data.confirmPassword
     };
-    console.log("Sending request:", payload);
-  
+    
     try {
       await changePasswordApi(payload);
-      alert("Password changed successfully!");
+      showSuccess();
       reset();
     } catch (error) {
       console.error("Error changing password:", error.response?.data || error.message);
