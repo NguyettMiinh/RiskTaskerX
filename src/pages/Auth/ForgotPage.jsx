@@ -12,6 +12,7 @@ import { useNavigate } from "react-router";
 import { otpApi } from "@/services/userService";
 import { useDispatch } from "react-redux";
 import { setEmail } from "@/redux/userSlice";
+
 // Schema validation
 const forgotPasswordSchema = yup.object().shape({
   email: yup

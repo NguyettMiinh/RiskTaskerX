@@ -1,8 +1,6 @@
 import React,{useState} from "react";
 import { useForm} from "react-hook-form";
 import { Link, useNavigate} from "react-router";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { Controller } from "react-hook-form";
 import { Flex, Checkbox, Form} from "antd";
 import "@assets/styles/auth.css";
@@ -15,24 +13,6 @@ import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
 import { useDispatch } from "react-redux";
 
-// Schema validation
-const loginSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(
-      /[@$!%*?&]/,
-      "Password must contain at least one special character (@$!%*?&)"
-    ),
-  remember: yup.boolean().default(true),
-});
 
 const LoginPage = () => {
   const [loginError, setLoginError] = useState("");
@@ -47,8 +27,7 @@ const LoginPage = () => {
       email: "",
       password: "",
       remember: false,
-    },
-    resolver: yupResolver(loginSchema),
+    }
   });
 
  const navigate = useNavigate();
