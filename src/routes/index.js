@@ -7,7 +7,8 @@ import ForgotPasswordForm from '@pages/auth/ForgotPage';
 import OtpPage from '@pages/auth/OtpPage';
 import ResetPage from '@/pages/auth/ResetPage';
 import DashboardPage from '@pages/dashboard/DashboardPage';
-import ChangePassword from '@pages/dashboard/ChangePasswordPage'
+import ChangePassword from '@pages/dashboard/ChangePasswordPage';
+import CustomerList from '@/pages/dashboard/CustomerList';
 
 
 //khong can dang nhap van xem duoc
@@ -17,7 +18,8 @@ const publicRoutes  = [
     {path: config.routes.otp, component: OtpPage, layout: null},
     {path: config.routes.reset, component: ResetPage, layout: null},
     {path: config.routes.dashboard, component: DashboardPage},
-    {path: config.routes.change, component: ChangePassword}
+    {path: config.routes.change, component: ChangePassword},
+    {path: config.routes.customer, component: CustomerList}
 ];
 
 //phai dang nhap moi vao duoc: khong dang nhap se chuyen huong den login

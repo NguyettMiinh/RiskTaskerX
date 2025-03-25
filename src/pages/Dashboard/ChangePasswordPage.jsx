@@ -16,7 +16,7 @@ import { changeSchema } from "@/validations/changeSchema";
 const ChangePassword = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const storedPassword = useSelector((state) => state.user.password);
-
+  const [changeError, setChangeError] = useState("");
   const {
     handleSubmit,
     control,
@@ -42,7 +42,7 @@ const ChangePassword = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data.currentPassword);
+    setChangeError("");
     const payload = {
       oldPassword: data.currentPassword,
       newPassword: data.password,
@@ -50,8 +50,14 @@ const ChangePassword = () => {
     };
 
     try {
-      await changePasswordApi(payload);
-      showSuccess();
+      
+      const response =  await changePasswordApi(payload);
+      console.log(response);
+      if (response.status === 200){
+        showSuccess();
+      }else if(response.message === ""){
+        setChangeError("Old password is error.")
+      } 
       reset();
     } catch (error) {
       console.error(
@@ -131,7 +137,7 @@ const ChangePassword = () => {
               className="cm-input"
               error={errors.confirmPassword}
             />
-
+             {changeError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{changeError}</p>}
             <Form.Item className="cn-btn">
               <ButtonComponent
                 className="cm-btn"

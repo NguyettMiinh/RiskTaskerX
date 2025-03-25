@@ -54,7 +54,7 @@ const onSubmit = async (data) => {
 };
 
   return (
-    <Flex justify="center" align="center" style={{ height: "100vh" }}>
+    <Flex justify="center" align="center" style={{ height: "100vh" }} className="cm-bg">
       {isSubmitting && <div className="overlay"></div>}
       <div className="common-form">
         <Form

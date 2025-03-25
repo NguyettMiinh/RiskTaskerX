@@ -21,7 +21,7 @@ ExclamationCircleFilled,
 } from "@ant-design/icons";
 const { Header } = Layout;
 const { confirm } = Modal;
-const HeaderCommon = () => {
+const HeaderCommon = ({ collapsed }) => {
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -69,7 +69,12 @@ const HeaderCommon = () => {
   ];
   return (
     <>
-      <Header className="header-layout">
+      <Header className="header-layout" 
+        style={{
+          marginLeft: collapsed ? "80px" : "327px", 
+          transition: "all 0.3s ease",
+        }}
+      >
         <Row align="middle" justify="space-between" gutter={[12, 12]}>
             <Col>
             <div style={{

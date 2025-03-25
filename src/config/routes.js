@@ -4,7 +4,8 @@ const routes = {
     otp: '/otppage',
     reset: '/reset-password',
     dashboard: '/dashboard',
-    change: '/change-password'
+    change: '/change-password',
+    customer: 'customer-list',
     
 };
 

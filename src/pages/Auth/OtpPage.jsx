@@ -100,6 +100,7 @@ export default function OtpPage() {
       style={{
         height: "100vh",
       }}
+      className="cm-bg"
     >
       {isSubmitting && <div className="overlay"></div>}
       

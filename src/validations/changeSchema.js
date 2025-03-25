@@ -6,25 +6,11 @@ export const changeSchema = (storedPassword) =>
     {
       currentPassword: yup
         .string()
-        .required("Please enter your current password")
-        .test(
-          "match-password",
-          "The current password is incorrect. Please try again.",
-          (value) => {
-            return value === storedPassword;
-          }
-        ),
+        .required("Please enter your current password"),
       password: yup
         .string()
         .required("Please enter your password")
         .min(8, "")
-        .test(
-          "match-password",
-          "New password cannot be the same as the current password.",
-          (value) => {
-            return value !== storedPassword;
-          }
-        )
         .test("no-spaces", "", (value) => !value || !/\s/.test(value))
         .test("uppercase", "", (value) => !value || /[A-Z]/.test(value))
         .test("number", "", (value) => !value || /[0-9]/.test(value))

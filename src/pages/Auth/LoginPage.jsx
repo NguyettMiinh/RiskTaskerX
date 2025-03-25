@@ -59,7 +59,7 @@ const LoginPage = () => {
 
 
   return (
-    <Flex justify="center" align="center" style={{height: "100vh"}}>
+    <Flex justify="center" align="center" style={{height: "100vh"}} className="cm-bg">
       <div className="common-form">
         <Form
           className="login-form"
