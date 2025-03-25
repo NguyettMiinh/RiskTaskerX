@@ -83,7 +83,7 @@ const CustomerList = () => {
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              width: "100%", // Đảm bảo chiều rộng bằng với bảng
+              width: "100%", 
             }}>
             <Input
               placeholder="Search customer by Name, Customer ID"

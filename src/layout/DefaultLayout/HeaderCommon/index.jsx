@@ -35,7 +35,7 @@ const HeaderCommon = ({ collapsed }) => {
       }
     };
 
-    fetchUserProfile(); // Gọi hàm khi component được render
+    fetchUserProfile(); 
   }, []);
   const showConfirm = () => {
     confirm({

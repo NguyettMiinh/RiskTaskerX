@@ -6,21 +6,19 @@ import { Flex, Checkbox, Form} from "antd";
 import "@assets/styles/auth.css";
 import "@assets/styles/common.css";
 import { loginApi } from "@/services/userService";
-import { setPassword } from "@/redux/userSlice";
 import Logo from "@/assets/images/logo.png";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
-import { useDispatch } from "react-redux";
 
 
 const LoginPage = () => {
+
   const [loginError, setLoginError] = useState("");
-   const dispatch = useDispatch();
+
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -31,14 +29,6 @@ const LoginPage = () => {
   });
 
  const navigate = useNavigate();
- //---------Redux----------------------
-   const passwordValue = watch("password");
-
-   React.useEffect(() => {
-     if (passwordValue) {
-       dispatch(setPassword(passwordValue));
-     }
-   }, [passwordValue, dispatch]);
 ///---------API----------------------
   const onSubmit = async (data) => {
     setLoginError("");
