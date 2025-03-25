@@ -17,7 +17,7 @@ const otpSchema = yup.object().shape({
   otp: yup
     .string()
     .matches(/^\d{4}$/, "Invalid OTP format")
-    .required("Please enter your OTP."),
+    .required(""),
 });
 
 export default function OtpPage() {
@@ -84,7 +84,9 @@ export default function OtpPage() {
      if (response.data?.results?.success) {
       navigate("/reset-password");
       } else {
-      setLoginError("OTP is incorrect!");
+
+
+        setLoginError("OTP is incorrect!");
       }
     } catch (error) {
       console.log(error);
@@ -134,13 +136,9 @@ export default function OtpPage() {
               <InputField
                 name="otp"
                 control={control}
-                className="email-input"
+                className="otp-input"
                 error={errors.otp}
                 length={4}
-                style={{
-                  height: 40,
-                  width: 300,
-                }}
               />
             </div>
 
@@ -148,11 +146,15 @@ export default function OtpPage() {
             {resend && (
               <div className="sub-resend">
                 Didn't receive the code?
-                <a onClick={handleResend}>Re-send</a>
+                <a onClick={handleResend} style={{
+                  paddingLeft: "5px",
+                }}>Re-send</a>
               </div>
             )}
 
-            {timeResend && <div>Resend {timer}...</div>}
+            {timeResend && <div style={{
+                paddingBottom: "20px"
+            }}>Resend in {timer}s...</div>}
           </div>
           {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
           <Form.Item className="cn-btn">

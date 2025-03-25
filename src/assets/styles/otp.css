@@ -7,6 +7,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
+}
+
+.ant-otp-input {
+  border-radius: 2px;
+  height: 58px!important;
+  width: 54px!important;
+  margin-right: 10px;
 }
 
 
