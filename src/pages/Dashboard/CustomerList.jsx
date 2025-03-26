@@ -6,6 +6,7 @@ import {
   DownloadOutlined,
 } from "@ant-design/icons";
 import { Tag } from "antd";
+import { exportApi } from "@/services/customerService";
 
 const columns = [
   { title: "Customer ID", dataIndex: "name" },
@@ -47,6 +48,40 @@ const CustomerList = () => {
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
+
+  const onSubmit = async () => {
+    try {
+      const response = await exportApi();
+      
+      const contentDisposition = response.headers["content-disposition"];
+      console.log("Content-Disposition:", contentDisposition); 
+
+      let fileName = "downloaded_file"; header
+
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) {
+          fileName = match[1].trim(); 
+        }
+      }
+  
+      // Tạo URL và tải file
+      const url = URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName); // Giữ tên file từ API
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error exporting file:", error);
+    }
+  };
+  
+
+  
+  
+  
 
   return (
     <div
@@ -131,6 +166,7 @@ const CustomerList = () => {
                 height: "40px",
                 borderColor: "#C9C6ED",
               }}
+              onClick = {onSubmit}
             >
               <span style={{ color: "#6055F2" }}>Export Customer List</span>
             </Button>

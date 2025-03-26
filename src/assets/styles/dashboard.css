@@ -1,18 +1,21 @@
 .header-layout {
     padding: 0 20px;
     background: white !important;
-    filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0px 4px 6px rgba(30, 76, 143, 0.46));
     height: 60px;     
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
-    /* margin-left: 327px;     */
 }
 
 .custom-sider {
     width: 327px !important;
     background: #1E4C8F !important;
   }
+
+.ant-menu-item-selected {
+    background-color: #6055F2!important;
+}
   

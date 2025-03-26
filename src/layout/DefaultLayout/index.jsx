@@ -12,7 +12,7 @@ const DefaultLayout = ({ children }) => {
       <Layout 
         style={{
           paddingTop: "70px",
-          marginLeft: collapsed ? "80px" : "327px", 
+          marginLeft: collapsed ? "80px" : "295px", 
           transition: "margin-left 0.3s ease",
         }}
       >

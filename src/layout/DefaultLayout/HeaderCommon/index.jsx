@@ -21,7 +21,7 @@ ExclamationCircleFilled,
 } from "@ant-design/icons";
 const { Header } = Layout;
 const { confirm } = Modal;
-const HeaderCommon = ({ collapsed }) => {
+const HeaderCommon = () => {
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -69,19 +69,13 @@ const HeaderCommon = ({ collapsed }) => {
   ];
   return (
     <>
-      <Header className="header-layout" 
-        style={{
-          marginLeft: collapsed ? "80px" : "327px", 
-          transition: "all 0.3s ease",
-        }}
-      >
+      <Header className="header-layout">
         <Row align="middle" justify="space-between" gutter={[12, 12]}>
             <Col>
             <div style={{
-                color: "#1E4C8F",
+                color: "#6055F2",
                 fontFamily: "'Russo One', sans-serif",
-                fontSize: 35,
-
+                fontSize: 30,
               }}>RISTASKERX</div>
 
             </Col>

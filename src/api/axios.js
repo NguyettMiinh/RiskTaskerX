@@ -11,15 +11,15 @@ instance.interceptors.request.use(
       if (token) {
         config.headers["Authorization"] = 'Bearer ' + token;
       }
+      console.log("config",config);
     return config;
   }, function (error) {
     return Promise.reject(error);
   }); 
   
-  instance.interceptors.response.use(
-    //Trả về response bình thường khi không có lỗi
+  instance.interceptors.response.use(  
     response => response,
-    //Nếu lỗi 401 (Unauthorized), chuyển hướng về trang đăng nhập
+   
     error => {
     if (error.response?.status === 401) {
       console.log("Unauthorized");
