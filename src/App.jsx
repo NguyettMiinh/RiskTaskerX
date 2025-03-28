@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "@/redux/store";
 import {publicRoutes} from "@/routes";
 import DefaultLayout  from "@/layout"
+import { ToastContainer } from 'react-toastify';
 
 
 
@@ -11,6 +12,7 @@ const App = () =>{
   return (
     <div>
       <Provider store={store}>
+        <ToastContainer/>
           <Routes>
             {publicRoutes.map((route,index) => {
               let Layout = DefaultLayout;

@@ -1,0 +1,44 @@
+.ant-select-selection-item {
+    background-color: transparent !important; /* Xóa màu nền xám */
+    color: black !important; /* Đảm bảo chữ vẫn hiển thị */
+  }
+  .custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #6055F2;
+    border-color: #6055F2;
+  }
+  
+  .custom-checkbox .ant-checkbox-inner {
+    border-color: #6055F2;
+  }
+  
+  .custom-checkbox .ant-checkbox-checked::after {
+    border-color: #6055F2;
+  }
+  
+  .custom-button-1 {
+    color: #6055F2;
+    border: none;
+  }
+  .custom-button-2 {
+    background-color: #6055F2;
+    border-color: #6055F2;
+  }
+  
+  .custom-button:hover,
+  .custom-button:focus {
+    background-color: #4d44d6;
+    border-color: #4d44d6;
+  }
+  :where(.css-dev-only-do-not-override-tjsggz).ant-select-multiple .ant-select-selection-overflow {
+    position: relative;
+    display: flex;
+    flex: auto;
+    flex-wrap: wrap;
+    max-width: 100%; 
+    justify-content: center; 
+    align-items: center;
+    color: #6055F2 ;
+    font-size: 15px;
+    border-color: #C9C6ED!important;
+    border-width: 1px;
+}

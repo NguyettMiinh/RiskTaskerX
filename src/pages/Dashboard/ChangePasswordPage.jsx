@@ -51,20 +51,13 @@ const ChangePassword = () => {
 
     try {
       
-      const response =  await changePasswordApi(payload);
-      console.log(response);
-      if (response.status === 200){
+     const response =  await changePasswordApi(payload);
+     if(response.message === "success") {
         showSuccess();
-      }else if(response.message === ""){
-        setChangeError("Old password is error.")
-      } 
+     }
       reset();
     } catch (error) {
-      console.error(
-        "Error changing password:",
-        error.response?.data || error.message
-      );
-      alert("Failed to change password. Please try again.");
+      console.log(error.message);
     }
   };
 
