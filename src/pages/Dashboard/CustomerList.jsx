@@ -18,16 +18,16 @@ const CustomerList = () => {
     fetchCustomers(currentPage, search, filterCustomer);
   }, [currentPage, search, filterCustomer]);
 
-  const fetchCustomers = async (page, searchValue, selectedValues) => {
+  const fetchCustomers = async (page, searchValue, filterCustomer) => {
     try {
       const response = searchValue
         ? await segCustomer({ searchKey: searchValue, page: page, size: pageSize })
-        : selectedValues.length > 0
-        ? await segCustomer({ tier: selectedValues, page: page, size: pageSize })
+        : filterCustomer.length > 0
+        ? await segCustomer({ tier: filterCustomer, page: page, size: pageSize })
         : await listCustomer({ page: page, size: pageSize });
       console.log(response);
       if (response && response.results) {
-        if (searchValue || selectedValues.length > 0) {
+        if (searchValue || filterCustomer.length > 0) {
           const truncatedData = response.results.content.map((item) => ({
             ...item,
             id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
@@ -88,10 +88,10 @@ const CustomerList = () => {
   };
 
   /// export file
-  const exportHandle = async (searchValue, selectedValues) => {
-    console.log("Selected values:", searchValue, selectedValues); 
+  const exportHandle = async (searchValue, filterCustomer) => {
+    console.log("Selected values:", searchValue, filterCustomer); 
     try {
-      const response = await exportApi({tier: selectedValues , searchKey: searchValue , page: currentPage, size: pageSize });
+      const response = await exportApi({tier: filterCustomer , searchKey: searchValue , page: currentPage, size: pageSize });
 
       console.log(response);
       
@@ -266,13 +266,13 @@ const CustomerList = () => {
             </Button>
 
             <TierSelect options={options} onChange={filterHandle} allLabel="All Tier" />
-            {/* <TierSelect options={optionStatus} onChange={checkStatus} allLabel="All Status" /> */}
+            <TierSelect options={optionStatus} onChange={filterHandle} allLabel="All Status" />
           </div>
 
           <Button
             icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
             style={{ height: "40px", borderColor: "#C9C6ED" }}
-            onClick={() => exportHandle(search)}
+            onClick={() => exportHandle(search, filterCustomer)}
           >
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
@@ -301,7 +301,7 @@ const CustomerList = () => {
             setCurrentPage(page);
             fetchCustomers(page, search);
           }}
-          style={{ marginTop: "10px", textAlign: "right" }}
+          style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}
         />
       </div>
     </div>
