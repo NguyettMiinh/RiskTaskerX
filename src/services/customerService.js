@@ -23,6 +23,7 @@ const exportApi = async ({
   return response.data;
 };
 
+//full
 const listCustomer = async ({
   page,
   size = 10,

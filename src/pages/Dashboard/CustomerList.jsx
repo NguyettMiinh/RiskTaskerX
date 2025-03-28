@@ -9,35 +9,33 @@ const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [filterCustomer, setFilterCustomer] = useState([]);
   const pageSize = 10;
   const [totalCustomers, setTotalCustomers] = useState(0); 
 
   useEffect(() => {
-    fetchCustomers(currentPage, search);
-  }, [currentPage, search]);
+    fetchCustomers(currentPage, search, filterCustomer);
+  }, [currentPage, search, filterCustomer]);
 
-  // useEffect(()=>{
-  //   fetchCustomers(currentPage,filterCustomer);
-  // },[currentPage, filterCustomer]);
-
-  const fetchCustomers = async (page, searchValue,selectedValues ) => {
+  const fetchCustomers = async (page, searchValue, selectedValues) => {
     try {
       const response = searchValue
         ? await segCustomer({ searchKey: searchValue, page: page, size: pageSize })
+        : selectedValues.length > 0
+        ? await segCustomer({ tier: selectedValues, page: page, size: pageSize })
         : await listCustomer({ page: page, size: pageSize });
-
+      console.log(response);
       if (response && response.results) {
-        if (searchValue) {
+        if (searchValue || selectedValues.length > 0) {
           const truncatedData = response.results.content.map((item) => ({
             ...item,
-            id: item.id.length > 11 ? item.id.substring(0, 11) : item.id,
-            fullName: item.fullName.length > 11 ? item.fullName.substring(0, 11) : item.fullName,
-            phoneNumber: item.phoneNumber.length > 11 ? item.phoneNumber.substring(0, 11) : item.phoneNumber,
-            address: item.address.length > 11 ? item.address.substring(0, 11) : item.address,
-            email: item.email.length > 11 ? item.email.substring(0, 11) : item.email,
-            tier: item.tier.length > 11 ? item.tier.substring(0, 11) : item.tier
+            id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
+            fullName: item.fullName.length > 12 ? item.fullName.substring(0, 12) : item.fullName,
+            phoneNumber: item.phoneNumber.length > 12 ? item.phoneNumber.substring(0, 12) : item.phoneNumber,
+            address: item.address.length > 12 ? item.address.substring(0, 12) : item.address,
+            email: item.email.length > 12 ? item.email.substring(0, 12) : item.email,
+            tier: item.tier.length > 12 ? item.tier.substring(0, 12) : item.tier
           }));
           setCustomers(truncatedData);
         } else {
@@ -84,6 +82,7 @@ const CustomerList = () => {
 
   ///filter customer
   const filterHandle = (selectedValues) => {
+    console.log(selectedValues);
     setFilterCustomer(selectedValues);
     setCurrentPage(0);
   };
@@ -192,25 +191,7 @@ const CustomerList = () => {
     { label: "Inactive", value: false },
   ];
 
-  const checkHandle = async (selectedValues) => {
-    setCurrentPage(1); // Reset to the first page
-    const response = await segCustomer({ tier: selectedValues, page: 1, size: pageSize });
-    console.log(response);
-    if (response?.results) {
-      setCustomers(response.results.content);
-      setTotalCustomers(response.results.totalElements || 0);
-    }
-  };
 
-  const checkStatus = async (selectedValues) => {
-    setCurrentPage(1); // Reset to the first page
-    const response = await segCustomer({ status: selectedValues, page: 1, size: pageSize });
-    console.log(response);
-    if (response?.results) {
-      setCustomers(response.results.content);
-      setTotalCustomers(response.results.totalElements || 0);
-    }
-  };
 
   return (
     <div style={{ display: "flex", justifyContent: "flex-start", minHeight: "100vh", padding: "10px" }}>
@@ -284,8 +265,8 @@ const CustomerList = () => {
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
 
-            <TierSelect options={options} onChange={checkHandle} allLabel="All Tier" />
-            <TierSelect options={optionStatus} onChange={checkStatus} allLabel="All Status" />
+            <TierSelect options={options} onChange={filterHandle} allLabel="All Tier" />
+            {/* <TierSelect options={optionStatus} onChange={checkStatus} allLabel="All Status" /> */}
           </div>
 
           <Button
