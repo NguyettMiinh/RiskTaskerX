@@ -33,14 +33,10 @@ const CustomerList = () => {
   const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
     console.log(status);
     try {
-      const response = searchValue
-        ? await segCustomer({
-            searchKey: searchValue,
-            page: page,
-            size: pageSize,
-          })
-        : (filterCustomer.length > 0 || status.length > 0)
+      const response = 
+        (searchValue || filterCustomer.length > 0 || status.length > 0)
          ? await segCustomer({
+            searchKey: searchValue,
             tier: filterCustomer,
             isActive: status,
             page: page,
@@ -49,7 +45,7 @@ const CustomerList = () => {
         : await listCustomer({ page: page, size: pageSize });
       console.log(response);
       if (response && response.results) {
-        if (searchValue || filterCustomer.length > 0) {
+        if (searchValue || filterCustomer.length > 0 || status.length > 0) {
           const truncatedData = response.results.content.map((item) => ({
             ...item,
             id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
