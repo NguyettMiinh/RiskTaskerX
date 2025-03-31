@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Table, Pagination, Input, Button, Dropdown, Switch, Modal } from "antd";
-import { SearchOutlined, DownOutlined, DownloadOutlined, EyeOutlined, CopyOutlined } from "@ant-design/icons";
-import { exportApi, listCustomer, segCustomer } from "@/services/customerService";
+import { Table, Pagination, Input, Button, Switch, Modal } from "antd";
+import {
+  SearchOutlined,
+  DownloadOutlined,
+  EyeOutlined,
+  CopyOutlined,
+} from "@ant-design/icons";
+import {
+  exportApi,
+  isActiveApi,
+  listCustomer,
+  segCustomer,
+} from "@/services/customerService";
 import "@assets/styles/list.css";
 import TierSelect from "./component/TierSelect";
 
@@ -11,19 +21,31 @@ const CustomerList = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [search, setSearch] = useState(null);
   const [filterCustomer, setFilterCustomer] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  
   const pageSize = 10;
-  const [totalCustomers, setTotalCustomers] = useState(0); 
 
   useEffect(() => {
-    fetchCustomers(currentPage, search, filterCustomer);
-  }, [currentPage, search, filterCustomer]);
+    fetchCustomers(currentPage, search, filterCustomer, status);
+  }, [currentPage, search, filterCustomer, status]);
 
-  const fetchCustomers = async (page, searchValue, filterCustomer) => {
+  const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
+    console.log(status);
     try {
       const response = searchValue
-        ? await segCustomer({ searchKey: searchValue, page: page, size: pageSize })
-        : filterCustomer.length > 0
-        ? await segCustomer({ tier: filterCustomer, page: page, size: pageSize })
+        ? await segCustomer({
+            searchKey: searchValue,
+            page: page,
+            size: pageSize,
+          })
+        : (filterCustomer.length > 0 || status.length > 0)
+         ? await segCustomer({
+            tier: filterCustomer,
+            isActive: status,
+            page: page,
+            size: pageSize,
+          })
         : await listCustomer({ page: page, size: pageSize });
       console.log(response);
       if (response && response.results) {
@@ -31,19 +53,30 @@ const CustomerList = () => {
           const truncatedData = response.results.content.map((item) => ({
             ...item,
             id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
-            fullName: item.fullName.length > 12 ? item.fullName.substring(0, 12) : item.fullName,
-            phoneNumber: item.phoneNumber.length > 12 ? item.phoneNumber.substring(0, 12) : item.phoneNumber,
-            address: item.address.length > 12 ? item.address.substring(0, 12) : item.address,
-            email: item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-            tier: item.tier.length > 12 ? item.tier.substring(0, 12) : item.tier
+            fullName:
+              item.fullName.length > 12
+                ? item.fullName.substring(0, 12)
+                : item.fullName,
+            phoneNumber:
+              item.phoneNumber.length > 12
+                ? item.phoneNumber.substring(0, 12)
+                : item.phoneNumber,
+            address:
+              item.address.length > 12
+                ? item.address.substring(0, 12)
+                : item.address,
+            email:
+              item.email.length > 12 ? item.email.substring(0, 12) : item.email,
+            tier:
+              item.tier.length > 12 ? item.tier.substring(0, 12) : item.tier,
           }));
           setCustomers(truncatedData);
         } else {
           setCustomers(response.results.content);
           setOriginalCustomers(response.results.content);
         }
-        setTotalCustomers(response.results.totalElements || 0);
         
+        setTotalCustomers(response.results.totalElements || 0);
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -62,11 +95,23 @@ const CustomerList = () => {
       title: "Actions",
       dataIndex: "actions",
       render: (_, record) => (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-          <Switch checked={record.active} onChange={(checked) => toggleActive(checked, record.id)} />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+          }}
+        >
+          <Switch
+            checked={record.isActive}
+            onChange={(checked) => toggleActive(record.id, checked)}
+          />
           <Button
             type="link"
-            icon={<EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />}
+            icon={
+              <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
+            }
             onClick={() => viewDetails(record)}
           />
         </div>
@@ -74,32 +119,73 @@ const CustomerList = () => {
     },
   ];
 
+  // put isActive
+  const toggleActive = async (id, isActive) => {
+    setCustomers(prevCustomers =>
+      prevCustomers.map(customer =>
+        customer.id === id ? { ...customer, isActive } : customer
+      )
+    );
+  
+    try {
+      const response = await isActiveApi(id, isActive);
+  
+      if (!response) {
+        setCustomers(prevCustomers =>
+          prevCustomers.map(customer =>
+            customer.id === id ? { ...customer, isActive: !isActive } : customer
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      setCustomers(prevCustomers =>
+        prevCustomers.map(customer =>
+          customer.id === id ? { ...customer, isActive: !isActive } : customer
+        )
+      );
+    }
+  };
+  
+  
+
   /// search customer
   const searchHandle = (searchValue) => {
     setSearch(searchValue);
     setCurrentPage(0);
   };
 
-  ///filter customer
+  ///filter tier
   const filterHandle = (selectedValues) => {
     console.log(selectedValues);
     setFilterCustomer(selectedValues);
     setCurrentPage(0);
   };
+//filter status
+const statusHandle = (selectedValues) => {
+  console.log(selectedValues);
+  setStatus(selectedValues);
+  setCurrentPage(0);
+}
 
   /// export file
-  const exportHandle = async (searchValue, filterCustomer) => {
-    console.log("Selected values:", searchValue, filterCustomer); 
+  const exportHandle = async (searchValue, filterCustomer, status) => {
+    console.log("Selected values:", searchValue, filterCustomer, status);
     try {
-      const response = await exportApi({tier: filterCustomer , searchKey: searchValue , page: currentPage, size: pageSize });
+      const response = await exportApi({
+        tier: filterCustomer,
+        isActive: status,
+        searchKey: searchValue,
+        page: currentPage,
+        size: pageSize,
+      });
 
       console.log(response);
-      
+
       const fileName = response.fileName;
       const password = response.password;
       console.log(fileName, password);
 
-      
       const byteCharacters = atob(response.response);
       const byteNumbers = new Uint8Array(byteCharacters.length);
 
@@ -107,18 +193,20 @@ const CustomerList = () => {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
 
-      const blob = new Blob([byteNumbers], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const blob = new Blob([byteNumbers], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
-      
+
       link.click();
 
       document.body.removeChild(link);
-      
+
       URL.revokeObjectURL(url);
 
       setTimeout(() => {
@@ -126,12 +214,16 @@ const CustomerList = () => {
           title: "Export Customer List",
           content: (
             <div>
-              <div style={{
-                fontSize: "15px",
-                paddingBottom: "10px",
-              }}>Export password</div>
+              <div
+                style={{
+                  fontSize: "15px",
+                  paddingBottom: "10px",
+                }}
+              >
+                Export password
+              </div>
               <div style={{ display: "flex", gap: "10px" }}>
-              <Input
+                <Input
                   value={password}
                   readOnly
                   style={{
@@ -143,9 +235,13 @@ const CustomerList = () => {
                   }}
                 />
                 <Button
-                  icon={<CopyOutlined style={{
-                    color: "white"
-                  }}/>}
+                  icon={
+                    <CopyOutlined
+                      style={{
+                        color: "white",
+                      }}
+                    />
+                  }
                   onClick={() => {
                     navigator.clipboard.writeText(password);
                   }}
@@ -156,10 +252,9 @@ const CustomerList = () => {
                     borderRadius: "0 6px 6px 0",
                     border: "1px solid #ccc",
                     height: "40px",
-                    width: "50px"
+                    width: "50px",
                   }}
-                >
-                </Button>
+                ></Button>
               </div>
             </div>
           ),
@@ -180,21 +275,28 @@ const CustomerList = () => {
     }
   };
 
+  // ti cho do constants
+
   const options = [
     { label: "Diamond", value: "Diamond" },
     { label: "Gold", value: "Gold" },
     { label: "Silver", value: "Silver" },
-    { label: "Bronze", value: "Bronze" }
+    { label: "Bronze", value: "Bronze" },
   ];
   const optionStatus = [
     { label: "Active", value: true },
     { label: "Inactive", value: false },
   ];
 
-
-
   return (
-    <div style={{ display: "flex", justifyContent: "flex-start", minHeight: "100vh", padding: "10px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-start",
+        minHeight: "100vh",
+        padding: "10px",
+      }}
+    >
       <div
         style={{
           width: "100%",
@@ -265,23 +367,35 @@ const CustomerList = () => {
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
 
-            <TierSelect options={options} onChange={filterHandle} allLabel="All Tier" />
-            <TierSelect options={optionStatus} onChange={filterHandle} allLabel="All Status" />
+            <TierSelect
+              options={options}
+              onChange={filterHandle}
+              allLabel="All Tier"
+            />
+            <TierSelect
+              options={optionStatus}
+              onChange={statusHandle}
+              allLabel="All Status"
+            />
           </div>
 
           <Button
             icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
             style={{ height: "40px", borderColor: "#C9C6ED" }}
-            onClick={() => exportHandle(search, filterCustomer)}
+            onClick={() => exportHandle(search, filterCustomer, status)}
           >
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
 
-        <Table 
-          columns={columns} 
-          dataSource={customer.length > 0 ? customer.map(c => ({ ...c, key: c.id })) : []} 
-          pagination={false} 
+        <Table
+          columns={columns}
+          dataSource={
+            customer.length > 0
+              ? customer.map((c) => ({ ...c, key: c.id }))
+              : []
+          }
+          pagination={false}
           // scroll={{ x: "max-content" }}
           className="custom-table"
           style={{
@@ -301,7 +415,11 @@ const CustomerList = () => {
             setCurrentPage(page);
             fetchCustomers(page, search);
           }}
-          style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "10px",
+          }}
         />
       </div>
     </div>

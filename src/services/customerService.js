@@ -74,4 +74,6 @@ const segCustomer = async ({
 const isActiveApi = async (id, isActive) => {
   return axios.put(`/customers/status`, { id, isActive });
 };
+
+
 export { exportApi, isActiveApi, listCustomer, segCustomer };

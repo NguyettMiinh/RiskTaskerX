@@ -11,12 +11,12 @@ import { changePasswordApi } from "@/services/userService";
 import { useSelector } from "react-redux";
 import { getPasswordRules } from "@/utils/passwordRules";
 import { changeSchema } from "@/validations/changeSchema";
+import { useNavigate } from "react-router";
 
 
 const ChangePassword = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const storedPassword = useSelector((state) => state.user.password);
-  const [changeError, setChangeError] = useState("");
   const {
     handleSubmit,
     control,
@@ -40,9 +40,8 @@ const ChangePassword = () => {
       title: "Password Changed Successfully!",
     });
   };
-
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
-    setChangeError("");
     const payload = {
       oldPassword: data.currentPassword,
       newPassword: data.password,
@@ -51,10 +50,14 @@ const ChangePassword = () => {
 
     try {
       
-     const response =  await changePasswordApi(payload);
-     if(response.message === "success") {
-        showSuccess();
-     }
+      const response = await changePasswordApi(payload);
+      console.log(response);
+      if (response.data.message === "success"){
+          showSuccess();
+      }    
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);        
       reset();
     } catch (error) {
       console.log(error.message);
@@ -71,6 +74,7 @@ const ChangePassword = () => {
         height: "100%",
       }}
     >
+
       <Flex justify="center" align="center" style={{ width: "100%" }}>
         <div className="common-form">
           <Form
@@ -95,7 +99,7 @@ const ChangePassword = () => {
             <InputField
               name="currentPassword"
               control={control}
-              placeholder="Currnet password "
+              placeholder="Current password "
               autoComplete="current-password"
               className="cm-input"
               error={errors.currentPassword}
@@ -130,7 +134,7 @@ const ChangePassword = () => {
               className="cm-input"
               error={errors.confirmPassword}
             />
-             {changeError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{changeError}</p>}
+
             <Form.Item className="cn-btn">
               <ButtonComponent
                 className="cm-btn"
