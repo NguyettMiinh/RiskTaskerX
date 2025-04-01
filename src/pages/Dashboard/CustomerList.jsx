@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Pagination, Input, Button, Switch, Modal } from "antd";
+import { useNavigate } from "react-router";
 import {
   SearchOutlined,
   DownloadOutlined,
@@ -9,7 +10,6 @@ import {
 import {
   exportApi,
   isActiveApi,
-  listCustomer,
   segCustomer,
 } from "@/services/customerService";
 import "@assets/styles/list.css";
@@ -42,10 +42,9 @@ const CustomerList = () => {
             page: page,
             size: pageSize,
           })
-        : await listCustomer({ page: page, size: pageSize });
+        : await segCustomer({ page: page, size: pageSize });
       console.log(response);
       if (response && response.results) {
-        if (searchValue || filterCustomer.length > 0 || status.length > 0) {
           const truncatedData = response.results.content.map((item) => ({
             ...item,
             id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
@@ -63,21 +62,20 @@ const CustomerList = () => {
                 : item.address,
             email:
               item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-            tier:
-              item.tier.length > 12 ? item.tier.substring(0, 12) : item.tier,
           }));
           setCustomers(truncatedData);
-        } else {
-          setCustomers(response.results.content);
-          setOriginalCustomers(response.results.content);
-        }
-        
-        setTotalCustomers(response.results.totalElements || 0);
+          setOriginalCustomers(truncatedData);        
+          setTotalCustomers(response.results.totalElements || 0);
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
+
+  const navigate = useNavigate();
+  const viewDetails = () => {
+    navigate("/personal-info");
+  }
 
   /// columns data
   const columns = [
