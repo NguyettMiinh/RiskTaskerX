@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Switch, Modal } from "antd";
 import avt from "@assets/images/maomao.jpg";
-import { getPurchase, isActiveApi } from "@/services/customerService";
+import { getWarranty, isActiveApi } from "@/services/customerService";
 import { useSelector } from "react-redux"; 
 import { ExclamationCircleFilled, TrophyOutlined } from "@ant-design/icons";
 
@@ -13,7 +13,8 @@ const PersonalInfor = () => {
         const fetchDetail = async () => {
             if (!id) return;
             try {
-                const response = await getPurchase(id);
+                const response = await getWarranty(id);
+                console.log(response);
                 if (response.data && response.data.length > 0) {
                     setDetail(response.data[0]); 
                 }
@@ -99,7 +100,8 @@ const PersonalInfor = () => {
                 width: 385,
                 background: "white",
                 height: "1000px",
-                filter: "drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.25))"
+                filter: "drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.25))",
+                marginLeft: "30px",
                 
             }}
         >

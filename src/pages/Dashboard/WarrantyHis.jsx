@@ -1,48 +1,37 @@
 import React, { useEffect, useState } from 'react'
-import { DownloadOutlined, EyeOutlined, CopyOutlined } from '@ant-design/icons';
-import { exportPurchase, getPurchase } from '@/services/customerService';
+import {exportWarranty, getWarranty } from '@/services/customerService';
 import { useSelector } from 'react-redux';
-import { Table , Button, Modal, Input} from 'antd';
-const PurchaseHis = () => {
-  const [purchase, setPurchase] = useState();
+import { Button, Table, Input, Modal, Select} from 'antd';
+import { DownloadOutlined, CopyOutlined} from '@ant-design/icons';
+
+
+const Warranty = () => {
+  const [warranty, setWarranty] = useState();
   const id = useSelector((state) => state.user.id);
 
   useEffect(() => {
-      const fetchPurchase = async () => {
-        const result = await getPurchase(id);
-        setPurchase(result.data);
+      const fetchWarranty = async () => {
+        const result = await getWarranty(id);
+        setWarranty(result.data);
       }
-      fetchPurchase();
+      fetchWarranty();
   },[])
   /// columns data
   const columns = [
     { title: "Car model", dataIndex: "carModel" },
-    { title: "VIN", dataIndex: "vehicleIdentificationNumber" },
-    { title: "Price", dataIndex: "price" },
-    { title: "Payment method", dataIndex: "paymentMethod" },
-    { title: "Purchase date", dataIndex: "purchaseDate" },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, record) => (
-        <div>       
-          <Button
-            type="link"
-            icon={
-              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
-            }
-            onClick={() => viewDetails(record.id)}
-          />
-        </div>
-      ),
-    },
+    { title: "License Plate", dataIndex: "licensePlate" },
+    { title: "Service Type", dataIndex: "serviceType" },
+    { title: "Service Center", dataIndex: "serviceCenter" },
+    { title: "Service Date", dataIndex: "serviceDate" },
+    { title: "Service Cost", dataIndex: "serviceCost" },
+    
   ];
   const exportHandle = async () => {
     console.log("Selected values:",id);
     try {
-      const response = await exportPurchase(id);
+      const response = await exportWarranty(id);
 
-      console.log(response);
+      console.log(response.data.fullName);
 
       const fileName = response.data.fileName;
       const password = response.data.password;
@@ -136,28 +125,52 @@ const PurchaseHis = () => {
       console.error("Error exporting file:", error);
     }
   };
+
+  const addHandle = () => {
+    Modal.confirm({
+      title: 'Add Warranty Information',
+      icon: null,
+      content:( <>
+        <Input placeholder= "Enter the car model" />
+        <Input placeholder= "Enter the license plate" />
+        <Select placeholder= "Choose the service type" />
+        <Input placeholder= "Enter the license plate" />
+        <Input placeholder= "Enter the service cost" />
+        
+      </>),
+      okText: 'Add New Warranty',
+      cancelText: 'Cancel',
+    });
+  }
   return (
     <div>
         <div style={{
           display: "flex",
           justifyContent: "flex-end",
+          marginBottom: "10px",
         }}>
+          <Button
+              icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
+              style={{ height: "40px", borderColor: "#C9C6ED", marginRight: "5px" }}
+              onClick={() => addHandle(id)}
+            >
+              <span style={{ color: "#6055F2" }}> Add Warranty Information</span>
+            </Button>
           <Button
               icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
               style={{ height: "40px", borderColor: "#C9C6ED" }}
               onClick={() => exportHandle(id)}
             >
-              <span style={{ color: "#6055F2" }}>Export Purchase History</span>
+              <span style={{ color: "#6055F2" }}>Export</span>
             </Button>
         </div>
-          
        <Table
           columns={columns}
-          dataSource={purchase}
+          dataSource={warranty}
           className="custom-table"
         />
     </div>
   )
 }
 
-export default PurchaseHis;
+export default Warranty;

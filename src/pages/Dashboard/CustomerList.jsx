@@ -449,7 +449,7 @@ const CustomerList = () => {
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
-
+              
         <Table
           columns={columns}
           dataSource={

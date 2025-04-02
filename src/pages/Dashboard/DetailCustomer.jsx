@@ -3,6 +3,7 @@ import PersonalInfor from './PersonalInfor';
 import { Tabs } from 'antd';
 import "@assets/styles/customTabs.css";
 import PurchaseHis from './purchaseHis';
+import Warranty from './WarrantyHis';
 const DetailCustomer = () => {
   const items = [
     {
@@ -13,7 +14,7 @@ const DetailCustomer = () => {
     {
       key: '2',
       label: 'Warranty history',
-      children: 'Content of Tab Pane 2',
+      children: <Warranty />,
     }
   ];
   const onChange = key => {

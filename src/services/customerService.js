@@ -82,4 +82,12 @@ const getWarranty = async(id) => {
   return axios.get(`/history/warranty/${id}`);
 }
 
-export { exportApi, isActiveApi, listCustomer, segCustomer, getPurchase, getWarranty };
+const exportPurchase = async (id) => {
+  return axios.get(`/export/customers/purchase/${id}`);
+}
+
+const exportWarranty = async (id) => {
+  return axios.get(`/export/customers/warranty/${id}`);
+}
+
+export { exportApi, isActiveApi, listCustomer, segCustomer, getPurchase, getWarranty, exportPurchase, exportWarranty };
