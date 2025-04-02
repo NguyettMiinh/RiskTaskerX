@@ -1,0 +1,17 @@
+:where(.css-dev-only-do-not-override-tjsggz).ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #1E4C8F;
+    text-shadow: 0 0 0.25px currentcolor;
+    font-size: 22px;
+}
+
+
+
+:where(.css-dev-only-do-not-override-tjsggz).ant-tabs .ant-tabs-ink-bar {
+    position: absolute;
+    background: #1E4C8F;
+    pointer-events: none;
+}
+
+:where(.css-dev-only-do-not-override-tjsggz).ant-tabs .ant-tabs-tab {
+    font-size: 22px;
+}

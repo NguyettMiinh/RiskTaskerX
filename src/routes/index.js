@@ -9,7 +9,7 @@ import ResetPage from '@/pages/auth/ResetPage';
 import DashboardPage from '@pages/dashboard/DashboardPage';
 import ChangePassword from '@pages/dashboard/ChangePasswordPage';
 import CustomerList from '@/pages/dashboard/CustomerList';
-import PersonalInfor from '@/pages/dashboard/PersonalInfor';
+import DetailCustomer from '@/pages/dashboard/DetailCustomer';
 
 
 //khong can dang nhap van xem duoc
@@ -21,7 +21,7 @@ const publicRoutes  = [
     {path: config.routes.dashboard, component: DashboardPage},
     {path: config.routes.change, component: ChangePassword},
     {path: config.routes.customer, component: CustomerList},
-    {path: config.routes.personal, component: PersonalInfor}
+    {path: config.routes.detail, component: DetailCustomer}
 ];
 
 //phai dang nhap moi vao duoc: khong dang nhap se chuyen huong den login

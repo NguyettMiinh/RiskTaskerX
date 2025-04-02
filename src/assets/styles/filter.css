@@ -41,4 +41,10 @@
     font-size: 15px;
     border-color: #C9C6ED!important;
     border-width: 1px;
+    line-height: 1;
+}
+
+:where(.css-dev-only-do-not-override-tjsggz).ant-select-multiple .ant-select-selection-wrap {
+  align-self: normal;
+
 }

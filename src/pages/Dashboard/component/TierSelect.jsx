@@ -5,8 +5,9 @@ import "@assets/styles/filter.css";
 const { Option } = Select;
 
 const TierSelect = ({ options, onChange, allLabel }) => {
-    const [selectedItems, setSelectedItems] = useState([]);
-    const [tempSelectedItems, setTempSelectedItems] = useState([]);
+   
+    const [selectedItems, setSelectedItems] = useState(options.map(option => option.value));
+    const [tempSelectedItems, setTempSelectedItems] = useState(options.map(option => option.value));
 
     const handleChange = (value) => {
         setTempSelectedItems(value);
@@ -26,11 +27,11 @@ const TierSelect = ({ options, onChange, allLabel }) => {
 
     const handleOk = () => {
         setSelectedItems(tempSelectedItems);
-        onChange(tempSelectedItems); 
+        onChange(tempSelectedItems);
     };
 
     const handleReset = () => {
-        setTempSelectedItems([]);
+        setTempSelectedItems(options.map(option => option.value));
     };
 
     const isAllSelected = options.length === tempSelectedItems.length;
@@ -41,18 +42,16 @@ const TierSelect = ({ options, onChange, allLabel }) => {
                 mode="multiple"
                 value={
                     tempSelectedItems.length === options.length
-                        ? [allLabel]
+                        ? [allLabel] 
                         : tempSelectedItems.length > 1
                         ? [...tempSelectedItems.slice(0, 1), `+${tempSelectedItems.length - 1}`]
                         : tempSelectedItems
                 }
                 onChange={handleChange}
                 className="centered-select"
-                style={{ width: 135, height: "40px", textAlign: "center"}}
+                style={{ width: 135, height: "40px", textAlign: "center" }}
                 placeholder=""
-                tagRender={({ label }) => (
-                    <span>{label}</span>
-                )}
+                tagRender={({ label }) => <span>{label}</span>}
                 dropdownRender={(menu) => (
                     <div>
                         {options.map(option => (

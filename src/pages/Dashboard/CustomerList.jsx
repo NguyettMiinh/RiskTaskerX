@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Pagination, Input, Button, Switch, Modal } from "antd";
+import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
+// import { debounce } from "lodash";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { setId } from "@/redux/userSlice";
 import {
   SearchOutlined,
   DownloadOutlined,
   EyeOutlined,
   CopyOutlined,
+  ExclamationCircleFilled
 } from "@ant-design/icons";
 import {
   exportApi,
@@ -23,7 +27,7 @@ const CustomerList = () => {
   const [filterCustomer, setFilterCustomer] = useState([]);
   const [status, setStatus] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
-  
+
   const pageSize = 10;
 
   useEffect(() => {
@@ -31,41 +35,41 @@ const CustomerList = () => {
   }, [currentPage, search, filterCustomer, status]);
 
   const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
-    console.log(status);
+    console.log(searchValue);
     try {
-      const response = 
-        (searchValue || filterCustomer.length > 0 || status.length > 0)
-         ? await segCustomer({
-            searchKey: searchValue,
-            tier: filterCustomer,
-            isActive: status,
-            page: page,
-            size: pageSize,
-          })
-        : await segCustomer({ page: page, size: pageSize });
+      const response =
+        searchValue || filterCustomer.length > 0 || status.length > 0
+          ? await segCustomer({
+              searchKey: searchValue,
+              tier: filterCustomer,
+              isActive: status,
+              page: page,
+              size: pageSize,
+            })
+          : await segCustomer({ page: page, size: pageSize });
       console.log(response);
       if (response && response.results) {
-          const truncatedData = response.results.content.map((item) => ({
-            ...item,
-            id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
-            fullName:
-              item.fullName.length > 12
-                ? item.fullName.substring(0, 12)
-                : item.fullName,
-            phoneNumber:
-              item.phoneNumber.length > 12
-                ? item.phoneNumber.substring(0, 12)
-                : item.phoneNumber,
-            address:
-              item.address.length > 12
-                ? item.address.substring(0, 12)
-                : item.address,
-            email:
-              item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          }));
-          setCustomers(truncatedData);
-          setOriginalCustomers(truncatedData);        
-          setTotalCustomers(response.results.totalElements || 0);
+        const truncatedData = response.results.content.map((item) => ({
+          ...item,
+          id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
+          fullName:
+            item.fullName.length > 12
+              ? item.fullName.substring(0, 12)
+              : item.fullName,
+          phoneNumber:
+            item.phoneNumber.length > 12
+              ? item.phoneNumber.substring(0, 12)
+              : item.phoneNumber,
+          address:
+            item.address.length > 12
+              ? item.address.substring(0, 12)
+              : item.address,
+          email:
+            item.email.length > 12 ? item.email.substring(0, 12) : item.email,
+        }));
+        setCustomers(truncatedData);
+        setOriginalCustomers(truncatedData);
+        setTotalCustomers(response.results.totalElements || 0);
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -73,9 +77,13 @@ const CustomerList = () => {
   };
 
   const navigate = useNavigate();
-  const viewDetails = () => {
-    navigate("/personal-info");
-  }
+  const dispatch = useDispatch();
+  const viewDetails = (id) => {
+      dispatch(setId(id));
+    setTimeout(() => {
+      navigate("/customer-detail");
+    }, 100);
+  };
 
   /// columns data
   const columns = [
@@ -84,7 +92,43 @@ const CustomerList = () => {
     { title: "Phone Number", dataIndex: "phoneNumber" },
     { title: "Address", dataIndex: "address" },
     { title: "Email", dataIndex: "email" },
-    { title: "Tier", dataIndex: "tier" },
+    {
+      title: "Tier",
+      dataIndex: "tier",
+      render: (tier) => {
+        let colorB = "#EDF1F2";
+        let colorF = "#8696A0";
+
+        if (tier === "Bronze") {
+          colorB = "#F5F0EB";
+          colorF = "#A67C52";
+        }
+        if (tier === "Diamond") {
+          colorB = "#F6E6FB";
+          colorF = "#A155B9";
+        }
+        if (tier === "Gold") {
+          colorB = "#FBF1D4";
+          colorF = "#D4AF37";
+        }
+
+        return (
+          <Tag
+            color={colorB}
+            style={{
+              color: colorF,
+              borderRadius: "16px",
+              fontSize: 15,
+              boxSizing: "border-box",
+              lineHeight: 1,
+              padding: "5px 9px",
+            }}
+          >
+            {tier}
+          </Tag>
+        );
+      },
+    },
     {
       title: "Actions",
       dataIndex: "actions",
@@ -100,13 +144,16 @@ const CustomerList = () => {
           <Switch
             checked={record.isActive}
             onChange={(checked) => toggleActive(record.id, checked)}
+            style={{
+              backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
+            }}
           />
           <Button
             type="link"
             icon={
               <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
             }
-            onClick={() => viewDetails(record)}
+            onClick={() => viewDetails(record.id)}
           />
         </div>
       ),
@@ -114,34 +161,55 @@ const CustomerList = () => {
   ];
 
   // put isActive
-  const toggleActive = async (id, isActive) => {
-    setCustomers(prevCustomers =>
-      prevCustomers.map(customer =>
-        customer.id === id ? { ...customer, isActive } : customer
-      )
-    );
-  
-    try {
-      const response = await isActiveApi(id, isActive);
-  
-      if (!response) {
-        setCustomers(prevCustomers =>
-          prevCustomers.map(customer =>
-            customer.id === id ? { ...customer, isActive: !isActive } : customer
+  const toggleActive = (id, isActive) => {
+    Modal.confirm({
+      icon: null,
+      content:  (
+        <div style={{ textAlign: "center" }}>
+          <ExclamationCircleFilled
+            style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
+          />
+          <div style={{fontSize: "15px"}}>
+            {isActive
+              ? "Are you sure you want to activate this customer?"
+              : "Are you sure you want to deactivate this customer?"}
+          </div>
+        </div>
+      ),
+      okText: "Confirm",
+      cancelText: "Cancel",
+      okButtonProps: {
+        style: { backgroundColor: "#6055F2", borderColor: "#6055F2", color: "#fff" },
+      },
+      onOk: async() => {
+        setCustomers((prevCustomers) =>
+          prevCustomers.map((customer) =>
+            customer.id === id ? { ...customer, isActive } : customer
           )
         );
-      }
-    } catch (error) {
-      console.error("Error updating customer status:", error);
-      setCustomers(prevCustomers =>
-        prevCustomers.map(customer =>
-          customer.id === id ? { ...customer, isActive: !isActive } : customer
-        )
-      );
-    }
+
+        try {
+          const response = await isActiveApi(id, isActive);
+    
+          if (!response) {
+            setCustomers((prevCustomers) =>
+              prevCustomers.map((customer) =>
+                customer.id === id ? { ...customer, isActive: !isActive } : customer
+              )
+            );
+          }
+        } catch (error) {
+          console.error("Error updating customer status:", error);
+          setCustomers((prevCustomers) =>
+            prevCustomers.map((customer) =>
+              customer.id === id ? { ...customer, isActive: !isActive } : customer
+            )
+          );
+        }
+      },
+    });
+
   };
-  
-  
 
   /// search customer
   const searchHandle = (searchValue) => {
@@ -155,12 +223,12 @@ const CustomerList = () => {
     setFilterCustomer(selectedValues);
     setCurrentPage(0);
   };
-//filter status
-const statusHandle = (selectedValues) => {
-  console.log(selectedValues);
-  setStatus(selectedValues);
-  setCurrentPage(0);
-}
+  //filter status
+  const statusHandle = (selectedValues) => {
+    console.log(selectedValues);
+    setStatus(selectedValues);
+    setCurrentPage(0);
+  };
 
   /// export file
   const exportHandle = async (searchValue, filterCustomer, status) => {

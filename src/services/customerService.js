@@ -72,8 +72,14 @@ const segCustomer = async ({
 
 
 const isActiveApi = async (id, isActive) => {
-  return axios.put(`/customers/status`, { id, isActive });
+  return axios.put('/customers/status', { id, isActive });
 };
 
+const getPurchase = async(id) => {
+    return axios.get(`/history/purchase/${id}`);
+}
+const getWarranty = async(id) => {
+  return axios.get(`/history/warranty/${id}`);
+}
 
-export { exportApi, isActiveApi, listCustomer, segCustomer };
+export { exportApi, isActiveApi, listCustomer, segCustomer, getPurchase, getWarranty };
