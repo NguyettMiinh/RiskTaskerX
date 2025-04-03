@@ -3,7 +3,8 @@ import { Row, Col, Card, Switch, Modal } from "antd";
 import avt from "@assets/images/maomao.jpg";
 import { getWarranty, isActiveApi } from "@/services/customerService";
 import { useSelector } from "react-redux"; 
-import { ExclamationCircleFilled, TrophyOutlined } from "@ant-design/icons";
+import { TrophyOutlined } from "@ant-design/icons";
+import { showConfirmModal } from "@/utils/showConfimModal";
 
 const PersonalInfor = () => {
     const [detail, setDetail] = useState(null);
@@ -36,62 +37,34 @@ const PersonalInfor = () => {
             year: "numeric", // "2000"
         });
     };
-      // put isActive
-    const toggleActive = (id, isActive) => {
-        Modal.confirm({
-        icon: null,
-        content:  (
-            <div style={{ textAlign: "center" }}>
-            <ExclamationCircleFilled
-                style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
-            />
-            <div style={{fontSize: "15px"}}>
-                {isActive
-                ? "Are you sure you want to activate this customer?"
-                : "Are you sure you want to deactivate this customer?"}
-            </div>
-            </div>
-        ),
-        okText: "Confirm",
-        cancelText: "Cancel",
-        okButtonProps: {
-            style: { backgroundColor: "#6055F2", borderColor: "#6055F2", color: "#fff" },
-        },
-        onOk: async() => {
-            setDetail((prevDetail) => ({
-                ...prevDetail,
-                customer: {
-                    ...prevDetail.customer,
-                    isActive: isActive
-                }
-            }));
 
-            try {
-            const response = await isActiveApi(id, isActive);
-        
-            if (!response) {
-                setDetail((prevDetail) => ({
-                    ...prevDetail,
-                    customer: {
-                        ...prevDetail.customer,
-                        isActive: !isActive
-                    }
-                }));
-            }
-            } catch (error) {
-                console.error("Error updating customer status:", error);
-                setDetail((prevDetail) => ({
-                    ...prevDetail,
-                    customer: {
-                        ...prevDetail.customer,
-                        isActive: !isActive
-                    }
-                }));
-            }
-        },
-        });
-
+const updateDetail = (isActive) => {
+    setDetail((prevDetail) => ({
+        ...prevDetail,
+        customer: {
+            ...prevDetail.customer,
+            isActive: isActive
+        }
+    }));
     };
+const handleDetail = async (id, isActive, setDetail) => {
+        try {
+          const response = await isActiveApi(id, isActive);
+          if (!response) {
+            updateDetail(!isActive, setDetail);
+          }
+        } catch (error) {
+          console.error("Error updating customer status:", error);
+          updateDetail(!isActive, setDetail);
+        }
+    };
+      // put isActive
+const toggleActive = (id, isActive, setCustomers) => {
+    showConfirmModal(isActive, async () => {
+    updateDetail(isActive, setCustomers);
+    await handleDetail(id, isActive, setCustomers);
+    });
+};
     return (
         <Card 
             title="Personal Information"
@@ -119,7 +92,7 @@ const PersonalInfor = () => {
                             fontWeight: "bold",
                             fontSize: "18px",
                         }}>{detail ? detail.customer.fullName : "Loading..."}</Col>
-                        <Col span={24} > Customer ID: <strong>{detail ? detail.id : "Loading..."}</strong></Col>
+                        <Col span={24} > Customer ID: <strong>{detail ? detail.customer.id : "Loading..."}</strong></Col>
                         <Col span={24}>
                         <TrophyOutlined style={{
                             color: "#ABABAB",

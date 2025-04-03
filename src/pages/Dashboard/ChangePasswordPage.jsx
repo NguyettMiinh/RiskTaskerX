@@ -13,7 +13,6 @@ import { getPasswordRules } from "@/utils/passwordRules";
 import { changeSchema } from "@/validations/changeSchema";
 import { useNavigate } from "react-router";
 
-
 const ChangePassword = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const storedPassword = useSelector((state) => state.user.password);
@@ -49,15 +48,14 @@ const ChangePassword = () => {
     };
 
     try {
-      
       const response = await changePasswordApi(payload);
       console.log(response);
-      if (response.data.message === "success"){
-          showSuccess();
-      }    
+      if (response.data.message === "success") {
+        showSuccess();
+      }
       setTimeout(() => {
         navigate("/login");
-      }, 2000);        
+      }, 2000);
       reset();
     } catch (error) {
       console.log(error.message);
@@ -74,7 +72,6 @@ const ChangePassword = () => {
         height: "100%",
       }}
     >
-
       <Flex justify="center" align="center" style={{ width: "100%" }}>
         <div className="common-form">
           <Form
@@ -104,15 +101,15 @@ const ChangePassword = () => {
               className="cm-input"
               error={errors.currentPassword}
             />
-            
+
             <Dropdown
               menu={{ items }}
               placement="bottom"
-              open={dropdownOpen} 
+              open={dropdownOpen}
               trigger={["click"]}
             >
               <div
-                onFocus={() => setDropdownOpen(true)} 
+                onFocus={() => setDropdownOpen(true)}
                 onBlur={() => setTimeout(() => setDropdownOpen(false), 200)}
               >
                 <InputField

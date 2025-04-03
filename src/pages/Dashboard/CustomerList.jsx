@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
-// import { debounce } from "lodash";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
+import constants from "@/constants/index";
+import { downloadFile } from "@/utils/exportUtils";
+import { showExportModal } from "@/utils/modalUtils";
 import {
   SearchOutlined,
   DownloadOutlined,
   EyeOutlined,
-  CopyOutlined,
-  ExclamationCircleFilled
 } from "@ant-design/icons";
 import {
   exportApi,
@@ -18,7 +18,7 @@ import {
 } from "@/services/customerService";
 import "@assets/styles/list.css";
 import TierSelect from "./component/TierSelect";
-
+import { showConfirmModal } from "@/utils/showConfimModal";
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
@@ -79,7 +79,7 @@ const CustomerList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const viewDetails = (id) => {
-      dispatch(setId(id));
+    dispatch(setId(id));
     setTimeout(() => {
       navigate("/customer-detail");
     }, 100);
@@ -87,11 +87,7 @@ const CustomerList = () => {
 
   /// columns data
   const columns = [
-    { title: "Customer ID", dataIndex: "id" },
-    { title: "Customer Name", dataIndex: "fullName" },
-    { title: "Phone Number", dataIndex: "phoneNumber" },
-    { title: "Address", dataIndex: "address" },
-    { title: "Email", dataIndex: "email" },
+    ...constants.CUSTOMER_LIST,
     {
       title: "Tier",
       dataIndex: "tier",
@@ -160,55 +156,31 @@ const CustomerList = () => {
     },
   ];
 
+  const updateCustomerStatus = (id, isActive) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer.id === id ? { ...customer, isActive } : customer
+      )
+    );
+  };
+  const handleApiUpdate = async (id, isActive, setCustomers) => {
+    try {
+      const response = await isActiveApi(id, isActive);
+      if (!response) {
+        updateCustomerStatus(id, !isActive, setCustomers);
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      updateCustomerStatus(id, !isActive, setCustomers);
+    }
+  };
+
   // put isActive
-  const toggleActive = (id, isActive) => {
-    Modal.confirm({
-      icon: null,
-      content:  (
-        <div style={{ textAlign: "center" }}>
-          <ExclamationCircleFilled
-            style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
-          />
-          <div style={{fontSize: "15px"}}>
-            {isActive
-              ? "Are you sure you want to activate this customer?"
-              : "Are you sure you want to deactivate this customer?"}
-          </div>
-        </div>
-      ),
-      okText: "Confirm",
-      cancelText: "Cancel",
-      okButtonProps: {
-        style: { backgroundColor: "#6055F2", borderColor: "#6055F2", color: "#fff" },
-      },
-      onOk: async() => {
-        setCustomers((prevCustomers) =>
-          prevCustomers.map((customer) =>
-            customer.id === id ? { ...customer, isActive } : customer
-          )
-        );
-
-        try {
-          const response = await isActiveApi(id, isActive);
-    
-          if (!response) {
-            setCustomers((prevCustomers) =>
-              prevCustomers.map((customer) =>
-                customer.id === id ? { ...customer, isActive: !isActive } : customer
-              )
-            );
-          }
-        } catch (error) {
-          console.error("Error updating customer status:", error);
-          setCustomers((prevCustomers) =>
-            prevCustomers.map((customer) =>
-              customer.id === id ? { ...customer, isActive: !isActive } : customer
-            )
-          );
-        }
-      },
+  const toggleActive = (id, isActive, setCustomers) => {
+    showConfirmModal(isActive, async () => {
+      updateCustomerStatus(id, isActive, setCustomers);
+      await handleApiUpdate(id, isActive, setCustomers);
     });
-
   };
 
   /// search customer
@@ -219,20 +191,18 @@ const CustomerList = () => {
 
   ///filter tier
   const filterHandle = (selectedValues) => {
-    console.log(selectedValues);
     setFilterCustomer(selectedValues);
     setCurrentPage(0);
   };
+
   //filter status
   const statusHandle = (selectedValues) => {
-    console.log(selectedValues);
     setStatus(selectedValues);
     setCurrentPage(0);
   };
 
   /// export file
   const exportHandle = async (searchValue, filterCustomer, status) => {
-    console.log("Selected values:", searchValue, filterCustomer, status);
     try {
       const response = await exportApi({
         tier: filterCustomer,
@@ -241,114 +211,12 @@ const CustomerList = () => {
         page: currentPage,
         size: pageSize,
       });
-
-      console.log(response);
-
-      const fileName = response.fileName;
-      const password = response.password;
-      console.log(fileName, password);
-
-      const byteCharacters = atob(response.response);
-      const byteNumbers = new Uint8Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const blob = new Blob([byteNumbers], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(url);
-
-      setTimeout(() => {
-        Modal.info({
-          title: "Export Customer List",
-          content: (
-            <div>
-              <div
-                style={{
-                  fontSize: "15px",
-                  paddingBottom: "10px",
-                }}
-              >
-                Export password
-              </div>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <Input
-                  value={password}
-                  readOnly
-                  style={{
-                    width: "300px",
-                    borderRadius: "6px 0 0 6px",
-                    border: "1px solid #ccc",
-                    height: "40px",
-                    fontWeight: 400,
-                  }}
-                />
-                <Button
-                  icon={
-                    <CopyOutlined
-                      style={{
-                        color: "white",
-                      }}
-                    />
-                  }
-                  onClick={() => {
-                    navigator.clipboard.writeText(password);
-                  }}
-                  style={{
-                    backgroundColor: "#6055F2",
-                    outline: "none",
-                    marginLeft: "-10px",
-                    borderRadius: "0 6px 6px 0",
-                    border: "1px solid #ccc",
-                    height: "40px",
-                    width: "50px",
-                  }}
-                ></Button>
-              </div>
-            </div>
-          ),
-          okText: "Confirm",
-          okButtonProps: {
-            style: {
-              backgroundColor: "#6055F2",
-              borderColor: "#6055F2",
-              color: "white",
-            },
-          },
-          icon: null,
-          onOk() {},
-        });
-      }, 1000);
+      const password = downloadFile(response);
+      showExportModal(password);
     } catch (error) {
       console.error("Error exporting file:", error);
     }
   };
-
-  // ti cho do constants
-
-  const options = [
-    { label: "Diamond", value: "Diamond" },
-    { label: "Gold", value: "Gold" },
-    { label: "Silver", value: "Silver" },
-    { label: "Bronze", value: "Bronze" },
-  ];
-  const optionStatus = [
-    { label: "Active", value: true },
-    { label: "Inactive", value: false },
-  ];
 
   return (
     <div
@@ -430,12 +298,12 @@ const CustomerList = () => {
             </Button>
 
             <TierSelect
-              options={options}
+              options={constants.TIER_OPTIONS}
               onChange={filterHandle}
-              allLabel="All Tier"
+              allLabel="All Tiers"
             />
             <TierSelect
-              options={optionStatus}
+              options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
             />
@@ -449,7 +317,7 @@ const CustomerList = () => {
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
-              
+
         <Table
           columns={columns}
           dataSource={
@@ -458,7 +326,6 @@ const CustomerList = () => {
               : []
           }
           pagination={false}
-          // scroll={{ x: "max-content" }}
           className="custom-table"
           style={{
             wordWrap: "break-word",
