@@ -16,9 +16,9 @@ const TYPE_OPTIONS = [
 ];
 
 const CENTER_OPTIONS = [
-  { label: "RISKTASKERX Ho Chi Minh", value: "RISKTASKERX Ho Chi Minh" },
-  { label: "RISKTASKERX Ha Noi", value: "RISKTASKERX Ha Noi" },
-  { label: "RISKTASKERX Quy Nhon", value: "RISKTASKERX Quy Nhon" },
+  { label: "RISKTASKERX Ho Chi Minh", value: "Ho_Chi_Minh" },
+  { label: "RISKTASKERX Ha Noi", value: "Ha_Noi" },
+  { label: "RISKTASKERX Quy Nhon", value: "Quy_Nhon" },
 ];
 
 const TIER_OPTIONS = [
@@ -41,11 +41,11 @@ const CUSTOMER_LIST = [
 ];
 
 const PURCHASE_LIST = [
-  { title: "Car model", dataIndex: "carModel" },
-  { title: "VIN", dataIndex: "vehicleIdentificationNumber" },
-  { title: "Price", dataIndex: "price" },
-  { title: "Payment method", dataIndex: "paymentMethod" },
-  { title: "Purchase date", dataIndex: "purchaseDate" },
+  { title: "Car model", dataIndex: "carModel", width: 150},
+  { title: "VIN", dataIndex: "vehicleIdentificationNumber",  width: 150 },
+  { title: "Price", dataIndex: "price",  width: 150 },
+  { title: "Payment options", dataIndex: "paymentMethod",  width: 150 },
+  { title: "Purchase date", dataIndex: "purchaseDate",  width: 150 },
 ];
 const WARRANTY_LIST = [
   { title: "Car model", dataIndex: "carModel" },

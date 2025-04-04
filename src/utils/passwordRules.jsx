@@ -15,7 +15,7 @@ export const getPasswordRules = (passwordValue) => {
   
     return rules.map((rule, index) => ({
       key: index,
-      label: <span style={{ color: rule.valid ? "black" : "red" }}>{rule.text}</span>,
+      label: <span style={{ color: rule.valid ? "green" : "red" }}>{rule.text}</span>,
     }));
   };
   

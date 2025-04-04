@@ -50,7 +50,7 @@ const PurchaseHis = () => {
   };
 
   return (
-    <div>
+    <div >
       <div
         style={{
           display: "flex",
@@ -65,8 +65,10 @@ const PurchaseHis = () => {
           <span style={{ color: "#6055F2" }}>Export Purchase History</span>
         </Button>
       </div>
-
-      <Table columns={columns} dataSource={purchase} className="custom-table" />
+      <div>
+        <Table columns={columns} dataSource={purchase} className="custom-table" />
+      </div>
+     
     </div>
   );
 };

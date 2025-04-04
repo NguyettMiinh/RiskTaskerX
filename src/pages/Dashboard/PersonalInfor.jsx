@@ -66,6 +66,7 @@ const toggleActive = (id, isActive, setCustomers) => {
     });
 };
     return (
+        <div>
         <Card 
             title="Personal Information"
             styles={{ header: { background: "#1E4C8F", color: "white" } }} 
@@ -74,7 +75,7 @@ const toggleActive = (id, isActive, setCustomers) => {
                 background: "white",
                 height: "1000px",
                 filter: "drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.25))",
-                marginLeft: "30px",
+                minHeight: "100vh",
                 
             }}
         >
@@ -140,6 +141,8 @@ const toggleActive = (id, isActive, setCustomers) => {
                 </Col>
             </Row>
         </Card>
+        </div>
+        
     );
 };
 

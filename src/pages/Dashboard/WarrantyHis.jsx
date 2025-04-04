@@ -69,6 +69,12 @@ const Warranty = () => {
 
     try {
       await addWarrantyData(payload);
+      setWarranty((prev) => [
+        ...prev,
+        {
+          ...payload
+        },
+      ]);
       Modal.destroyAll();
     } catch (error) {
       console.error("Error adding warranty:", error);
