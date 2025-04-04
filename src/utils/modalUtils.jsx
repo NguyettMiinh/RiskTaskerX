@@ -16,7 +16,7 @@ export const showExportModal = (password) => {
             Export password
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
-            <Input
+            <Input.Password
               value={password}
               readOnly
               style={{
