@@ -33,22 +33,22 @@ const STATUS_OPTIONS = [
 ];
 
 const CUSTOMER_LIST = [
-  { title: "Customer ID", dataIndex: "id" },
-  { title: "Customer Name", dataIndex: "fullName" },
-  { title: "Phone Number", dataIndex: "phoneNumber" },
-  { title: "Address", dataIndex: "address" },
-  { title: "Email", dataIndex: "email" }
+  { title: "Customer ID", dataIndex: "id", align: 'center', },
+  { title: "Customer Name", dataIndex: "fullName", align: 'center', },
+  { title: "Phone Number", dataIndex: "phoneNumber", align: 'center', },
+  { title: "Address", dataIndex: "address", align: 'center', },
+  { title: "Email", dataIndex: "email", align: 'center', }
 ];
 
 const PURCHASE_LIST = [
-  { title: "Car model", dataIndex: "carModel", width: 150},
+  { title: "Car Model", dataIndex: "carModel", width: 150},
   { title: "VIN", dataIndex: "vehicleIdentificationNumber",  width: 150 },
   { title: "Price", dataIndex: "price",  width: 150 },
   { title: "Payment options", dataIndex: "paymentMethod",  width: 150 },
   { title: "Purchase date", dataIndex: "purchaseDate",  width: 150 },
 ];
 const WARRANTY_LIST = [
-  { title: "Car model", dataIndex: "carModel" },
+  { title: "Car Model", dataIndex: "carModel" },
   { title: "License Plate", dataIndex: "licensePlate" },
   { title: "Service Type", dataIndex: "serviceType" },
   { title: "Service Center", dataIndex: "serviceCenter" },

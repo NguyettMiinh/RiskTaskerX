@@ -91,7 +91,7 @@ export default function OtpPage() {
     try {
      const response = await verifyOtpApi(email, data.otp);
      if (response.data?.results?.success) {
-      navigate("/reset-password");
+      navigate("/reset");
       } else {
 
 

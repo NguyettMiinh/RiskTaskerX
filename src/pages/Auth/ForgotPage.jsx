@@ -51,7 +51,7 @@ export default function ForgotPasswordForm() {
       setLoginError("");
       try {
         await otpApi(data.email);
-        navigate("/otppage");         
+        navigate("/otp");         
       } catch (error) {
           console.error("Error:", error.response?.data || error.message);
           setLoginError("Invalid email. Please try again.");

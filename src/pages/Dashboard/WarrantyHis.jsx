@@ -18,6 +18,9 @@ import { DownloadOutlined } from "@ant-design/icons";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
+import { formatDate } from "@/utils/formatDate";
+import { formatMoney } from "@/utils/formatMoney";
+import { formatCenter } from "@/utils/formatCenter";
 
 const Warranty = () => {
   const [warranty, setWarranty] = useState();
@@ -34,8 +37,16 @@ const Warranty = () => {
 
   useEffect(() => {
     const fetchWarranty = async () => {
-      const result = await getWarranty(id);
-      setWarranty(result.data);
+      const response = await getWarranty(id);
+      const newResult = response.data;
+      const result = newResult.map((item) => ({
+        ...item,
+        serviceCenter: formatCenter(item.serviceCenter),
+        serviceDate: formatDate(item.serviceDate),
+        serviceCost: formatMoney(item.serviceCost),
+      }));
+      setWarranty(result);
+      console.log("warranty", typeof result.data);
     };
     fetchWarranty();
   }, [id]);
@@ -55,7 +66,12 @@ const Warranty = () => {
   const handleInputChange = (field, value) => {
     warrantyData.current[field] = value;
   };
-
+  // format datedate
+  function convertToISO(dateString) {
+    const date = new Date(dateString);
+    console.log(dateString);
+    return date.toISOString();
+  }
   const handleAddWarranty = async () => {
     const payload = {
       customerId: id,
@@ -72,7 +88,10 @@ const Warranty = () => {
       setWarranty((prev) => [
         ...prev,
         {
-          ...payload
+          ...payload,
+          serviceCenter: formatCenter(warrantyData.current.center),
+          serviceDate: formatDate(warrantyData.current.date),
+          serviceCost: formatMoney(warrantyData.current.cost),
         },
       ]);
       Modal.destroyAll();
@@ -80,12 +99,7 @@ const Warranty = () => {
       console.error("Error adding warranty:", error);
     }
   };
-  // format datedate
-  function convertToISO(dateString) {
-    const date = new Date(dateString);
-    console.log(dateString);
-    return date.toISOString();
-  }
+  
 
   const addHandle = () => {
     Modal.confirm({

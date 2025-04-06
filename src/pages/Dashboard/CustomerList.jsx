@@ -17,8 +17,8 @@ import {
   segCustomer,
 } from "@/services/customerService";
 import "@assets/styles/list.css";
-import TierSelect from "./component/TierSelect";
 import { showConfirmModal } from "@/utils/showConfimModal";
+import SelectComponent from "@components/ui/SelectComponent";
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
@@ -35,10 +35,9 @@ const CustomerList = () => {
   }, [currentPage, search, filterCustomer, status]);
 
   const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
-    console.log(searchValue);
     try {
       const response =
-        searchValue || filterCustomer.length > 0 || status.length > 0
+        searchValue || filterCustomer?.length > 0 || status?.length > 0
           ? await segCustomer({
               searchKey: searchValue,
               tier: filterCustomer,
@@ -81,7 +80,7 @@ const CustomerList = () => {
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
-      navigate("/customer-detail");
+      navigate("/layout/detail");
     }, 100);
   };
 
@@ -91,6 +90,7 @@ const CustomerList = () => {
     {
       title: "Tier",
       dataIndex: "tier",
+      align : "center",
       render: (tier) => {
         let colorB = "#EDF1F2";
         let colorF = "#8696A0";
@@ -128,6 +128,7 @@ const CustomerList = () => {
     {
       title: "Actions",
       dataIndex: "actions",
+      align : "center",
       render: (_, record) => (
         <div
           style={{
@@ -190,14 +191,14 @@ const CustomerList = () => {
   };
 
   ///filter tier
-  const filterHandle = (selectedValues) => {
-    setFilterCustomer(selectedValues);
+  const filterHandle = (value) => {
+    setFilterCustomer(value);
     setCurrentPage(0);
   };
 
   //filter status
-  const statusHandle = (selectedValues) => {
-    setStatus(selectedValues);
+  const statusHandle = (value) => {
+    setStatus(value);
     setCurrentPage(0);
   };
 
@@ -297,12 +298,12 @@ const CustomerList = () => {
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
 
-            <TierSelect
+            <SelectComponent
               options={constants.TIER_OPTIONS}
               onChange={filterHandle}
               allLabel="All Tiers"
             />
-            <TierSelect
+            <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"

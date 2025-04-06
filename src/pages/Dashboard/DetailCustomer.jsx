@@ -5,6 +5,7 @@ import "@assets/styles/customTabs.css";
 import PurchaseHis from "./purchaseHis";
 import Warranty from "./WarrantyHis";
 const DetailCustomer = () => {
+  
   const items = [
     {
       key: "1",
