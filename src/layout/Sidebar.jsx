@@ -23,9 +23,9 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
 
   // Menu items
   const items = [
-    { key: "1", icon: <BarChartOutlined />, label: "Dashboard", onClick: () => navigate("/dashboard") },
+    { key: "1", icon: <BarChartOutlined />, label: "Dashboard", onClick: () => navigate("/layout/dashboard") },
     { key: "2", icon: <SafetyOutlined />, label: "User Roles & Permissions" },
-    { key: "3", icon: <UsergroupAddOutlined />, label: "Customer Management", onClick: () => navigate("/customer-list") },
+    { key: "3", icon: <UsergroupAddOutlined />, label: "Customer Management", onClick: () => navigate("/layout/customer") },
     { key: "4", icon: <CarOutlined />, label: "Car Management" },
     { key: "5", icon: <ToolOutlined />, label: "Spare Parts Management" },
     { key: "6", icon: <NotificationOutlined />, label: "Marketing Campaign Management" },

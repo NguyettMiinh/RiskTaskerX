@@ -27,7 +27,16 @@ export default function OtpPage() {
   const [timer, setTimer] = useState(0);
   const [timeResend, setTimeResend] = useState(false);
   const email = useSelector((state) => state.user.email);
+
+  let navigate = useNavigate();
   
+  useEffect(() => {
+    if (!email) {
+      navigate("/login"); 
+      
+    }
+  }, [email, navigate]);
+
   useEffect(() => {
     if (time > 0) {
       const timeId = setInterval(() => {
@@ -49,7 +58,7 @@ export default function OtpPage() {
       setTimeResend(false);
     }
   }, [timer]);
-  let navigate = useNavigate();
+
   
   const handleResend = async () => {
     setResend(false);
@@ -82,7 +91,7 @@ export default function OtpPage() {
     try {
      const response = await verifyOtpApi(email, data.otp);
      if (response.data?.results?.success) {
-      navigate("/reset-password");
+      navigate("/reset");
       } else {
 
 

@@ -37,7 +37,7 @@ const LoginPage = () => {
       console.log(data.password);
       const token = response.data.results.token;
       localStorage.setItem("authToken", token);
-      navigate("/dashboard");
+      navigate("/layout/dashboard");
       console.log("Login successful");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
@@ -99,7 +99,7 @@ const LoginPage = () => {
                   </Checkbox>
                 )}
               />
-              <Link to="/password" className="forgot-link">
+              <Link to="/forgot" className="forgot-link">
                 Forgot password?
               </Link>
             </Flex>

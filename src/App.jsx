@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react';
-import { Routes, Route} from 'react-router';
+import React from 'react';
+import { createBrowserRouter, RouterProvider} from 'react-router';
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
-import {publicRoutes} from "@/routes";
-import DefaultLayout  from "@/layout"
 import { ToastContainer } from 'react-toastify';
+import routes from "@/routes/routes";
 
+const router = createBrowserRouter(routes);
 
 
 const App = () =>{
@@ -13,22 +13,7 @@ const App = () =>{
     <div>
       <Provider store={store}>
         <ToastContainer/>
-          <Routes>
-            {publicRoutes.map((route,index) => {
-              let Layout = DefaultLayout;
-              if(route.layout){
-                Layout = route.layout;
-              }else if(route.layout === null){
-                Layout = Fragment;
-              }
-              const Page = route.component;
-              return <Route key = {index} path={route.path} element={
-                <Layout>
-                  <Page/>
-                </Layout>
-            } />
-            } )}
-          </Routes>
+          <RouterProvider router={router} />
       </Provider>
     </div>
   );

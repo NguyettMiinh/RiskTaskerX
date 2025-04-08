@@ -1,0 +1,43 @@
+import LayoutDefault from "@/layout/Layout";
+import ForgotPasswordForm from "@/pages/auth/ForgotPage";
+import LoginPage from "@/pages/auth/LoginPage";
+import OtpPage from "@/pages/auth/OtpPage";
+import ResetPage from "@/pages/auth/ResetPage";
+import CustomerList from "@/pages/dashboard/CustomerList";
+import DashboardPage from "@/pages/dashboard/DashboardPage";
+import DetailCustomer from "@/pages/dashboard/DetailCustomer";
+
+
+
+
+
+const routes = [
+    {
+        path: "/login",
+        element: <LoginPage />,
+    },
+    {
+        path: "/forgot",
+        element: <ForgotPasswordForm />,
+    },
+    {
+        path: "/otp",
+        element: <OtpPage/>,
+    },
+    {
+        path: "/reset",
+        element: <ResetPage />,
+    },
+    {
+        path: "/layout",
+        element: <LayoutDefault />,
+        children: [
+          { path: 'dashboard', element: <DashboardPage /> },
+          { path: 'customer', element: <CustomerList /> },
+          {path: 'detail', element: <DetailCustomer />}
+        ]
+    }
+      
+]
+
+export default routes;

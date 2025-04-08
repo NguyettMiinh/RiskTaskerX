@@ -6,7 +6,7 @@ const loginApi = async (email, password) => {
 }
 
 const otpApi = async (email) => {
-    return axios.get("/otp/email/send",
+    return axios.get("/admin/otp/email/send",
       { params: { to: email } });
 };
 
@@ -15,7 +15,7 @@ const verifyOtpApi = async (email,otp) => {
     email: email,
     otp: otp,
   };
-  return axios.post("/otp/email/verify",{...loginRequest});
+  return axios.post("/admin/otp/email/verify",{...loginRequest});
 }
 
 const resetPassWordApi = async (email, newPassword, reNewPassword) => {
@@ -24,7 +24,7 @@ const resetPassWordApi = async (email, newPassword, reNewPassword) => {
     newPassword: newPassword,
     reNewPassword: reNewPassword,
   };
-    return axios.put("/otp/email/forgot-password", {...resetRequest});
+    return axios.put("/admin/otp/email/forgot-password", {...resetRequest});
 }
 
 const getUserProfile = async () => { 
