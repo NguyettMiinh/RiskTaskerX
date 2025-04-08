@@ -17,21 +17,36 @@ import {
 import { useNavigate } from "react-router";
 
 const { Sider } = Layout;
-
+function getItem(label, key, icon, children, onClick) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    onClick,
+  };
+}
 const Sidebar = ({ collapsed, setCollapsed }) => {
   const navigate = useNavigate();
 
   // Menu items
   const items = [
-    { key: "1", icon: <BarChartOutlined />, label: "Dashboard", onClick: () => navigate("/layout/dashboard") },
-    { key: "2", icon: <SafetyOutlined />, label: "User Roles & Permissions" },
-    { key: "3", icon: <UsergroupAddOutlined />, label: "Customer Management", onClick: () => navigate("/layout/customer") },
-    { key: "4", icon: <CarOutlined />, label: "Car Management" },
-    { key: "5", icon: <ToolOutlined />, label: "Spare Parts Management" },
-    { key: "6", icon: <NotificationOutlined />, label: "Marketing Campaign Management" },
-    { key: "7", icon: <ShoppingCartOutlined />, label: "Order Management" },
-    { key: "8", icon: <ApartmentOutlined />, label: "Branch Management" },
-    { key: "9", icon: <MessageOutlined />, label: "Notification Management" },
+    getItem("Dashboard", "1", <BarChartOutlined />, null, () =>
+      navigate("/layout/dashboard")
+    ),
+    getItem("User Roles & Permissions", "ad", <SafetyOutlined />, [
+      getItem("Admin Management", "2"),
+      getItem("Role Management", "3"),
+    ]),
+    getItem("Customer Management", "4", <UsergroupAddOutlined />, null, () =>
+      navigate("/layout/customer")
+    ),
+    getItem("Car Management", "5", <CarOutlined />),
+    getItem("Spare Parts Management", "6", <ToolOutlined />),
+    getItem("Marketing Campaign Management", "7", <NotificationOutlined />),
+    getItem("Order Management", "8", <ShoppingCartOutlined />),
+    getItem("Branch Management", "9", <ApartmentOutlined />),
+    getItem("Notification Management", "10", <MessageOutlined />),
   ];
 
   return (
