@@ -36,16 +36,13 @@ const CustomerList = () => {
 
   const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
     try {
-      const response =
-        searchValue || filterCustomer?.length > 0 || status?.length > 0
-          ? await segCustomer({
-              searchKey: searchValue,
-              tier: filterCustomer,
-              isActive: status,
-              page: page,
-              size: pageSize,
-            })
-          : await segCustomer({ page: page, size: pageSize });
+      const response = await segCustomer({
+        searchKey: searchValue,
+        tier: filterCustomer,
+        isActive: status,
+        page: page,
+        size: pageSize,
+      });
       console.log(response);
       if (response && response.results) {
         const truncatedData = response.results.content.map((item) => ({
@@ -90,7 +87,7 @@ const CustomerList = () => {
     {
       title: "Tier",
       dataIndex: "tier",
-      align : "center",
+      align: "center",
       render: (tier) => {
         let colorB = "#EDF1F2";
         let colorF = "#8696A0";
@@ -128,7 +125,7 @@ const CustomerList = () => {
     {
       title: "Actions",
       dataIndex: "actions",
-      align : "center",
+      align: "center",
       render: (_, record) => (
         <div
           style={{
