@@ -6,6 +6,8 @@ import { Table, Button } from "antd";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
+import { formatDate } from "@/utils/formatDate";
+import { formatMoney } from "@/utils/formatMoney";
 
 const PurchaseHis = () => {
   const [purchase, setPurchase] = useState();
@@ -13,8 +15,15 @@ const PurchaseHis = () => {
 
   useEffect(() => {
     const fetchPurchase = async () => {
-      const result = await getPurchase(id);
-      setPurchase(result.data);
+      const response = await getPurchase(id);
+      const newResult = response.data;
+      console.log(newResult);
+      const result = newResult.map((item) => ({
+              ...item,
+              purchaseDate: formatDate(item.purchaseDate),
+              price: formatMoney(item.price),
+            }));
+      setPurchase(result);
     };
     fetchPurchase();
   }, []);

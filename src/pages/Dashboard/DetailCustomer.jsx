@@ -4,6 +4,7 @@ import { Tabs } from "antd";
 import "@assets/styles/customTabs.css";
 import PurchaseHis from "./purchaseHis";
 import Warranty from "./WarrantyHis";
+import { Link } from "react-router";
 const DetailCustomer = () => {
   
   const items = [
@@ -38,9 +39,9 @@ const DetailCustomer = () => {
         }}>
           <div style={{paddingLeft: "10px", marginBottom: "20px" }}>
             <div>
-              Home / <span>Customer Management / </span>
+              Home / <span><Link to ="/layout/customer">Customer Management </Link>/ </span>
               <span>
-                <a href="#" style={{ textDecoration: "underline" }}>
+                <a href="/layout/detail" style={{ textDecoration: "underline" }}>
                   Customer Details
                 </a>
               </span>

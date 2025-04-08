@@ -14,13 +14,14 @@ import {
   Typography,
   DatePicker,
 } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
 import { formatDate } from "@/utils/formatDate";
 import { formatMoney } from "@/utils/formatMoney";
 import { formatCenter } from "@/utils/formatCenter";
+import { toast } from "react-toastify";
 
 const Warranty = () => {
   const [warranty, setWarranty] = useState();
@@ -94,6 +95,7 @@ const Warranty = () => {
           serviceCost: formatMoney(warrantyData.current.cost),
         },
       ]);
+      toast.success("New information added successfully!");
       Modal.destroyAll();
     } catch (error) {
       console.error("Error adding warranty:", error);
@@ -197,7 +199,7 @@ const Warranty = () => {
         }}
       >
         <Button
-          icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
+          icon={<PlusOutlined style={{ color: "#6055F2" }} />}
           style={{ height: "40px", borderColor: "#C9C6ED", marginRight: "5px" }}
           onClick={() => addHandle(id)}
         >

@@ -69,13 +69,13 @@ const PersonalInfor = () => {
       >
         {/* Image & Basic Info */}
         <Row gutter={[16, 16]} style={{ marginBottom: "30px" }}>
-          <Col span={12}>
+          <Col span={8}>
             <img
               src={avt}
-              style={{ width: 105, height: 105, borderRadius: "50%" }}
+              style={{ width: 100, height: 100, borderRadius: "50%" }}
             />
           </Col>
-          <Col span={12} style={{ display: "flex" }}>
+          <Col span={16} style={{ display: "flex" }}>
             <Row
               style={{
                 color: "#5A607F",

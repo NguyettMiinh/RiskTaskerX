@@ -343,7 +343,7 @@ const CustomerList = () => {
           onChange={(page) => {
             console.log("Pagination changed to:", page);
             setCurrentPage(page);
-            fetchCustomers(page, search);
+            fetchCustomers(page, search, filterCustomer, status);
           }}
           style={{
             display: "flex",
