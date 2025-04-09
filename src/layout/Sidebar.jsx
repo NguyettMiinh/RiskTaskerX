@@ -35,7 +35,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       navigate("/layout/dashboard")
     ),
     getItem("User Roles & Permissions", "ad", <SafetyOutlined />, [
-      getItem("Admin Management", "2"),
+      getItem("Admin Management", "2", null,null, () => navigate("/layout/admin")),
       getItem("Role Management", "3"),
     ]),
     getItem("Customer Management", "4", <UsergroupAddOutlined />, null, () =>

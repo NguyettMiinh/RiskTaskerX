@@ -1,0 +1,57 @@
+.customize-select-role.ant-select-show-arrow {
+  min-width: 100px !important;
+}
+
+.admin-list {
+  display: flex;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 10px;
+}
+
+.admin-list > .admin-item {
+  min-width: 100%;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+.toolbar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.search-panel {
+  height: 40px;
+  border-radius: 6px 0 0 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.btn-search {
+  height: 40px;
+  width: 56px;
+  background-color: #6055f2;
+  color: #fff;
+  border-radius: 0 6px 6px 0;
+  border: none;
+  margin-left: -10px;
+}
+
+.table-admin-list {
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  width: 100%;
+}
