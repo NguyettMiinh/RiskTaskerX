@@ -21,15 +21,18 @@ function RoleList() {
   const [search, setSearch] = useState(null);
   const [status, setStatus] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
-
+  const [sortField, setSortField] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
   const pageSize = 10;
   useEffect(() => {
     fetchRoles(currentPage, search, status);
-  }, [currentPage, search, status]);
+  }, [currentPage, search, status, sortField, sortOrder]);
 
   const fetchRoles = async (page, searchValue, status) => {
     try {
       const response = await roleSearchFilter({
+        sortKey: sortField,
+        sortBy: sortOrder,
         searchKey: searchValue,
         isActive: status,
         page: page,
@@ -81,7 +84,7 @@ function RoleList() {
   const columns = [
     { title: "No", dataIndex: "id", align: "center" },
     { title: "Role Name", dataIndex: "name", align: "center" },
-    { title: "Last Update", dataIndex: "updateAt", align: "center" },
+    { title: "Last Update", dataIndex: "updateAt", sorter: true, align: "center" },
     {
       title: "Actions",
       dataIndex: "actions",
@@ -114,6 +117,18 @@ function RoleList() {
     },
   ];
 
+  //sort
+  const handleTable = (pagination, filters, sorter) => {
+    console.log("Sort field:", sorter.field);
+    console.log("Sort order:", sorter.order);
+    if (sorter.order) {
+      setSortField(sorter.field);
+      setSortOrder(sorter.order === "ascend" ? "ASC" : "DESC");
+    } else {
+      setSortField(null);
+      setSortOrder(null);
+    }
+  };
   /// search customer
   const searchHandle = (searchValue) => {
     setSearch(searchValue);
@@ -208,13 +223,7 @@ function RoleList() {
               onChange={statusHandle}
             />
           </div>
-
-          <Button
-            icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
-            style={{ height: "40px", borderColor: "#C9C6ED" }}
-          >
-            <span style={{ color: "#6055F2" }}>Export</span>
-          </Button>
+    
 
           <Button
             icon={<PlusOutlined style={{ color: "white" }} />}
@@ -234,6 +243,7 @@ function RoleList() {
           dataSource={
             roles.length > 0 ? roles.map((c) => ({ ...c, key: c.id })) : []
           }
+          onChange={handleTable}
           pagination={false}
           className="custom-table"
           style={{

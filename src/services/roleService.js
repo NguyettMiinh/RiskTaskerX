@@ -5,7 +5,7 @@ const roleSearchFilter = async ({
   size = 10,
   searchKey = null,
   isActive = null,
-  sortKey = "id",
+  sortKey = "updateAt",
   sortBy = "ASC",
 }) => {
   return axios.post("/roles/search-and-filter", {
