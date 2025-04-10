@@ -3,7 +3,8 @@ import Sidebar from "./Sidebar";
 import HeaderCommon from "./Header";
 import { useState } from "react";
 const {Content} = Layout;
-import {Layout } from "antd";
+import { Layout } from "antd";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 
 const LayoutDefault = () => {
   const [collapsed, setCollapsed] = useState(false);
