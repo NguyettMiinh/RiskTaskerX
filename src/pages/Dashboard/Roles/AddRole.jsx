@@ -20,7 +20,7 @@ function AddRole() {
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isActive, setIsActive] = useState(false);
-  
+  const [isError, setIsError] = useState("");
   const indeterminate = value.length > 0 && value.length < permissions.length;
   const checkAll = permissions.length === value.length;
   const [name, setName] = useState();
@@ -68,23 +68,27 @@ function AddRole() {
     try {
       const response = await addRoles(name, isActive, value);
       toast.success("New role has been added successfully!");
-      console.log(response);
-      setName(""); 
-      setValue([]); 
-      setSelectedCategory(null); 
-      setPermissions([]); 
-      setIsActive(false); 
+      console.log(response.message);
+      setName("");
+      setValue([]);
+      setSelectedCategory(null);
+      setPermissions([]);
+      setIsActive(false);
+      setIsError("");
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      const message = error.response?.data?.message;
+      if (message === "role-already-exists") {
+        setIsError("This role name is already taken.");
+      }
     }
   };
-const toggleActive = async (checked) => {
-  if (checked) {
-    setIsActive(true);
-  }else {
-    setIsActive(false);
-  }
-}
+  const toggleActive = async (checked) => {
+    if (checked) {
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+  };
   return (
     <div
       style={{
@@ -124,8 +128,13 @@ const toggleActive = async (checked) => {
                   placeholder="Enter role name"
                   size="large"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  status={isError ? "error" : ""}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setNameError(""); // clear error khi user gõ lại
+                  }}
                 />
+                {isError && <div style={{ color: "red" }}>{isError}</div>}
               </div>
             </div>
             <div
@@ -196,19 +205,13 @@ const toggleActive = async (checked) => {
                 >
                   <Switch
                     checked={isActive}
-                    onChange={(checked) =>
-                      toggleActive(checked)
-                    }
+                    onChange={(checked) => toggleActive(checked)}
                     style={{
-                      backgroundColor: isActive
-                        ? "#6055F2"
-                        : "#d9d9d9",
+                      backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
                       marginRight: "5px",
                     }}
                   />{" "}
-                  <span>
-                    {isActive ? "Active" : "Inactive"}
-                  </span>
+                  <span>{isActive ? "Active" : "Inactive"}</span>
                 </div>
               </div>
               <div
