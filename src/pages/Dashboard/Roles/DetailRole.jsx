@@ -1,4 +1,5 @@
 import { RightOutlined } from "@ant-design/icons";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 import {
   Button,
   Card,
@@ -59,17 +60,7 @@ function DetailRole() {
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-          <div>
-            Home /{" "}
-            <span>
-              <Link to="#">Role Management </Link>/{" "}
-            </span>
-            <span>
-              <a href="/layout/detail" style={{ textDecoration: "underline" }}>
-                Role Detail
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs/>
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
             Role Detail
           </div>

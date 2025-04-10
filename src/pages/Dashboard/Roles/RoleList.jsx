@@ -9,8 +9,10 @@ import {
 } from "@ant-design/icons";
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import { useNavigate } from "react-router";
-import { roleSearchFilter } from "@/services/roleService";
+import { roleSearchFilter, roleActive } from "@/services/roleService";
+import { showConfirmModal } from "@/utils/showConfimModal";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
+import { formatTime } from "@/utils/formatTime";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -33,20 +35,49 @@ function RoleList() {
         page: page,
         size: pageSize,
       });
-      console.log("A", response);
-      setRoles(response.data.results.content);
-      setOriginalCustomers(response.data.results.content);
+      const results = response.data.results.content;
+      const newResult = results.map((item) => ({
+        ...item,
+        updateAt: formatTime(item.updateAt),
+      }));
+
+      setRoles(newResult);
+      setOriginalCustomers(newResult);
       setTotalCustomers(response.data.results.totalElements || 0);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
-    const viewDetails = () => {
-      console.log("Hello");
-      setTimeout(() => {
-        navigate("/layout/role-list/role-detail");
-      }, 100);
-    };
+  const viewDetails = () => {
+    console.log("Hello");
+    setTimeout(() => {
+      navigate("/layout/role-list/role-detail");
+    }, 100);
+  };
+  const updateRoleStatus = (id, isActive) => {
+    setRoles((prevRoles) =>
+      prevRoles.map((role) => (role.id === id ? { ...role, isActive } : role))
+    );
+  };
+  const handleApiUpdate = async (id, isActive, setCustomers) => {
+    try {
+      const response = await roleActive(id, isActive);
+      if (!response) {
+        updateRoleStatus(id, !isActive, setCustomers);
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      updateRoleStatus(id, !isActive, setCustomers);
+    }
+  };
+  // put isActive
+  const toggleActive = (id, isActive, setRoles) => {
+    showConfirmModal(isActive, async () => {
+      updateRoleStatus(id, isActive, setRoles);
+      await handleApiUpdate(id, isActive, setRoles);
+    });
+  };
+
   const columns = [
     { title: "No", dataIndex: "id", align: "center" },
     { title: "Role Name", dataIndex: "name", align: "center" },
@@ -115,7 +146,7 @@ function RoleList() {
         }}
       >
         <div style={{ marginBottom: "20px" }}>
-          <Breadcrumbs />
+         <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold" }}> Role List</div>
         </div>
 
@@ -198,22 +229,20 @@ function RoleList() {
           </Button>
         </div>
 
-       <Table
-            columns={columns}
-            dataSource={
-            roles.length > 0
-                     ? roles.map((c) => ({ ...c, key: c.id }))
-                     : []
-              }
-            pagination={false}
-            className="custom-table"
-            style={{
-                   wordWrap: "break-word",
-                   whiteSpace: "normal",
-                   overflowWrap: "break-word",
-                   wordBreak: "break-word",
-                 }}
-            />
+        <Table
+          columns={columns}
+          dataSource={
+            roles.length > 0 ? roles.map((c) => ({ ...c, key: c.id })) : []
+          }
+          pagination={false}
+          className="custom-table"
+          style={{
+            wordWrap: "break-word",
+            whiteSpace: "normal",
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
+          }}
+        />
 
         <Pagination
           current={currentPage}

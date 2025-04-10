@@ -21,6 +21,9 @@ const roleSearchFilter = async ({
 
 };
 
+const roleActive = async (id, isActive) => {
+  return axios.put("/roles/status", { id, isActive });
+};
 export {
-    roleSearchFilter
+    roleSearchFilter, roleActive
 };

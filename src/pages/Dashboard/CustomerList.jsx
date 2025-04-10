@@ -19,6 +19,7 @@ import {
 import "@assets/styles/list.css";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
@@ -235,14 +236,7 @@ const CustomerList = () => {
         }}
       >
         <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontSize: "21px", paddingBottom: "8px" }}>
-            Home /{" "}
-            <span>
-              <a href="#" style={{ textDecoration: "underline" }}>
-                Customer Management
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold" }}>Customer List</div>
         </div>
 

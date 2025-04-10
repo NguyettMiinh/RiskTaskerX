@@ -36,19 +36,13 @@ const routes = [
         breadcrumb: "Home",
         children: [
           { path: 'dashboard', element: <DashboardPage /> , breadcrumb: "Dashboard"},
-          { path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer"},
-          {path: 'detail', element: <DetailCustomer /> , breadcrumb: "Detail"},
+          { path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer Management"},
+          {path: 'detail', element: <DetailCustomer /> , breadcrumb: "Customer Details"},
           {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Acount List"},
           {path: 'admin/detail/:id', element: <AdminManagementList />, breadcrumb: "Detail"},
-          {
-            path: 'role-list',
-            element: <RoleList />,
-            breadcrumb: "Role Management",
-            children: [
-              { path: 'add-role', element: <AddRole />, breadcrumb: "Add New Role" },
-              { path: 'role-detail', element: <DetailRole />, breadcrumb: "Role Detail" }
-            ]
-          }
+          {path: 'role-list', element: <RoleList />, breadcrumb: "Role Management"},
+          {path: 'role-list/add-role', element: <AddRole />, breadcrumb: "Add New Role"},
+          {path: 'role-list/role-detail', element: <DetailRole/>, breadcrumb: "Role Detail"}
 
         ]
     }

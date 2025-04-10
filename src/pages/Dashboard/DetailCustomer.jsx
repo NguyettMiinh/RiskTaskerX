@@ -1,10 +1,10 @@
-import React from "react";
 import PersonalInfor from "./PersonalInfor";
 import { Tabs } from "antd";
 import "@assets/styles/customTabs.css";
 import PurchaseHis from "./purchaseHis";
 import Warranty from "./WarrantyHis";
 import { Link } from "react-router";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 const DetailCustomer = () => {
   
   const items = [
@@ -38,14 +38,7 @@ const DetailCustomer = () => {
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
         }}>
           <div style={{paddingLeft: "10px", marginBottom: "20px" }}>
-            <div>
-              Home / <span><Link to ="/layout/customer">Customer Management </Link>/ </span>
-              <span>
-                <a href="/layout/detail" style={{ textDecoration: "underline" }}>
-                  Customer Details
-                </a>
-              </span>
-            </div>
+           <Breadcrumbs />
           </div>
 
           <div
