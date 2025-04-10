@@ -37,7 +37,7 @@ const routes = [
         children: [
           { path: 'dashboard', element: <DashboardPage /> , breadcrumb: "Dashboard"},
           { path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer Management"},
-          {path: 'detail', element: <DetailCustomer /> , breadcrumb: "Customer Details"},
+          {path: 'customer/detail/:id', element: <DetailCustomer /> , breadcrumb: "Customer Details"},
           {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Acount List"},
           {path: 'admin/detail/:id', element: <AdminManagementList />, breadcrumb: "Detail"},
           {path: 'role-list', element: <RoleList />, breadcrumb: "Role Management"},

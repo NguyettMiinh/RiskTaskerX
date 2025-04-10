@@ -18,12 +18,17 @@ const roleSearchFilter = async ({
     size,
     sortBy,
   });
-
 };
 
 const roleActive = async (id, isActive) => {
   return axios.put("/roles/status", { id, isActive });
 };
-export {
-    roleSearchFilter, roleActive
+
+const getPermissions = async () => {
+  return axios.get("/permissions");
 };
+
+const addRoles = async (name, isActive, permissionId) => {
+  return axios.post("/roles", {name, isActive, permissionId});
+}
+export { roleSearchFilter, roleActive, getPermissions , addRoles};

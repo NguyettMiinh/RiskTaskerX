@@ -78,7 +78,7 @@ const CustomerList = () => {
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
-      navigate("/layout/detail");
+      navigate(`/layout/customer/detail/${id}`);
     }, 100);
   };
 
