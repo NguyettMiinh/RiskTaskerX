@@ -56,6 +56,21 @@ const WARRANTY_LIST = [
   { title: "Service Cost", dataIndex: "serviceCost" },
   
 ];
+const DEPARTMENT_LIST = [
+  { label: "Customer", value: "customer" },
+  { label: "Operations", value: "operations" },
+  { label: "Sales", value: "sales" },
+  { label: "IT", value: "it" },
+];
+
+const ROLE_LIST = [
+  { label: "Customer Manager", value: "customerManager" },
+  { label: "Operations Manager", value: "operationsManager" },
+  { label: "Sales Manager", value: "salesManager" },
+  { label: "System Admin", value: "systemAdmin" },
+];
+
+
 export default {
   MODEL_OPTIONS,
   TYPE_OPTIONS,
@@ -64,5 +79,7 @@ export default {
   CENTER_OPTIONS,
   CUSTOMER_LIST,
   PURCHASE_LIST,
-  WARRANTY_LIST
+  WARRANTY_LIST,
+  DEPARTMENT_LIST,
+  ROLE_LIST
 };
