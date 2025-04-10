@@ -300,16 +300,16 @@ const CustomerList = () => {
               onChange={filterHandle}
               allLabel="All Tiers"
               style={{
-                width: "135px"
-            }}
+                width: "135px",
+              }}
             />
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
               style={{
-                width: "135px"
-            }}
+                width: "135px",
+              }}
             />
           </div>
 

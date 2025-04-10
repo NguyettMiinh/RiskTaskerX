@@ -16,7 +16,7 @@ function RoleList() {
   const [originalCustomers, setOriginalCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [search, setSearch] = useState(null);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
 
   const pageSize = 10;
@@ -40,6 +40,12 @@ function RoleList() {
       console.error("Error fetching customers:", error);
     }
   };
+    const viewDetails = () => {
+      console.log("Hello");
+      setTimeout(() => {
+        navigate("/layout/role-detail");
+      }, 100);
+    };
   const columns = [
     { title: "No", dataIndex: "id", align: "center" },
     { title: "Role Name", dataIndex: "name", align: "center" },
@@ -69,7 +75,7 @@ function RoleList() {
             icon={
               <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
             }
-            onClick={() => viewDetails(record.id)}
+            onClick={() => viewDetails()}
           />
         </div>
       ),
