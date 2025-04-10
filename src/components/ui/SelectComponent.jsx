@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 import { Checkbox, Select, Button} from "antd";
 import "@assets/styles/filter.css";
-const SelectComponent = ({options, allLabel, onChange}) => {
+const SelectComponent = ({options, allLabel, onChange, style}) => {
   // tra ve mang cac option value
   const [value, setValue] = useState(options.map(option => option.value));
   const indeterminate = value.length > 0 && value.length < options.length;
@@ -73,8 +73,7 @@ const SelectComponent = ({options, allLabel, onChange}) => {
     <div>
       <Select
         mode="multiple"
-        style={{    
-          width: "135px"}}
+        style={style}
         size="large"
         value={value.length === options.length ? [allLabel] : value}
         options={options}

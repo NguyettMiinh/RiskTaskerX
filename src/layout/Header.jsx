@@ -1,23 +1,15 @@
-import React from 'react';
+import React from "react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { getUserProfile } from "@/services/userService";
 import "@assets/styles/dashboard.css";
+import { Layout, Row, Col, Avatar, Button, Dropdown, Modal } from "antd";
 import {
-Layout,
-Row,
-Col,
-Avatar,
-Button,
-Dropdown,
-Modal,
-} from "antd";
-import {
-CaretDownFilled,
-UserOutlined,
-LockOutlined,
-LogoutOutlined,
-ExclamationCircleFilled,
+  CaretDownFilled,
+  UserOutlined,
+  LockOutlined,
+  LogoutOutlined,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 const { Header } = Layout;
 const { confirm } = Modal;
@@ -27,15 +19,18 @@ const HeaderCommon = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await getUserProfile(); 
-        setUserProfile(response.data); 
+        const response = await getUserProfile();
+        setUserProfile(response.data);
         console.log("User profile:", response.data);
       } catch (error) {
-        console.error("Error fetching user profile:", error.response?.data || error.message);
+        console.error(
+          "Error fetching user profile:",
+          error.response?.data || error.message
+        );
       }
     };
 
-    fetchUserProfile(); 
+    fetchUserProfile();
   }, []);
   const showConfirm = () => {
     confirm({
@@ -44,7 +39,7 @@ const HeaderCommon = () => {
       okText: "Confirm",
       cancelText: "Cancel",
       onOk() {
-        // localStorage.removeItem("authToken");
+        localStorage.removeItem("authToken");
         navigate("/login");
       },
     });
@@ -71,35 +66,50 @@ const HeaderCommon = () => {
     <>
       <Header className="header-layout">
         <Row align="middle" justify="space-between" gutter={[12, 12]}>
-            <Col>
-            <div style={{
+          <Col>
+            <div
+              style={{
                 color: "#6055F2",
                 fontFamily: "'Russo One', sans-serif",
                 fontSize: 30,
-              }}>RISTASKERX</div>
-
-            </Col>
-            <Col style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <Avatar size="default" icon={<UserOutlined />} />
-              <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-                <span style={{ fontWeight: "bold" }}>{userProfile?.results?.email || "Loading..."}</span>
-                <span style={{ fontSize: "12px", color: "gray", paddingTop: "5px" }}>Admin</span>
-              </div>
-              <Dropdown menu={{ items: itemsUser }} placement="bottom">
-                <Button
-                  icon={<CaretDownFilled />}
-                  style={{
-                    outline: "none",
-                    background: "transparent",
-                    border: "none",
-                  }}
-                />
-              </Dropdown>
-            </Col>
-          </Row>
-        </Header>
+              }}
+            >
+              RISTASKERX
+            </div>
+          </Col>
+          <Col style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Avatar size="default" icon={<UserOutlined />} />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                lineHeight: 1,
+              }}
+            >
+              <span style={{ fontWeight: "bold" }}>
+                {userProfile?.results?.email || "Loading..."}
+              </span>
+              <span
+                style={{ fontSize: "12px", color: "gray", paddingTop: "5px" }}
+              >
+                Admin
+              </span>
+            </div>
+            <Dropdown menu={{ items: itemsUser }} placement="bottom">
+              <Button
+                icon={<CaretDownFilled />}
+                style={{
+                  outline: "none",
+                  background: "transparent",
+                  border: "none",
+                }}
+              />
+            </Dropdown>
+          </Col>
+        </Row>
+      </Header>
     </>
-  )
-}
+  );
+};
 
 export default HeaderCommon;

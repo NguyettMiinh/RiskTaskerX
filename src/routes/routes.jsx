@@ -6,9 +6,8 @@ import ResetPage from "@/pages/auth/ResetPage";
 import CustomerList from "@/pages/dashboard/CustomerList";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import DetailCustomer from "@/pages/dashboard/DetailCustomer";
-
-
-
+import AddRole from "@/pages/Dashboard/Roles/AddRole";
+import RoleList from "@/pages/Dashboard/Roles/RoleList";
 
 
 const routes = [
@@ -34,7 +33,9 @@ const routes = [
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'customer', element: <CustomerList /> },
-          {path: 'detail', element: <DetailCustomer />}
+          {path: 'detail', element: <DetailCustomer />},
+          {path: 'role-list', element: <RoleList />},
+          {path: 'add-role', element: <AddRole />}
         ]
     }
       
