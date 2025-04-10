@@ -40,9 +40,15 @@ const routes = [
           {path: 'detail', element: <DetailCustomer /> , breadcrumb: "Detail"},
           {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Acount List"},
           {path: 'admin/detail/:id', element: <AdminManagementList />, breadcrumb: "Detail"},
-          {path: 'role-list', element: <RoleList />, breadcrumb: "Role Management"},
-          {path: 'add-role', element: <AddRole />, breadcrumb: "Add New Role"},
-          {path: 'role-detail', element: <DetailRole/>, breadcrumb: "Role Detail"}
+          {
+            path: 'role-list',
+            element: <RoleList />,
+            breadcrumb: "Role Management",
+            children: [
+              { path: 'add-role', element: <AddRole />, breadcrumb: "Add New Role" },
+              { path: 'role-detail', element: <DetailRole />, breadcrumb: "Role Detail" }
+            ]
+          }
 
         ]
     }

@@ -9,8 +9,8 @@ import {
   Row,
   Col,
 } from "antd";
-import React, { useState } from "react";
 import { Link } from "react-router";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 
 const permissionsData = [
   {
@@ -59,17 +59,7 @@ function AddRole() {
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-          <div>
-            Home /{" "}
-            <span>
-              <Link to="#">Role Management </Link>/{" "}
-            </span>
-            <span>
-              <a href="/layout/detail" style={{ textDecoration: "underline" }}>
-                Add New Role
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
             Add New Role
           </div>

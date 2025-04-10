@@ -10,6 +10,7 @@ import {
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import { useNavigate } from "react-router";
 import { roleSearchFilter } from "@/services/roleService";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -43,7 +44,7 @@ function RoleList() {
     const viewDetails = () => {
       console.log("Hello");
       setTimeout(() => {
-        navigate("/layout/role-detail");
+        navigate("/layout/role-list/role-detail");
       }, 100);
     };
   const columns = [
@@ -93,7 +94,7 @@ function RoleList() {
   };
   const navigate = useNavigate();
   function handleRole() {
-    navigate("/layout/add-role");
+    navigate("/layout/role-list/add-role");
   }
   return (
     <div
@@ -114,14 +115,7 @@ function RoleList() {
         }}
       >
         <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontSize: "21px", paddingBottom: "8px" }}>
-            Home /{" "}
-            <span>
-              <a href="#" style={{ textDecoration: "underline" }}>
-                Role Management
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold" }}> Role List</div>
         </div>
 
