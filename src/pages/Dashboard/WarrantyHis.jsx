@@ -35,11 +35,12 @@ const Warranty = () => {
   });
 
   const id = useSelector((state) => state.user.id);
+  const dataSource = warranty?.map((c) => ({ ...c, key: c.id }));
 
   useEffect(() => {
     const fetchWarranty = async () => {
-      const response = await getWarranty(id);
-      const newResult = response.data;
+      const response = await getWarranty({page: 0, customerId:  id});
+      const newResult = response.data.content;
       const result = newResult.map((item) => ({
         ...item,
         serviceCenter: formatCenter(item.serviceCenter),
@@ -47,7 +48,6 @@ const Warranty = () => {
         serviceCost: formatMoney(item.serviceCost),
       }));
       setWarranty(result);
-      console.log("warranty", typeof result.data);
     };
     fetchWarranty();
   }, [id]);
@@ -213,7 +213,7 @@ const Warranty = () => {
           <span style={{ color: "#6055F2" }}>Export</span>
         </Button>
       </div>
-      <Table columns={columns} dataSource={warranty} className="custom-table" />
+      <Table columns={columns} dataSource={dataSource} className="custom-table" />
     </div>
   );
 };

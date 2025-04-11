@@ -19,6 +19,7 @@ import {
 import "@assets/styles/list.css";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
@@ -77,7 +78,7 @@ const CustomerList = () => {
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
-      navigate("/layout/detail");
+      navigate(`/layout/customer/detail/${id}`);
     }, 100);
   };
 
@@ -235,14 +236,7 @@ const CustomerList = () => {
         }}
       >
         <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontSize: "21px", paddingBottom: "8px" }}>
-            Home /{" "}
-            <span>
-              <a href="#" style={{ textDecoration: "underline" }}>
-                Customer Management
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold" }}>Customer List</div>
         </div>
 
@@ -299,11 +293,17 @@ const CustomerList = () => {
               options={constants.TIER_OPTIONS}
               onChange={filterHandle}
               allLabel="All Tiers"
+              style={{
+                width: "135px",
+              }}
             />
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
+              style={{
+                width: "135px",
+              }}
             />
           </div>
 

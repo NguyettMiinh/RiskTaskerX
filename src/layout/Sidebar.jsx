@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children } from "react";
 import "@assets/styles/dashboard.css";
 import { Layout, Menu, Button } from "antd";
 import {
@@ -36,7 +36,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     ),
     getItem("User Roles & Permissions", "ad", <SafetyOutlined />, [
       getItem("Admin Management", "2", null,null, () => navigate("/layout/admin")),
-      getItem("Role Management", "3"),
+      getItem("Role Management", "3",null,null, () => navigate('/layout/role-list')),
     ]),
     getItem("Customer Management", "4", <UsergroupAddOutlined />, null, () =>
       navigate("/layout/customer")

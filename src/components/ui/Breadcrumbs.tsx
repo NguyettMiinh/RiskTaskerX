@@ -1,35 +1,11 @@
 import { Breadcrumb } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBreadcrumbTitle } from "../../utils/getBreadcrumbTitle";
-import React from 'react'
 
-function Breadcrumbs() {
+function Breadcrumbs({ onBeforeNavigate }) {
   const location = useLocation();
   const navigate = useNavigate();
   const breadcrumbItems = getBreadcrumbTitle(location.pathname);
-  const items = [
-    {
-      onClick: () => navigate("/"),
-    },
-    ...breadcrumbItems.map((item, index) => {
-      const isLast = index === breadcrumbItems.length - 1;
-      return {
-        title: (
-          <span
-            style={{
-              fontWeight: isLast ? "bold" : "normal",
-              color: isLast ? "#1890ff" : undefined, // màu xanh highlight
-            }}
-          >
-            {item?.title}
-          </span>
-        ),
-        onClick: () => {
-          if (!isLast) navigate(item?.path ?? '');
-        },
-      };
-    }),
-  ];
 
   return (
     <Breadcrumb
@@ -40,15 +16,22 @@ function Breadcrumbs() {
           title: (
             <span
               style={{
-                fontWeight: isLast ? "bold" : "normal",
-                color: isLast ? "#1677ff" : undefined,
+                fontSize: "20px",
+                color: isLast ? "#1677FF" : undefined,
+                cursor: isLast ? "default" : "pointer",
               }}
             >
               {item?.title}
             </span>
           ),
           onClick: () => {
-            if (!isLast) navigate(item?.path ?? '');
+            if (!isLast) {
+              if (onBeforeNavigate) {
+                onBeforeNavigate(item); 
+              } else {
+                navigate(item?.path ?? "");
+              }
+            }
           },
         };
       })}
@@ -56,4 +39,4 @@ function Breadcrumbs() {
   );
 }
 
-export default Breadcrumbs
+export default Breadcrumbs;
