@@ -36,7 +36,7 @@ instance.interceptors.response.use(
       toast.error("The current password is incorrect. Please try again.");
     }
 
-    // Quan trọng: Phải reject để `catch` ở component hoạt động
+
     return Promise.reject(error);
   }
 );

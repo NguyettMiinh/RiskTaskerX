@@ -11,6 +11,7 @@ import {
   LogoutOutlined,
   ExclamationCircleFilled,
 } from "@ant-design/icons";
+import constants from "@/constants/storageKeys";
 const { Header } = Layout;
 const { confirm } = Modal;
 const HeaderCommon = () => {
@@ -21,7 +22,6 @@ const HeaderCommon = () => {
       try {
         const response = await getUserProfile();
         setUserProfile(response.data);
-        console.log("User profile:", response.data);
       } catch (error) {
         console.error(
           "Error fetching user profile:",
@@ -39,7 +39,7 @@ const HeaderCommon = () => {
       okText: "Confirm",
       cancelText: "Cancel",
       onOk() {
-        localStorage.removeItem("authToken");
+        localStorage.removeItem(constants.AUTHEN_TOKEN_KEY);
         navigate("/login");
       },
     });

@@ -15,10 +15,10 @@ const PersonalInfor = () => {
     const fetchDetail = async () => {
       if (!id) return;
       try {
-        const response = await getWarranty(id);
+        const response = await getWarranty({page: 0, customerId:  id});
         console.log(response);
-        if (response.data && response.data.length > 0) {
-          setDetail(response.data[0]);
+        if (response.data.content && response.data.content.length > 0) {
+          setDetail(response.data.content[0]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);

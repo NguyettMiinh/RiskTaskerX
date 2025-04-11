@@ -8,11 +8,13 @@ import {
   Typography,
   Row,
   Col,
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
 import { getPermissions, addRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 function AddRole() {
   const [categories, setCategories] = useState([]);
@@ -24,6 +26,7 @@ function AddRole() {
   const indeterminate = value.length > 0 && value.length < permissions.length;
   const checkAll = permissions.length === value.length;
   const [name, setName] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
@@ -83,11 +86,27 @@ function AddRole() {
     }
   };
   const toggleActive = async (checked) => {
+    if (isLoading) return;
+    setIsLoading(true);
     if (checked) {
       setIsActive(true);
     } else {
       setIsActive(false);
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  };
+const navigate = useNavigate();
+  const handleBreadcrumbNavigate = (item) => {
+    Modal.confirm({
+      title: "Are you sure you want to save your changes?",
+      okText: "Yes",
+      cancelText: "Cancel",
+      onOk() {
+        navigate(item.path);
+      },
+    });
   };
   return (
     <div
@@ -109,7 +128,7 @@ function AddRole() {
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-          <Breadcrumbs />
+        <Breadcrumbs onBeforeNavigate={handleBreadcrumbNavigate} />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
             Add New Role
           </div>
@@ -210,6 +229,8 @@ function AddRole() {
                       backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
                       marginRight: "5px",
                     }}
+                    loading={isLoading}
+                    disabled={isLoading}
                   />{" "}
                   <span>{isActive ? "Active" : "Inactive"}</span>
                 </div>

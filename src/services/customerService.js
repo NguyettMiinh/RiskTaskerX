@@ -74,11 +74,43 @@ const isActiveApi = async (id, isActive) => {
   return axios.put("/customers/status", { id, isActive });
 };
 
-const getPurchase = async (id) => {
-  return axios.get(`/history/purchase/${id}`);
+
+const getWarranty = async ({
+  sortKey,
+  customerId,
+
+  page,
+  size,
+  sortBy,
+}) => {
+  return axios.post(`/history/warranty`, {
+    sortKey,
+    filters: {
+      customerId,
+    },
+    page,
+    size,
+    sortBy,
+  });
 };
-const getWarranty = async (id) => {
-  return axios.get(`/history/warranty/${id}`);
+
+const getPurchase = async ({
+  sortKey,
+  customerId,
+
+  page,
+  size,
+  sortBy,
+}) => {
+  return axios.post(`/history/purchase`, {
+    sortKey,
+    filters: {
+      customerId,
+    },
+    page,
+    size,
+    sortBy,
+  });
 };
 
 const exportPurchase = async (id) => {

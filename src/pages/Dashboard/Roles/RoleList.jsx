@@ -24,6 +24,8 @@ function RoleList() {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const pageSize = 10;
+  const dataSource = roles.map((c) => ({ ...c, key: c.id }));
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     fetchRoles(currentPage, search, status);
   }, [currentPage, search, status, sortField, sortOrder]);
@@ -52,7 +54,6 @@ function RoleList() {
     }
   };
   const viewDetails = () => {
-    console.log("Hello");
     setTimeout(() => {
       navigate("/layout/role-list/role-detail");
     }, 100);
@@ -78,6 +79,9 @@ function RoleList() {
     showConfirmModal(isActive, async () => {
       updateRoleStatus(id, isActive, setRoles);
       await handleApiUpdate(id, isActive, setRoles);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     });
   };
 
@@ -104,6 +108,7 @@ function RoleList() {
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
             }}
+            disabled={isLoading}
           />
           <Button
             type="link"
@@ -111,6 +116,7 @@ function RoleList() {
               <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails()}
+            
           />
         </div>
       ),
@@ -119,8 +125,6 @@ function RoleList() {
 
   //sort
   const handleTable = (pagination, filters, sorter) => {
-    console.log("Sort field:", sorter.field);
-    console.log("Sort order:", sorter.order);
     if (sorter.order) {
       setSortField(sorter.field);
       setSortOrder(sorter.order === "ascend" ? "ASC" : "DESC");
@@ -240,9 +244,7 @@ function RoleList() {
 
         <Table
           columns={columns}
-          dataSource={
-            roles.length > 0 ? roles.map((c) => ({ ...c, key: c.id })) : []
-          }
+          dataSource={dataSource}
           onChange={handleTable}
           pagination={false}
           className="custom-table"
@@ -259,7 +261,6 @@ function RoleList() {
           total={totalCustomers}
           pageSize={pageSize}
           onChange={(page) => {
-            console.log("Pagination changed to:", page);
             setCurrentPage(page);
             fetchRoles(page, search, status);
           }}

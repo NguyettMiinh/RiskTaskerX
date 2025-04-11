@@ -2,11 +2,11 @@ import { Breadcrumb } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBreadcrumbTitle } from "../../utils/getBreadcrumbTitle";
 
-function Breadcrumbs() {
+function Breadcrumbs({ onBeforeNavigate }) {
   const location = useLocation();
   const navigate = useNavigate();
   const breadcrumbItems = getBreadcrumbTitle(location.pathname);
-  
+
   return (
     <Breadcrumb
       style={{ fontSize: "21px", paddingBottom: "8px" }}
@@ -18,13 +18,20 @@ function Breadcrumbs() {
               style={{
                 fontSize: "20px",
                 color: isLast ? "#1677FF" : undefined,
+                cursor: isLast ? "default" : "pointer",
               }}
             >
               {item?.title}
             </span>
           ),
           onClick: () => {
-            if (!isLast) navigate(item?.path ?? '');
+            if (!isLast) {
+              if (onBeforeNavigate) {
+                onBeforeNavigate(item); 
+              } else {
+                navigate(item?.path ?? "");
+              }
+            }
           },
         };
       })}
@@ -32,4 +39,4 @@ function Breadcrumbs() {
   );
 }
 
-export default Breadcrumbs
+export default Breadcrumbs;
