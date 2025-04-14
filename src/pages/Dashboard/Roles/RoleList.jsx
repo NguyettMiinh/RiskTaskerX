@@ -15,6 +15,7 @@ import Breadcrumbs from "@components/ui/Breadcrumbs";
 import { formatTime } from "@/utils/formatTime";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
+import '../../../index.css';
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -227,9 +228,7 @@ function RoleList() {
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
-              style={{
-                width: "135px",
-              }}
+              className="w-[135px]"
               onChange={statusHandle}
             />
           </div>
