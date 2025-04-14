@@ -19,6 +19,7 @@ import {
 import "@assets/styles/list.css";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
@@ -43,7 +44,6 @@ const CustomerList = () => {
         page: page,
         size: pageSize,
       });
-      console.log(response);
       if (response && response.results) {
         const truncatedData = response.results.content.map((item) => ({
           ...item,
@@ -77,7 +77,7 @@ const CustomerList = () => {
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
-      navigate("/layout/detail");
+      navigate(`/layout/customer/detail/${id}`);
     }, 100);
   };
 
@@ -215,7 +215,7 @@ const CustomerList = () => {
       console.error("Error exporting file:", error);
     }
   };
-
+  const dataSource =  customer?.map((item) => ({ ...item, key: item.id }));
   return (
     <div
       style={{
@@ -235,14 +235,7 @@ const CustomerList = () => {
         }}
       >
         <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontSize: "21px", paddingBottom: "8px" }}>
-            Home /{" "}
-            <span>
-              <a href="#" style={{ textDecoration: "underline" }}>
-                Customer Management
-              </a>
-            </span>
-          </div>
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold" }}>Customer List</div>
         </div>
 
@@ -299,11 +292,17 @@ const CustomerList = () => {
               options={constants.TIER_OPTIONS}
               onChange={filterHandle}
               allLabel="All Tiers"
+              style={{
+                width: "135px",
+              }}
             />
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
+              style={{
+                width: "135px",
+              }}
             />
           </div>
 
@@ -315,14 +314,10 @@ const CustomerList = () => {
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
-
+       
         <Table
           columns={columns}
-          dataSource={
-            customer.length > 0
-              ? customer.map((c) => ({ ...c, key: c.id }))
-              : []
-          }
+          dataSource={ dataSource}
           pagination={false}
           className="custom-table"
           style={{
@@ -338,7 +333,6 @@ const CustomerList = () => {
           total={totalCustomers}
           pageSize={pageSize}
           onChange={(page) => {
-            console.log("Pagination changed to:", page);
             setCurrentPage(page);
             fetchCustomers(page, search, filterCustomer, status);
           }}

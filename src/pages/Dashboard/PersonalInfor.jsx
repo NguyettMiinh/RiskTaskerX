@@ -10,20 +10,20 @@ import { formatDate } from "@/utils/formatDate";
 const PersonalInfor = () => {
   const [detail, setDetail] = useState(null);
   const id = useSelector((state) => state.user.id);
-  console.log("id", id);
-  useEffect(() => {
-    const fetchDetail = async () => {
-      if (!id) return;
-      try {
-        const response = await getWarranty(id);
-        console.log(response);
-        if (response.data && response.data.length > 0) {
-          setDetail(response.data[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  
+  const fetchDetail = async () => {
+    if (!id) return;
+    try {
+      const response = await getWarranty({page: 0, customerId:  id});
+      if (response.data.content && response.data.content.length > 0) {
+        setDetail(response.data.content[0]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchDetail();
   }, []);
 
