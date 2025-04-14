@@ -44,7 +44,6 @@ const CustomerList = () => {
         page: page,
         size: pageSize,
       });
-      console.log(response);
       if (response && response.results) {
         const truncatedData = response.results.content.map((item) => ({
           ...item,
@@ -216,7 +215,7 @@ const CustomerList = () => {
       console.error("Error exporting file:", error);
     }
   };
-
+  const dataSource =  customer?.map((item) => ({ ...item, key: item.id }));
   return (
     <div
       style={{
@@ -315,14 +314,10 @@ const CustomerList = () => {
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
-
+       
         <Table
           columns={columns}
-          dataSource={
-            customer.length > 0
-              ? customer.map((c) => ({ ...c, key: c.id }))
-              : []
-          }
+          dataSource={ dataSource}
           pagination={false}
           className="custom-table"
           style={{
@@ -338,7 +333,6 @@ const CustomerList = () => {
           total={totalCustomers}
           pageSize={pageSize}
           onChange={(page) => {
-            console.log("Pagination changed to:", page);
             setCurrentPage(page);
             fetchCustomers(page, search, filterCustomer, status);
           }}

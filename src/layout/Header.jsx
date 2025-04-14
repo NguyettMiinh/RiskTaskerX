@@ -17,19 +17,20 @@ const { confirm } = Modal;
 const HeaderCommon = () => {
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await getUserProfile();
-        setUserProfile(response.data);
-      } catch (error) {
-        console.error(
-          "Error fetching user profile:",
-          error.response?.data || error.message
-        );
-      }
-    };
+  
 
+  const fetchUserProfile = async () => {
+    try {
+      const response = await getUserProfile();
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error(
+        "Error fetching user profile:",
+        error.response?.data || error.message
+      );
+    }
+  };
+  useEffect(() => {
     fetchUserProfile();
   }, []);
   const showConfirm = () => {
@@ -39,7 +40,7 @@ const HeaderCommon = () => {
       okText: "Confirm",
       cancelText: "Cancel",
       onOk() {
-        localStorage.removeItem(constants.AUTHEN_TOKEN_KEY);
+        localStorage.removeItem(constants.AUTH_TOKEN_KEY);
         navigate("/login");
       },
     });
@@ -53,7 +54,7 @@ const HeaderCommon = () => {
     {
       key: "2",
       icon: <LockOutlined />,
-      label: <Link to="/change-password">Change Password</Link>,
+      label: <Link to="/layout/change-password">Change Password</Link>,
     },
     {
       key: "3",

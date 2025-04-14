@@ -16,28 +16,27 @@ const PurchaseHis = () => {
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const id = useSelector((state) => state.user.id);
 
+
+  const fetchPurchase = async () => {
+    const response = await getPurchase({ page: 0, customerId: id });
+    const newResult = response.data.content;
+
+    const result = newResult.map((item) => ({
+      ...item,
+      key: item.id,
+      carModel: item.car?.model || "",
+      vehicleIdentificationNumber: item.vehicleIdentificationNumber,
+      price: formatMoney(item.car?.price),
+      serviceCenter: formatCenter(item.serviceCenter),
+      paymentMethod: item.payment?.paymentMethod,
+      purchaseDate: formatDate(item.purchaseDate),
+      expiredDate: formatDate(item.warranty.expiredDate),
+      startedDate: formatDate(item.warranty.startedDate),
+    }));
+
+    setPurchase(result);
+  };
   useEffect(() => {
-    const fetchPurchase = async () => {
-      const response = await getPurchase({ page: 0, customerId: id });
-      const newResult = response.data.content;
-
-      const result = newResult.map((item) => ({
-        ...item,
-        key: item.id,
-        carModel: item.car?.model || "",
-        vehicleIdentificationNumber: item.vehicleIdentificationNumber,
-        price: formatMoney(item.car?.price),
-        serviceCenter: formatCenter(item.serviceCenter),
-        paymentMethod: item.payment?.paymentMethod,
-        purchaseDate: formatDate(item.purchaseDate),
-        expiredDate: formatDate(item.warranty.expiredDate),
-        startedDate: formatDate(item.warranty.startedDate),
-      }));
-      console.log("a",result);
-
-      setPurchase(result);
-    };
-
     fetchPurchase();
   }, [id]);
 
@@ -71,7 +70,7 @@ const PurchaseHis = () => {
       ),
     },
   ];
-  console.log("customer", selectedPurchase);
+ 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>

@@ -13,6 +13,8 @@ import { roleSearchFilter, roleActive } from "@/services/roleService";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import { formatTime } from "@/utils/formatTime";
+import { useDispatch } from "react-redux";
+import { setId } from "@/redux/userSlice";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -24,8 +26,9 @@ function RoleList() {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const pageSize = 10;
-  const dataSource = roles.map((c) => ({ ...c, key: c.id }));
+  const dataSource = roles?.map((item) => ({ ...item, key: item.id }));
   const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     fetchRoles(currentPage, search, status);
   }, [currentPage, search, status, sortField, sortOrder]);
@@ -53,7 +56,9 @@ function RoleList() {
       console.error("Error fetching customers:", error);
     }
   };
-  const viewDetails = () => {
+  const dispatch = useDispatch();
+  const viewDetails = (id) => {
+     dispatch(setId(id));
     setTimeout(() => {
       navigate("/layout/role-list/role-detail");
     }, 100);
@@ -86,13 +91,14 @@ function RoleList() {
   };
 
   const columns = [
-    { title: "No", dataIndex: "id", align: "center" },
-    { title: "Role Name", dataIndex: "name", align: "center" },
-    { title: "Last Update", dataIndex: "updateAt", sorter: true, align: "center" },
+    { title: "No", dataIndex: "id", width: "400px"},
+    { title: "Role Name", dataIndex: "name", width: "400px"},
+    { title: "Last Update", dataIndex: "updateAt", sorter: true, width: "400px"},
     {
       title: "Actions",
       dataIndex: "actions",
       align: "center",
+      width: "309px",
       render: (_, record) => (
         <div
           style={{
@@ -115,7 +121,7 @@ function RoleList() {
             icon={
               <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
             }
-            onClick={() => viewDetails()}
+            onClick={() => viewDetails(record.id)}
             
           />
         </div>

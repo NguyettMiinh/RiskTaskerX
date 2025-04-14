@@ -31,4 +31,8 @@ const getPermissions = async () => {
 const addRoles = async (name, isActive, permissionId) => {
   return axios.post("/roles", {name, isActive, permissionId});
 }
-export { roleSearchFilter, roleActive, getPermissions , addRoles};
+
+const getRoles = async (id) => {
+  return axios.get(`/roles/${id}`);
+}
+export { roleSearchFilter, roleActive, getPermissions , addRoles, getRoles};

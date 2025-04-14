@@ -10,6 +10,7 @@ import DetailCustomer from "@/pages/dashboard/DetailCustomer";
 import AddRole from "@/pages/Dashboard/Roles/AddRole";
 import DetailRole from "@/pages/Dashboard/Roles/DetailRole";
 import RoleList from "@/pages/Dashboard/Roles/RoleList";
+import ChangePassword from "@/pages/Dashboard/ChangePasswordPage";
 
 
 
@@ -35,8 +36,9 @@ const routes = [
         element: <LayoutDefault />,
         breadcrumb: "Home",
         children: [
-          { path: 'dashboard', element: <DashboardPage /> , breadcrumb: "Dashboard"},
-          { path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer Management"},
+          {path: 'dashboard', element: <DashboardPage /> , breadcrumb: "Dashboard"},
+          {path: 'change-password', element: <ChangePassword />},
+          {path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer Management"},
           {path: 'customer/detail/:id', element: <DetailCustomer /> , breadcrumb: "Customer Details"},
           {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Acount List"},
           {path: 'admin/detail/:id', element: <AdminManagementList />, breadcrumb: "Detail"},

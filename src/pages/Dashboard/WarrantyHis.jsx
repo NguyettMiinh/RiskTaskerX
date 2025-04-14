@@ -35,20 +35,20 @@ const Warranty = () => {
   });
 
   const id = useSelector((state) => state.user.id);
-  const dataSource = warranty?.map((c) => ({ ...c, key: c.id }));
+  const dataSource = warranty?.map((item) => ({ ...item, key: item.id }));
 
+  const fetchWarranty = async () => {
+    const response = await getWarranty({page: 0, customerId:  id});
+    const newResult = response.data.content;
+    const result = newResult.map((item) => ({
+      ...item,
+      serviceCenter: formatCenter(item.serviceCenter),
+      serviceDate: formatDate(item.serviceDate),
+      serviceCost: formatMoney(item.serviceCost),
+    }));
+    setWarranty(result);
+  };
   useEffect(() => {
-    const fetchWarranty = async () => {
-      const response = await getWarranty({page: 0, customerId:  id});
-      const newResult = response.data.content;
-      const result = newResult.map((item) => ({
-        ...item,
-        serviceCenter: formatCenter(item.serviceCenter),
-        serviceDate: formatDate(item.serviceDate),
-        serviceCost: formatMoney(item.serviceCost),
-      }));
-      setWarranty(result);
-    };
     fetchWarranty();
   }, [id]);
 
@@ -70,7 +70,6 @@ const Warranty = () => {
   // format datedate
   function convertToISO(dateString) {
     const date = new Date(dateString);
-    console.log(dateString);
     return date.toISOString();
   }
   const handleAddWarranty = async () => {

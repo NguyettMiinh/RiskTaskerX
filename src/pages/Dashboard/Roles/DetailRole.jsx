@@ -8,59 +8,58 @@ import {
   Typography,
   Row,
   Col,
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
-import { getPermissions } from "@/services/roleService";
+import { getPermissions, addRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { getRoles } from "@/services/roleService";
 
-function DetailRole() {
+function AddRole() {
   const [categories, setCategories] = useState([]);
   const [value, setValue] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const indeterminate = value.length > 0 && value.length < permissions.length;
-  const checkAll = permissions.length === value.length;
-  useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        const response = await getPermissions();
-        // Xử lý dữ liệu response ở đây nếu cần
-        setCategories(response.data.results);
-      } catch (error) {
-        console.error("Failed to fetch permissions:", error);
-      }
-    };
+  const [isLoading, setIsLoading] = useState(false);
+  const [detail, setDetail] = useState([]);
+  const id = useSelector((state) => state.user.id);
 
+
+  const fetchPermissions = async () => {
+    try {
+      const response = await getPermissions();
+      setCategories(response.data.results);
+    } catch (error) {
+      console.error("Failed to fetch permissions:", error);
+    }
+  };
+  useEffect(() => {
     fetchPermissions();
   }, []);
 
-  function handleCheckBox(value, checked) {
-    if (checked) {
-      setValue((prev) => [...prev, value]);
-    } else {
-      setValue((prev) => prev.filter((item) => item !== value));
+  const fetchDetail = async () => {
+    if (!id) return;
+    try {
+      const response = await getRoles(id);
+      setDetail(response.data.results);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-  }
+  };
+    useEffect(() => {
+      fetchDetail();
+    }, []);
+
 
   // Khi chọn category mới:
-const handlePermissions = (category) => {
-  setSelectedCategory(category);
-  setPermissions(category.children || []);
-  setValue([]); // reset checkbox khi chọn danh mục khác
-};
-
-// Check all
-const onCheckAllChange = (e) => {
-  const checked = e.target.checked;
-  if (checked) {
-    setValue(permissions.map((option) => option.id));
-  } else {
-    setValue([]);
-  }
-};
-
-console.log(value);
-
+  const handlePermissions = (category) => {
+    setSelectedCategory(category);
+  };
+  const checkAll =  selectedCategory?.children.map((item) => item.name).every(item => detail?.permissionNames.includes(item));
+ 
   return (
     <div
       style={{
@@ -81,9 +80,9 @@ console.log(value);
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-          <Breadcrumbs />
+        <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
-            Role Detail
+            Add New Role
           </div>
         </div>
 
@@ -96,7 +95,12 @@ console.log(value);
             >
               <div>
                 <Typography.Text strong>Role Name</Typography.Text>
-                <Input placeholder="Enter role name" size="large" />
+                <Input
+                  placeholder="Enter role name"
+                  size="large"
+                  value={detail?.name} 
+                />
+                
               </div>
             </div>
             <div
@@ -165,7 +169,17 @@ console.log(value);
                     paddingTop: "5px",
                   }}
                 >
-                  <Switch /> <span>Active</span>
+                  <Switch
+                    checked={detail?.isActive}
+                    onChange={(checked) => toggleActive(checked)}
+                    style={{
+                      backgroundColor: detail?.isActive ? "#6055F2" : "#d9d9d9",
+                      marginRight: "5px",
+                    }}
+                    loading={isLoading}
+                    disabled={isLoading}
+                  />{" "}
+                  <span>{detail?.isActive ? "Active" : "Inactive"}</span>
                 </div>
               </div>
               <div
@@ -174,33 +188,42 @@ console.log(value);
                 }}
               >
                 <Card
-                  title="Permission"
+                  title= {
+                      <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}>
+                        <div>Permissions</div>
+                        <div>
+                          <Checkbox
+                            checked={checkAll}
+                            className="custom-checkbox"
+                          >
+                            Select All
+                          </Checkbox>
+                        </div>
+                         
+                      </div>
+                    
+                  }
                   styles={{ header: { background: "#EBEAFA" } }}
                   style={{ width: "100%" }}
                 >
                   {selectedCategory?.children?.length > 0 ? (
                     <>
                       {selectedCategory.children.map((child) => (
-                        <div key={child.id}>
+                        <div key={child.id} style={{
+                          paddingBottom: "10px",
+                        }}>
                           <Checkbox
-                            onChange={(e) =>
-                              handleCheckBox(child.id, e.target.checked)
-                            }
-                            checked={value.includes(child.id)}
+                            checked={detail.permissionNames?.includes(child.name)}
                           >
                             {" "}
                             {child.name}
                           </Checkbox>
                         </div>
                       ))}
-                      <Checkbox
-                        indeterminate={indeterminate}
-                        onChange={onCheckAllChange}
-                        checked={checkAll}
-                        className="custom-checkbox"
-                      >
-                        All
-                      </Checkbox>
+                      
                     </>
                   ) : (
                     <div>No permissions available</div>
@@ -208,23 +231,6 @@ console.log(value);
                 </Card>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginTop: "10px",
-                }}
-              >
-                <Button
-                  style={{
-                    marginTop: "10px",
-                    backgroundColor: "#6055F2",
-                    color: "white",
-                  }}
-                >
-                  Add Now
-                </Button>
-              </div>
             </div>
           </Col>
         </Row>
@@ -233,4 +239,4 @@ console.log(value);
   );
 }
 
-export default DetailRole;
+export default AddRole;

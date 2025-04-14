@@ -23,21 +23,21 @@ function AddRole() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [isError, setIsError] = useState("");
-  const indeterminate = value.length > 0 && value.length < permissions.length;
-  const checkAll = permissions.length === value.length;
   const [name, setName] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        const response = await getPermissions();
-        // Xử lý dữ liệu response ở đây nếu cần
-        setCategories(response.data.results);
-      } catch (error) {
-        console.error("Failed to fetch permissions:", error);
-      }
-    };
+  const [nameError, setNameError] = useState("");
 
+
+  const fetchPermissions = async () => {
+    try {
+      const response = await getPermissions();
+      setCategories(response.data.results);
+    } catch (error) {
+      console.error("Failed to fetch permissions:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchPermissions();
   }, []);
 
@@ -49,29 +49,19 @@ function AddRole() {
     }
   }
 
+
   // Khi chọn category mới:
   const handlePermissions = (category) => {
     setSelectedCategory(category);
-    setPermissions(category.children || []);
-    setValue([]); // reset checkbox khi chọn danh mục khác
+    setPermissions(category.children);
   };
 
-  // Check all
-  const onCheckAllChange = (e) => {
-    const checked = e.target.checked;
-    if (checked) {
-      setValue(permissions.map((option) => option.id));
-    } else {
-      setValue([]);
-    }
-  };
+
 
   const handleAdd = async () => {
-    console.log(name, isActive, value);
     try {
       const response = await addRoles(name, isActive, value);
       toast.success("New role has been added successfully!");
-      console.log(response.message);
       setName("");
       setValue([]);
       setSelectedCategory(null);
@@ -97,17 +87,32 @@ function AddRole() {
       setIsLoading(false);
     }, 1000);
   };
-const navigate = useNavigate();
-  const handleBreadcrumbNavigate = (item) => {
-    Modal.confirm({
-      title: "Are you sure you want to save your changes?",
-      okText: "Yes",
-      cancelText: "Cancel",
-      onOk() {
-        navigate(item.path);
-      },
-    });
-  };
+// const navigate = useNavigate();
+//   const handleBreadcrumbNavigate = (item) => {
+//     Modal.confirm({
+//       title: "Are you sure you want to save your changes?",
+//       okText: "Yes",
+//       cancelText: "Cancel",
+//       onOk() {
+//         navigate(item.path);
+//       },
+//     });
+//   };
+/*
+  - kiem tra xem mang chua cac permission duoc chon co chua moi phan tu cua tung categories ko? 
+*/
+
+const checkAll =  selectedCategory?.children.map((item) => item.id).every(item => value.includes(item));
+function handleAll(e) {
+  if (e) {
+    const all = permissions.map((option) => option.id);
+    setValue((prev) => [...prev,...all]);
+  } else {
+    setValue([]);
+  }
+}
+
+
   return (
     <div
       style={{
@@ -128,7 +133,7 @@ const navigate = useNavigate();
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-        <Breadcrumbs onBeforeNavigate={handleBreadcrumbNavigate} />
+        <Breadcrumbs  />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
             Add New Role
           </div>
@@ -150,7 +155,7 @@ const navigate = useNavigate();
                   status={isError ? "error" : ""}
                   onChange={(e) => {
                     setName(e.target.value);
-                    setNameError(""); // clear error khi user gõ lại
+                    setNameError(""); 
                   }}
                 />
                 {isError && <div style={{ color: "red" }}>{isError}</div>}
@@ -241,14 +246,34 @@ const navigate = useNavigate();
                 }}
               >
                 <Card
-                  title="Permission"
+                 title= {
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}>
+                      <div>Permissions</div>
+                      <div>
+                        <Checkbox
+                          checked={checkAll}
+                          onChange={(e) => handleAll(e.target.checked)}
+                          className="custom-checkbox"
+                        >
+                          Select All
+                        </Checkbox>
+                      </div>
+                      
+                    </div>
+                
+                }
                   styles={{ header: { background: "#EBEAFA" } }}
                   style={{ width: "100%" }}
                 >
                   {selectedCategory?.children?.length > 0 ? (
                     <>
                       {selectedCategory.children.map((child) => (
-                        <div key={child.id}>
+                        <div key={child.id} style={{
+                          paddingBottom: "10px",
+                        }}>
                           <Checkbox
                             onChange={(e) =>
                               handleCheckBox(child.id, e.target.checked)
@@ -260,14 +285,6 @@ const navigate = useNavigate();
                           </Checkbox>
                         </div>
                       ))}
-                      <Checkbox
-                        indeterminate={indeterminate}
-                        onChange={onCheckAllChange}
-                        checked={checkAll}
-                        className="custom-checkbox"
-                      >
-                        All
-                      </Checkbox>
                     </>
                   ) : (
                     <div>No permissions available</div>
