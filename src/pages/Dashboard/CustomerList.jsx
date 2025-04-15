@@ -17,6 +17,7 @@ import {
   segCustomer,
 } from "@/services/customerService";
 import "@assets/styles/list.css";
+import "@assets/styles/filter.css";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
@@ -215,7 +216,7 @@ const CustomerList = () => {
       console.error("Error exporting file:", error);
     }
   };
-  const dataSource =  customer?.map((item) => ({ ...item, key: item.id }));
+  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
   return (
     <div
       style={{
@@ -287,22 +288,20 @@ const CustomerList = () => {
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
-
             <SelectComponent
               options={constants.TIER_OPTIONS}
               onChange={filterHandle}
               allLabel="All Tiers"
-              style={{
-                width: "135px",
-              }}
+             
+              
             />
+
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
-              style={{
-                width: "135px",
-              }}
+              
+              
             />
           </div>
 
@@ -314,10 +313,10 @@ const CustomerList = () => {
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
         </div>
-       
+
         <Table
           columns={columns}
-          dataSource={ dataSource}
+          dataSource={dataSource}
           pagination={false}
           className="custom-table"
           style={{

@@ -30,20 +30,16 @@
     background-color: #4d44d6;
     border-color: #4d44d6;
   }
-  :where(.css-dev-only-do-not-override-tjsggz).ant-select-multiple .ant-select-selection-overflow {
-    position: relative;
-    display: flex;
-    flex: auto;
-    flex-wrap: wrap;
-    max-width: 100%; 
-    justify-content: center; 
-    align-items: center;
-    color: #6055F2 ;
-    font-size: 15px;
-    line-height: 1;
-}
 
-:where(.css-dev-only-do-not-override-tjsggz).ant-select-multiple .ant-select-selection-wrap {
+ 
+
+:where(.css-dev-only-do-not-override-1d4w9r2).ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
   align-self: normal;
 
 }
+
+.ant-select-selection-overflow-item {
+  color: #6055F2;
+  
+}
+
