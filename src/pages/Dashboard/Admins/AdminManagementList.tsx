@@ -67,7 +67,7 @@ export default function AdminManagementList() {
   const toggleActive = (id?: number, isActive?: boolean, setAdmin?: Admin) => {
     showConfirmModal(isActive, async () => {
       console.log("show modal");
-    });
+    }, "admins");
   };
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -137,13 +137,12 @@ export default function AdminManagementList() {
   };
 
   /// export file
-  const exportHandle = async (
-    searchValue: string,
-    filterRole: boolean[],
-    filterDepartment?: string[]
-  ) => {
+  const exportHandle = async () => {
     try {
-      const password = downloadFile(admin);
+      const response = await adminService.exportAdmin(payload);
+      console.log(response);
+
+      const password = downloadFile(response);
       showExportModal(password);
     } catch (error) {
       console.error("Error exporting file:", error);
@@ -251,10 +250,10 @@ export default function AdminManagementList() {
               allLabel="All Departments"
             />
             <SelectComponent
-              className="w-full sm:w-30"
+              className="w-full sm:w-[100px]"
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
-              style={{ with: "135px" }}
+              style={{}}
               onChange={filterRoleHandle}
             />
           </div>
@@ -262,15 +261,13 @@ export default function AdminManagementList() {
             <Button
               icon={<DownloadOutlined style={{ color: COLOR.blue }} />}
               style={{ height: "40px", borderColor: "#C9C6ED" }}
-              onClick={() =>
-                exportHandle(search, filterStatus, filterDepartmentAdmin)
-              }
+              onClick={() => exportHandle()}
             >
               <span style={{ color: COLOR.blue }}>Export</span>
             </Button>
             <Button
+              className="h-[40px]"
               style={{
-                height: "40px",
                 background: COLOR.blue,
                 borderColor: "#c9c6ed",
               }}

@@ -62,6 +62,12 @@ export type FieldColumn = {
   sortOrder?: SortOrder;
 };
 
+export interface APIResponseExport{
+  response: string[];
+  fileName: string;
+  password: string;
+}
+
 export const columnAdminFields: FieldColumn[] = [
   { title: "Admin ID", dataIndex: "id", align: "left" },
   { title: "Admin Name", dataIndex: "fullName", align: "left" },
