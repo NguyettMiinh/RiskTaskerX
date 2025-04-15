@@ -9,15 +9,16 @@ export const formatTime = (data) => {
   if (month < 10) {
     month = "0" + month;
   }
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  if (hours < 10) {
+    hours = "0" + hours;
+  }
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
   const dateTimeString =
-    date.getHours() +
-    ":" +
-    date.getMinutes() +
-    " " +
-    day +
-    "-" +
-    month +
-    "-" +
-    date.getFullYear();
+    hours + ":" + minutes + " " + day + "-" + month + "-" + date.getFullYear();
   return dateTimeString;
 };

@@ -19,8 +19,8 @@
 
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
   margin-bottom: 20px;
   justify-content: space-between;
 }
@@ -35,7 +35,6 @@
   height: 40px;
   border-radius: 6px 0 0 6px;
   border: 1px solid #ccc;
-  width: 100%;
 }
 
 .btn-search {
@@ -54,4 +53,8 @@
   overflow-wrap: break-word;
   word-break: break-word;
   width: 100%;
+}
+
+.ant-table-cell{
+  border-bottom: none !important;
 }

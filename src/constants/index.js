@@ -57,10 +57,10 @@ const WARRANTY_LIST = [
   
 ];
 const DEPARTMENT_LIST = [
-  { label: "Customer", value: "customer" },
-  { label: "Operations", value: "operations" },
-  { label: "Sales", value: "sales" },
-  { label: "IT", value: "it" },
+  { label: "Customer", value: "Customer" },
+  { label: "Operations", value: "Operations" },
+  { label: "Sales", value: "Sales" },
+  { label: "IT", value: "IT" },
 ];
 
 const ROLE_LIST = [
