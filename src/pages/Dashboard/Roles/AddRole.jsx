@@ -8,25 +8,26 @@ import {
   Typography,
   Row,
   Col,
-  Modal,
+  Collapse,
 } from "antd";
 import { useEffect, useState } from "react";
 import { getPermissions, addRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import "../../../assets/styles/role.css";
+const { Panel } = Collapse;
 
 function AddRole() {
   const [categories, setCategories] = useState([]);
   const [value, setValue] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [childCategory, setChildCategory] = useState([]);
   const [isActive, setIsActive] = useState(false);
   const [isError, setIsError] = useState("");
-  const [name, setName] = useState();
+  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState("");
-
 
   const fetchPermissions = async () => {
     try {
@@ -41,26 +42,28 @@ function AddRole() {
     fetchPermissions();
   }, []);
 
-  function handleCheckBox(value, checked) {
+  const handleCheckBox = (value, checked) => {
     if (checked) {
       setValue((prev) => [...prev, value]);
     } else {
       setValue((prev) => prev.filter((item) => item !== value));
     }
-  }
-
-
-  // Khi chọn category mới:
-  const handlePermissions = (category) => {
-    setSelectedCategory(category);
-    setPermissions(category.children);
   };
 
-
+  const handlePermissions = (category) => {
+    if (category.name === "Admin & Role Management") {
+      setChildCategory(category.children || []);
+      setSelectedCategory(null);
+      setPermissions([]);
+    } else {
+      setSelectedCategory(category);
+      setPermissions(category.children || []);
+    }
+  };
 
   const handleAdd = async () => {
     try {
-      const response = await addRoles(name, isActive, value);
+      await addRoles(name, isActive, value);
       toast.success("New role has been added successfully!");
       setName("");
       setValue([]);
@@ -75,43 +78,29 @@ function AddRole() {
       }
     }
   };
+
   const toggleActive = async (checked) => {
     if (isLoading) return;
     setIsLoading(true);
-    if (checked) {
-      setIsActive(true);
-    } else {
-      setIsActive(false);
-    }
+    setIsActive(checked);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   };
-// const navigate = useNavigate();
-//   const handleBreadcrumbNavigate = (item) => {
-//     Modal.confirm({
-//       title: "Are you sure you want to save your changes?",
-//       okText: "Yes",
-//       cancelText: "Cancel",
-//       onOk() {
-//         navigate(item.path);
-//       },
-//     });
-//   };
-/*
-  - kiem tra xem mang chua cac permission duoc chon co chua moi phan tu cua tung categories ko? 
-*/
 
-const checkAll =  selectedCategory?.children.map((item) => item.id).every(item => value.includes(item));
-function handleAll(e) {
-  if (e) {
-    const all = permissions.map((option) => option.id);
-    setValue((prev) => [...prev,...all]);
-  } else {
-    setValue([]);
-  }
-}
+  const checkAll = selectedCategory?.children
+    ?.map((item) => item.id)
+    .every((id) => value.includes(id));
 
+  const handleAll = (checked) => {
+    if (checked) {
+      const all = permissions.map((option) => option.id);
+      setValue((prev) => [...new Set([...prev, ...all])]);
+    } else {
+      const idsToRemove = permissions.map((option) => option.id);
+      setValue((prev) => prev.filter((id) => !idsToRemove.includes(id)));
+    }
+  };
 
   return (
     <div
@@ -133,7 +122,7 @@ function handleAll(e) {
       >
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
-        <Breadcrumbs  />
+          <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
             Add New Role
           </div>
@@ -141,151 +130,171 @@ function handleAll(e) {
 
         <Row>
           <Col span={8}>
-            <div
-              style={{
-                display: "flex",
+            <Typography.Text strong>Role Name</Typography.Text>
+            <Input
+              placeholder="Enter role name"
+              size="large"
+              value={name}
+              status={isError ? "error" : ""}
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError("");
               }}
-            >
-              <div>
-                <Typography.Text strong>Role Name</Typography.Text>
-                <Input
-                  placeholder="Enter role name"
-                  size="large"
-                  value={name}
-                  status={isError ? "error" : ""}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    setNameError(""); 
-                  }}
-                />
-                {isError && <div style={{ color: "red" }}>{isError}</div>}
-              </div>
-            </div>
+            />
+            {isError && <div style={{ color: "red" }}>{isError}</div>}
+
             <div
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: "20px",
+                marginTop: "20px",
+                border: "1px solid #eee",
+                borderRadius: "10px",
               }}
             >
               <div
                 style={{
-                  border: "1px solid #eee",
-                  borderRadius: "10px",
-                  width: "510px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  borderBottom: "1px solid #eee",
+                  padding: "18px 20px",
+                  backgroundColor: "#EBEAFA",
+                  color: "#6055F2",
+                  fontWeight: "500",
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderBottom: "1px solid #eee",
-                    padding: "18px 20px",
-                    backgroundColor: "#EBEAFA",
-                    color: "#6055F2",
-                    fontWeight: "500",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                  }}
-                >
-                  Management Categories
-                </div>
-                {categories.map((item) => {
-                  return (
-                    <div key={item.id}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "20px 20px",
-                          borderBottom: "1px solid #eee",
-                          cursor: "pointer",
-                          backgroundColor:
-                            selectedCategory?.id === item.id
-                              ? "#F5F5F5"
-                              : "white",
-                        }}
-                        onClick={() => handlePermissions(item)}
-                      >
-                        {" "}
-                        {item.name}
-                        <RightOutlined style={{ color: "#6055F2" }} />
-                      </div>
-                    </div>
-                  );
-                })}
+                Management Categories
               </div>
+              {categories.map((item) => {
+                if (item.name === "Admin & Role Management") {
+                  return (
+                    <Collapse
+                      key={item.id}
+                      expandIcon={({ isActive }) => (
+                        <RightOutlined
+                          rotate={isActive ? 90 : 0}
+                          style={{ color: "#6055F2" }}
+                        />
+                      )}
+                      expandIconPosition="end"
+                      style={{
+                        backgroundColor:
+                          selectedCategory?.id === item.id
+                            ? "#F5F5F5"
+                            : "white",
+                      }}
+                    >
+                      <Panel
+                        header={
+                          <div onClick={() => handlePermissions(item)}>
+                            {item.name}
+                          </div>
+                        }
+                        key={item.id}
+                      >
+                        {childCategory.map((child) => (
+                          <div key={child.id}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "20px 20px",
+                                cursor: "pointer",
+                                backgroundColor:
+                                selectedCategory?.id === item.id
+                                  ? "#F5F5F5"
+                                  : "white",
+
+                              }}
+                              onClick={() => handlePermissions(child)}
+                            >
+                              {child.name}
+                              <RightOutlined style={{ color: "#6055F2" }} />
+                            </div>
+                          </div>
+                        ))}
+                      </Panel>
+                    </Collapse>
+                  );
+                }
+
+                return (
+                  <div key={item.id}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "20px 20px",
+                        borderBottom: "1px solid #eee",
+                        cursor: "pointer",
+                        backgroundColor:
+                          selectedCategory?.id === item.id
+                            ? "#F5F5F5"
+                            : "white",
+                      }}
+                      onClick={() => handlePermissions(item)}
+                    >
+                      {item.name}
+                      <RightOutlined style={{ color: "#6055F2" }} />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </Col>
+
           <Col span={12} offset={4}>
             <div>
-              <div>
-                <Typography.Text strong>Status</Typography.Text>
-
-                <div
+              <Typography.Text strong>Status</Typography.Text>
+              <div style={{ paddingTop: "5px" }}>
+                <Switch
+                  checked={isActive}
+                  onChange={toggleActive}
                   style={{
-                    paddingTop: "5px",
+                    backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
+                    marginRight: "5px",
                   }}
-                >
-                  <Switch
-                    checked={isActive}
-                    onChange={(checked) => toggleActive(checked)}
-                    style={{
-                      backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
-                      marginRight: "5px",
-                    }}
-                    loading={isLoading}
-                    disabled={isLoading}
-                  />{" "}
-                  <span>{isActive ? "Active" : "Inactive"}</span>
-                </div>
+                  loading={isLoading}
+                  disabled={isLoading}
+                />
+                <span>{isActive ? "Active" : "Inactive"}</span>
               </div>
-              <div
-                style={{
-                  paddingTop: "30px",
-                }}
-              >
+
+              <div style={{ paddingTop: "30px" }}>
                 <Card
-                 title= {
-                    <div style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}>
+                  title={
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <div>Permissions</div>
-                      <div>
-                        <Checkbox
-                          checked={checkAll}
-                          onChange={(e) => handleAll(e.target.checked)}
-                          className="custom-checkbox"
-                        >
-                          Select All
-                        </Checkbox>
-                      </div>
-                      
+                      <Checkbox
+                        checked={checkAll}
+                        onChange={(e) => handleAll(e.target.checked)}
+                        className="custom-checkbox"
+                      >
+                        Select All
+                      </Checkbox>
                     </div>
-                
-                }
+                  }
                   styles={{ header: { background: "#EBEAFA" } }}
                   style={{ width: "100%" }}
                 >
                   {selectedCategory?.children?.length > 0 ? (
-                    <>
-                      {selectedCategory.children.map((child) => (
-                        <div key={child.id} style={{
-                          paddingBottom: "10px",
-                        }}>
-                          <Checkbox
-                            onChange={(e) =>
-                              handleCheckBox(child.id, e.target.checked)
-                            }
-                            checked={value.includes(child.id)}
-                          >
-                            {" "}
-                            {child.name}
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </>
+                    selectedCategory.children.map((child) => (
+                      <div key={child.id} style={{ paddingBottom: "10px" }}>
+                        <Checkbox
+                          onChange={(e) =>
+                            handleCheckBox(child.id, e.target.checked)
+                          }
+                          checked={value.includes(child.id)}
+                        >
+                          {child.name}
+                        </Checkbox>
+                      </div>
+                    ))
                   ) : (
                     <div>No permissions available</div>
                   )}
