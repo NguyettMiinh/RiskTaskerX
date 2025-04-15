@@ -31,6 +31,9 @@
       "@components/*": [
         "components/*"
       ],
+      "@api/*": [
+        "api/*"
+      ],
       "@utils/*": [
         "utils/*"
       ],

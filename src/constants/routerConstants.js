@@ -7,6 +7,9 @@ const ROUTER_PATH = {
     change: '/layout/change-password',
     customer: '/layout/customer',
     detail: '/layout/customer/detail/:id',
+    detailAdmin: '/layout/admin/detail',
     
    
 }
+
+export default ROUTER_PATH;
