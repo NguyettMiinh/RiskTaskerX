@@ -15,6 +15,7 @@ import { getPermissions, addRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";
+import { useNavigate } from "react-router";
 const { Panel } = Collapse;
 
 function AddRole() {
@@ -60,10 +61,11 @@ function AddRole() {
       setPermissions(category.children || []);
     }
   };
-
+const navigate = useNavigate();
   const handleAdd = async () => {
     try {
       await addRoles(name, isActive, value);
+      navigate("/layout/role-list");
       toast.success("New role has been added successfully!");
       setName("");
       setValue([]);
