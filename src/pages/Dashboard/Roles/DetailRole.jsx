@@ -9,15 +9,15 @@ import {
   Row,
   Col,
   Modal,
-  Collapse
+  Collapse,
 } from "antd";
 import { useEffect, useState } from "react";
-import { getPermissions, addRoles } from "@/services/roleService";
+import { getPermissions, getRoles, editRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
-import { getRoles } from "@/services/roleService";
+
 const { Panel } = Collapse;
 function DetailRole() {
   const [categories, setCategories] = useState([]);
@@ -28,7 +28,11 @@ function DetailRole() {
   const [isLoading, setIsLoading] = useState(false);
   const [detail, setDetail] = useState([]);
   const id = useSelector((state) => state.user.id);
-
+  const [formEdit, setFormEdit] = useState({
+    name: "",
+    isActive: "false",
+    permissionId: [],
+  });
   const fetchPermissions = async () => {
     try {
       const response = await getPermissions();
@@ -37,6 +41,7 @@ function DetailRole() {
       console.error("Failed to fetch permissions:", error);
     }
   };
+
   useEffect(() => {
     fetchPermissions();
   }, []);
@@ -45,12 +50,18 @@ function DetailRole() {
     if (!id) return;
     try {
       const response = await getRoles(id);
-      setDetail(response.data.results);
-      console.log("response", response);
+      const data = response.data.results;
+      setDetail(data);
+      setFormEdit({
+        name: data.name || "",
+        isActive: data.isActive ?? false,
+        permissionId: data.permissions?.map((item) => item.id) || [],
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     fetchDetail();
   }, []);
@@ -67,13 +78,35 @@ function DetailRole() {
     }
   };
 
-  // const checkAll =  selectedCategory?.children.map((item) => item.name).every(item => detail?.permissions.includes(item));
   const permissionIds = detail?.permissions?.map((item) => item.id) || [];
 
-  const checkAll = selectedCategory?.children?.every((item) =>
-    permissionIds.includes(item.id)
-  );
-  console.log("detail", detail);
+  // const checkAll = selectedCategory?.children?.every((item) =>
+  //   formEdit.permissionId.includes(item.id)
+  // );
+  const checkAll =
+    selectedCategory?.children?.length > 0 &&
+    selectedCategory.children.every((item) =>
+      formEdit.permissionId.includes(item.id)
+    );
+
+  const navigate = useNavigate();
+  function handleCancel() {
+    navigate("/layout/role-list");
+  }
+
+  const handleSave = async () => {
+    try {
+      const response = await editRoles(
+        id,
+        formEdit.name,
+        formEdit.isActive,
+        formEdit.permissionId
+      );
+      navigate("/layout/role-list");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div
       style={{
@@ -96,7 +129,7 @@ function DetailRole() {
         <div style={{ marginBottom: "20px" }}>
           <Breadcrumbs />
           <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
-            Add New Role
+            Role Details
           </div>
         </div>
 
@@ -112,7 +145,10 @@ function DetailRole() {
                 <Input
                   placeholder="Enter role name"
                   size="large"
-                  value={detail?.name}
+                  value={formEdit.name}
+                  onChange={(e) =>
+                    setFormEdit({ ...formEdit, name: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -233,16 +269,18 @@ function DetailRole() {
                   }}
                 >
                   <Switch
-                    checked={detail?.isActive}
-                    onChange={(checked) => toggleActive(checked)}
+                    checked={formEdit.isActive}
+                    onChange={(checked) =>
+                      setFormEdit({ ...formEdit, isActive: checked })
+                    }
                     style={{
-                      backgroundColor: detail?.isActive ? "#6055F2" : "#d9d9d9",
+                      backgroundColor: formEdit.isActive
+                        ? "#6055F2"
+                        : "#d9d9d9",
                       marginRight: "5px",
                     }}
-                    loading={isLoading}
-                    disabled={isLoading}
-                  />{" "}
-                  <span>{detail?.isActive ? "Active" : "Inactive"}</span>
+                  />
+                  <span>{formEdit?.isActive ? "Active" : "Inactive"}</span>
                 </div>
               </div>
               <div
@@ -262,6 +300,25 @@ function DetailRole() {
                       <div>
                         <Checkbox
                           checked={checkAll}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            const allIds = selectedCategory.children.map(
+                              (child) => child.id
+                            );
+
+                            const updatedPermissions = checked
+                              ? Array.from(
+                                  new Set([...formEdit.permissionId, ...allIds])
+                                ) // tránh trùng ID
+                              : formEdit.permissionId.filter(
+                                  (id) => !allIds.includes(id)
+                                );
+
+                            setFormEdit({
+                              ...formEdit,
+                              permissionId: updatedPermissions,
+                            });
+                          }}
                           className="custom-checkbox"
                         >
                           Select All
@@ -281,7 +338,22 @@ function DetailRole() {
                             paddingBottom: "10px",
                           }}
                         >
-                          <Checkbox checked={permissionIds.includes(child.id)}>
+                          <Checkbox
+                            checked={formEdit.permissionId.includes(child.id)}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              const updatedPermissions = checked
+                                ? [...formEdit.permissionId, child.id]
+                                : formEdit.permissionId.filter(
+                                    (id) => id !== child.id
+                                  );
+
+                              setFormEdit({
+                                ...formEdit,
+                                permissionId: updatedPermissions,
+                              });
+                            }}
+                          >
                             {" "}
                             {child.name}
                           </Checkbox>
@@ -292,6 +364,33 @@ function DetailRole() {
                     <div>No permissions available</div>
                   )}
                 </Card>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "10px",
+                }}
+              >
+                <Button
+                  style={{
+                    marginTop: "10px",
+                    marginRight: "10px",
+                  }}
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  style={{
+                    marginTop: "10px",
+                    backgroundColor: "#6055F2",
+                    color: "white",
+                  }}
+                  onClick={handleSave}
+                >
+                  Save Changes
+                </Button>
               </div>
             </div>
           </Col>
