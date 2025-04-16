@@ -228,7 +228,6 @@ function RoleList() {
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
-              className="w-[135px]"
               onChange={statusHandle}
             />
           </div>
