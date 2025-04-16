@@ -9,10 +9,11 @@ import {
   Row,
   Col,
   Collapse,
+  Modal
 } from "antd";
 import { useEffect, useState } from "react";
 import { getPermissions, addRoles } from "@/services/roleService";
-import { RightOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled, RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";
 import { useNavigate } from "react-router";
@@ -61,10 +62,15 @@ function AddRole() {
       setPermissions(category.children || []);
     }
   };
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const handleAdd = async () => {
     try {
       await addRoles(name, isActive, value);
+      if (name === "") {
+        setIsError("Role Name is required.");
+        return;
+      }
       navigate("/layout/role-list");
       toast.success("New role has been added successfully!");
       setName("");
@@ -103,7 +109,30 @@ const navigate = useNavigate();
       setValue((prev) => prev.filter((id) => !idsToRemove.includes(id)));
     }
   };
-
+function handleCancel() {
+  Modal.confirm({
+    icon: null,
+    content: (
+      <div style={{ textAlign: "center" }}>
+        <ExclamationCircleFilled
+          style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
+        />
+        <div style={{ fontSize: "15px" }}>
+            Are you sure you want to save your changes?
+        </div>
+      </div>
+    ),
+    okText: "Ok",
+    cancelText: "Cancel",
+    okButtonProps: {
+      style: {
+        backgroundColor: "#6055F2",
+        borderColor: "#6055F2",
+        color: "#fff",
+      },
+    },
+  });
+}
   return (
     <div
       style={{
@@ -129,8 +158,12 @@ const navigate = useNavigate();
             Add New Role
           </div>
         </div>
-
-        <Row>
+        <div></div>
+        <Row
+          style={{
+            paddingBottom: "30px",
+          }}
+        >
           <Col span={8}>
             <Typography.Text strong>Role Name</Typography.Text>
             <Input
@@ -144,10 +177,28 @@ const navigate = useNavigate();
               }}
             />
             {isError && <div style={{ color: "red" }}>{isError}</div>}
-
+          </Col>
+          <Col span={12} offset={4}>
+            <Typography.Text strong>Status</Typography.Text>
+            <div style={{ paddingTop: "5px" }}>
+              <Switch
+                checked={isActive}
+                onChange={toggleActive}
+                style={{
+                  backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
+                  marginRight: "5px",
+                }}
+                loading={isLoading}
+                disabled={isLoading}
+              />
+              <span>{isActive ? "Active" : "Inactive"}</span>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
             <div
               style={{
-                marginTop: "20px",
                 border: "1px solid #eee",
                 borderRadius: "10px",
               }}
@@ -203,10 +254,9 @@ const navigate = useNavigate();
                                 padding: "20px 20px",
                                 cursor: "pointer",
                                 backgroundColor:
-                                selectedCategory?.id === item.id
-                                  ? "#F5F5F5"
-                                  : "white",
-
+                                  selectedCategory?.id === item.id
+                                    ? "#F5F5F5"
+                                    : "white",
                               }}
                               onClick={() => handlePermissions(child)}
                             >
@@ -244,83 +294,74 @@ const navigate = useNavigate();
               })}
             </div>
           </Col>
-
-          <Col span={12} offset={4}>
+          <Col span={14} offset={2}>
             <div>
-              <Typography.Text strong>Status</Typography.Text>
-              <div style={{ paddingTop: "5px" }}>
-                <Switch
-                  checked={isActive}
-                  onChange={toggleActive}
-                  style={{
-                    backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
-                    marginRight: "5px",
-                  }}
-                  loading={isLoading}
-                  disabled={isLoading}
-                />
-                <span>{isActive ? "Active" : "Inactive"}</span>
-              </div>
-
-              <div style={{ paddingTop: "30px" }}>
-                <Card
-                  title={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+              <Card
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>Permissions</div>
+                    <Checkbox
+                      checked={checkAll}
+                      onChange={(e) => handleAll(e.target.checked)}
+                      className="custom-checkbox"
                     >
-                      <div>Permissions</div>
+                      Select All
+                    </Checkbox>
+                  </div>
+                }
+                styles={{ header: { background: "#EBEAFA" } }}
+                style={{ width: "100%" }}
+              >
+                {selectedCategory?.children?.length > 0 ? (
+                  selectedCategory.children.map((child) => (
+                    <div key={child.id} style={{ paddingBottom: "10px" }}>
                       <Checkbox
-                        checked={checkAll}
-                        onChange={(e) => handleAll(e.target.checked)}
-                        className="custom-checkbox"
+                        onChange={(e) =>
+                          handleCheckBox(child.id, e.target.checked)
+                        }
+                        checked={value.includes(child.id)}
                       >
-                        Select All
+                        {child.name}
                       </Checkbox>
                     </div>
-                  }
-                  styles={{ header: { background: "#EBEAFA" } }}
-                  style={{ width: "100%" }}
-                >
-                  {selectedCategory?.children?.length > 0 ? (
-                    selectedCategory.children.map((child) => (
-                      <div key={child.id} style={{ paddingBottom: "10px" }}>
-                        <Checkbox
-                          onChange={(e) =>
-                            handleCheckBox(child.id, e.target.checked)
-                          }
-                          checked={value.includes(child.id)}
-                        >
-                          {child.name}
-                        </Checkbox>
-                      </div>
-                    ))
-                  ) : (
-                    <div>No permissions available</div>
-                  )}
-                </Card>
-              </div>
+                  ))
+                ) : (
+                  <div>No permissions available</div>
+                )}
+              </Card>
+            </div>
 
-              <div
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "10px",
+              }}
+            >
+              <Button
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
                   marginTop: "10px",
+                  marginRight: "10px",
                 }}
+                onClick={handleCancel}
               >
-                <Button
-                  style={{
-                    marginTop: "10px",
-                    backgroundColor: "#6055F2",
-                    color: "white",
-                  }}
-                  onClick={handleAdd}
-                >
-                  Add Now
-                </Button>
-              </div>
+                Cancel
+              </Button>
+              <Button
+                style={{
+                  marginTop: "10px",
+                  backgroundColor: "#6055F2",
+                  color: "white",
+                }}
+                onClick={handleAdd}
+              >
+                Add Now
+              </Button>
             </div>
           </Col>
         </Row>

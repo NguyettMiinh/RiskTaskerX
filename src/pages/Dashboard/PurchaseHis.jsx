@@ -96,7 +96,7 @@ const PurchaseHis = () => {
             Purchase Details
           </div>
         }
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >

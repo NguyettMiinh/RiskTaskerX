@@ -133,37 +133,50 @@ function DetailRole() {
           </div>
         </div>
 
+        <Row
+          style={{
+            paddingBottom: "30px",
+          }}
+        >
+          <Col span={8}>
+            <Typography.Text strong>Role Name</Typography.Text>
+            <Input
+              placeholder="Enter role name"
+              size="large"
+              value={formEdit.name}
+              onChange={(e) =>
+                setFormEdit({ ...formEdit, name: e.target.value })
+              }
+            />
+          </Col>
+          <Col span={12} offset={4}>
+            <Typography.Text strong>Status</Typography.Text>
+
+            <div
+              style={{
+                paddingTop: "5px",
+              }}
+            >
+              <Switch
+                checked={formEdit.isActive}
+                onChange={(checked) =>
+                  setFormEdit({ ...formEdit, isActive: checked })
+                }
+                style={{
+                  backgroundColor: formEdit.isActive ? "#6055F2" : "#d9d9d9",
+                  marginRight: "5px",
+                }}
+              />
+              <span>{formEdit?.isActive ? "Active" : "Inactive"}</span>
+            </div>
+          </Col>
+        </Row>
         <Row>
           <Col span={8}>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
-              <div>
-                <Typography.Text strong>Role Name</Typography.Text>
-                <Input
-                  placeholder="Enter role name"
-                  size="large"
-                  value={formEdit.name}
-                  onChange={(e) =>
-                    setFormEdit({ ...formEdit, name: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: "20px",
-              }}
-            >
               <div
                 style={{
                   border: "1px solid #eee",
                   borderRadius: "10px",
-                  width: "510px",
                 }}
               >
                 <div
@@ -256,62 +269,68 @@ function DetailRole() {
                   );
                 })}
               </div>
-            </div>
           </Col>
           <Col span={12} offset={4}>
-            <div>
-              <div>
-                <Typography.Text strong>Status</Typography.Text>
-
-                <div
-                  style={{
-                    paddingTop: "5px",
-                  }}
-                >
-                  <Switch
-                    checked={formEdit.isActive}
-                    onChange={(checked) =>
-                      setFormEdit({ ...formEdit, isActive: checked })
-                    }
+            <div
+            >
+              <Card
+                title={
+                  <div
                     style={{
-                      backgroundColor: formEdit.isActive
-                        ? "#6055F2"
-                        : "#d9d9d9",
-                      marginRight: "5px",
+                      display: "flex",
+                      justifyContent: "space-between",
                     }}
-                  />
-                  <span>{formEdit?.isActive ? "Active" : "Inactive"}</span>
-                </div>
-              </div>
-              <div
-                style={{
-                  paddingTop: "30px",
-                }}
+                  >
+                    <div>Permissions</div>
+                    <div>
+                      <Checkbox
+                        checked={checkAll}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          const allIds = selectedCategory.children.map(
+                            (child) => child.id
+                          );
+
+                          const updatedPermissions = checked
+                            ? Array.from(
+                                new Set([...formEdit.permissionId, ...allIds])
+                              ) // tránh trùng ID
+                            : formEdit.permissionId.filter(
+                                (id) => !allIds.includes(id)
+                              );
+
+                          setFormEdit({
+                            ...formEdit,
+                            permissionId: updatedPermissions,
+                          });
+                        }}
+                        className="custom-checkbox"
+                      >
+                        Select All
+                      </Checkbox>
+                    </div>
+                  </div>
+                }
+                styles={{ header: { background: "#EBEAFA" } }}
+                style={{ width: "100%" }}
               >
-                <Card
-                  title={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>Permissions</div>
-                      <div>
+                {selectedCategory?.children?.length > 0 ? (
+                  <>
+                    {selectedCategory.children.map((child) => (
+                      <div
+                        key={child.id}
+                        style={{
+                          paddingBottom: "10px",
+                        }}
+                      >
                         <Checkbox
-                          checked={checkAll}
+                          checked={formEdit.permissionId.includes(child.id)}
                           onChange={(e) => {
                             const checked = e.target.checked;
-                            const allIds = selectedCategory.children.map(
-                              (child) => child.id
-                            );
-
                             const updatedPermissions = checked
-                              ? Array.from(
-                                  new Set([...formEdit.permissionId, ...allIds])
-                                ) // tránh trùng ID
+                              ? [...formEdit.permissionId, child.id]
                               : formEdit.permissionId.filter(
-                                  (id) => !allIds.includes(id)
+                                  (id) => id !== child.id
                                 );
 
                             setFormEdit({
@@ -319,79 +338,44 @@ function DetailRole() {
                               permissionId: updatedPermissions,
                             });
                           }}
-                          className="custom-checkbox"
                         >
-                          Select All
+                          {" "}
+                          {child.name}
                         </Checkbox>
                       </div>
-                    </div>
-                  }
-                  styles={{ header: { background: "#EBEAFA" } }}
-                  style={{ width: "100%" }}
-                >
-                  {selectedCategory?.children?.length > 0 ? (
-                    <>
-                      {selectedCategory.children.map((child) => (
-                        <div
-                          key={child.id}
-                          style={{
-                            paddingBottom: "10px",
-                          }}
-                        >
-                          <Checkbox
-                            checked={formEdit.permissionId.includes(child.id)}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              const updatedPermissions = checked
-                                ? [...formEdit.permissionId, child.id]
-                                : formEdit.permissionId.filter(
-                                    (id) => id !== child.id
-                                  );
-
-                              setFormEdit({
-                                ...formEdit,
-                                permissionId: updatedPermissions,
-                              });
-                            }}
-                          >
-                            {" "}
-                            {child.name}
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <div>No permissions available</div>
-                  )}
-                </Card>
-              </div>
-              <div
+                    ))}
+                  </>
+                ) : (
+                  <div>No permissions available</div>
+                )}
+              </Card>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "10px",
+              }}
+            >
+              <Button
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
                   marginTop: "10px",
+                  marginRight: "10px",
                 }}
+                onClick={handleCancel}
               >
-                <Button
-                  style={{
-                    marginTop: "10px",
-                    marginRight: "10px",
-                  }}
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  style={{
-                    marginTop: "10px",
-                    backgroundColor: "#6055F2",
-                    color: "white",
-                  }}
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </Button>
-              </div>
+                Cancel
+              </Button>
+              <Button
+                style={{
+                  marginTop: "10px",
+                  backgroundColor: "#6055F2",
+                  color: "white",
+                }}
+                onClick={handleSave}
+              >
+                Save Changes
+              </Button>
             </div>
           </Col>
         </Row>
