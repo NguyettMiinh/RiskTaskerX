@@ -44,7 +44,7 @@ const PURCHASE_LIST = [
   { title: "Car Model", dataIndex: "carModel", width: 150},
   { title: "VIN", dataIndex: "vehicleIdentificationNumber",  width: 150 },
   { title: "Price", dataIndex: "price",  width: 150 },
-  { title: "Payment options", dataIndex: "paymentMethod",  width: 150 },
+  { title: "Payment options", dataIndex: "paymentOption",  width: 150 },
   { title: "Purchase date", dataIndex: "purchaseDate",  width: 150 },
 ];
 const WARRANTY_LIST = [

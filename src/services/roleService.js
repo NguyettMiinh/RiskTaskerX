@@ -23,7 +23,9 @@ const roleSearchFilter = async ({
 const roleActive = async (id, isActive) => {
   return axios.put("/roles/status", { id, isActive });
 };
-
+const editRoles = async (id, name, isActive) => {
+  return axios.put("/roles/status", { id, isActive });
+};
 const getPermissions = async () => {
   return axios.get("/permissions");
 };
