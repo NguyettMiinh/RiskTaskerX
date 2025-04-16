@@ -31,6 +31,9 @@ import {
 } from "antd/es/table/interface";
 import { SORTBYASC, SORTBYDESC } from "../../../constants/Variable";
 import ROUTERPATH from "../../../constants/routerConstants";
+import { useModalStore } from "../../../utils/modalStore";
+import AddAdminModal from "./AddAdminModal";
+import dayjs from "dayjs";
 
 export default function AdminManagementList() {
   const navigate = useNavigate();
@@ -50,6 +53,7 @@ export default function AdminManagementList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<number>(10);
   const totalPages = Math.ceil(totalAdmins / pageSize);
+  const { openModal } = useModalStore();
 
   const payload: AdminSearchAndFilterRequest = {
     sortKey: sortField ? sortField : "id",
@@ -67,7 +71,7 @@ export default function AdminManagementList() {
   const toggleActive = (id?: number, isActive?: boolean, setAdmin?: Admin) => {
     showConfirmModal(isActive, async () => {
       console.log("show modal");
-    }, "admins");
+    });
   };
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -168,8 +172,8 @@ export default function AdminManagementList() {
   };
 
   useEffect(() => {
-    if ((currentPage - 1) * pageSize >= totalAdmins && currentPage !== 1) {
-      setCurrentPage(1);
+    if (currentPage > totalPages && currentPage > 1) {
+      setCurrentPage(totalPages);
     }
     fetchData();
   }, [
@@ -199,7 +203,7 @@ export default function AdminManagementList() {
               : item.fullName,
           email:
             item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: formatTime(item.lastLogin),
+          lastLogin: dayjs(item.lastLogin).format('HH:mm DD-MM-YYYY'),
         }));
         setAdmin(truncatedData);
         setOriginalAdmin(truncatedData);
@@ -272,9 +276,11 @@ export default function AdminManagementList() {
                 borderColor: "#c9c6ed",
               }}
               icon={<PlusOutlined style={{ color: "#fff" }} />}
+              onClick={openModal}
             >
               <span style={{ color: "#fff" }}>Add Admin</span>
             </Button>
+            <AddAdminModal/>
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -286,7 +292,7 @@ export default function AdminManagementList() {
             locale={{ emptyText: "No admin matched your search. Try again." }}
             onChange={handleTable}
             className="table-admin-list border-b-0"
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "max-content"}}
             rowKey="id"
           />
         </div>
