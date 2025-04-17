@@ -67,10 +67,6 @@ function AddRole() {
   const handleAdd = async () => {
     try {
       await addRoles(name, isActive, value);
-      if (name === "") {
-        setIsError("Role Name is required.");
-        return;
-      }
       navigate("/layout/role-list");
       toast.success("New role has been added successfully!");
       setName("");
@@ -83,6 +79,9 @@ function AddRole() {
       const message = error.response?.data?.message;
       if (message === "role-already-exists") {
         setIsError("This role name is already taken.");
+      }
+      if (message === "invalid-role-name") {
+        setIsError("Role Name is required.");
       }
     }
   };

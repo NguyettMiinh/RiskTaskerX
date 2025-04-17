@@ -104,15 +104,15 @@ function DetailRole() {
         formEdit.isActive,
         formEdit.permissionId
       );
-      if (formEdit.name === "") {
-        setIsError("Role Name is required.");
-        return;
-      }
       navigate("/layout/role-list");
+      toast.success("Changes have been saved successfully!");
     } catch (error) {
       const message = error.response?.data?.message;
-      if (message === "role-already-exists") {
+      if (message === "role-name-exists") {
         setIsError("This role name is already taken.");
+      }
+      if (message === "invalid-valid-name") {
+        setIsError("Role Name is required.");
       }
     }
   };
