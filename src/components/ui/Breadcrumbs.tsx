@@ -9,16 +9,17 @@ function Breadcrumbs({ onBeforeNavigate } : any) {
   
   return (
     <Breadcrumb
-      style={{ fontSize: "21px", paddingBottom: "8px" }}
+      style={{ paddingBottom: "10px" }}
       items={breadcrumbItems.map((item, index: number) => {
         const isLast = index === breadcrumbItems.length - 1;
         return {
           title: (
             <span
               style={{
-                fontSize: "16px",
+                fontSize: "15px",
                 color: isLast ? "#1677FF" : undefined,
                 cursor: isLast ? "default" : "pointer",
+                textDecoration: isLast ? "underline" : "",
               }}
             >
               {item?.title}

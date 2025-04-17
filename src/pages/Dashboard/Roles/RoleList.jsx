@@ -6,6 +6,7 @@ import {
   PlusOutlined,
   SearchOutlined,
   EyeOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import { useNavigate } from "react-router";
@@ -114,17 +115,27 @@ function RoleList() {
             onChange={(checked) => toggleActive(record.id, checked)}
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
+              height: "22px",
             }}
             disabled={isLoading}
           />
           <Button
             type="link"
             icon={
-              <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
+              <EyeOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails(record.id)}
             
           />
+          <Button
+            type="link"
+            icon={
+              <DeleteOutlined  style={{ fontSize: "22px", color: "#BFBFBF" }} />
+            }
+            onClick={() => viewDetails(record.id)}
+            
+          />
+          
         </div>
       ),
     },
@@ -173,7 +184,7 @@ function RoleList() {
       >
         <div style={{ marginBottom: "20px" }}>
          <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold" }}> Role List</div>
+          <div style={{ fontSize: 20, fontWeight: "bold" }}> Role List</div>
         </div>
 
         <div
@@ -195,7 +206,7 @@ function RoleList() {
             <Input
               placeholder="Search role by Name"
               style={{
-                width: "400px",
+                width: "450px",
                 height: "40px",
                 borderRadius: "6px 0 0 6px",
                 border: "1px solid #ccc",

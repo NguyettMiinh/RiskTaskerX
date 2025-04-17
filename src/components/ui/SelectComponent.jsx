@@ -10,7 +10,9 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
   // xóa dấu x ở tag
   function tagRender(props) {
     const { label } = props;
-    return <div closable="false">{label}</div>;
+    return <div closable="false" style={{
+      paddingLeft: "10px"
+    }}>{label}</div>;
   }
   // khi nhấn vào checkbox thì sẽ thêm hoặc xóa giá trị của checkbox đó vào mảng value
   function handleCheckBox(value, checked) {
@@ -84,7 +86,9 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
     <div>
       <Select
         mode="multiple"
-        style={style}
+        style= {{
+          fontSize: "15px"
+        }}
         className={`${className}`}
         size="large"
         value={value.length === options.length ? [allLabel] : value}

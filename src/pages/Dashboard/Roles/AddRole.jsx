@@ -9,7 +9,7 @@ import {
   Row,
   Col,
   Collapse,
-  Modal
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
 import { getPermissions, addRoles } from "@/services/roleService";
@@ -25,7 +25,7 @@ function AddRole() {
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [childCategory, setChildCategory] = useState([]);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
   const [isError, setIsError] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +77,7 @@ function AddRole() {
       setValue([]);
       setSelectedCategory(null);
       setPermissions([]);
-      setIsActive(false);
+      setIsActive(true);
       setIsError("");
     } catch (error) {
       const message = error.response?.data?.message;
@@ -109,30 +109,30 @@ function AddRole() {
       setValue((prev) => prev.filter((id) => !idsToRemove.includes(id)));
     }
   };
-function handleCancel() {
-  Modal.confirm({
-    icon: null,
-    content: (
-      <div style={{ textAlign: "center" }}>
-        <ExclamationCircleFilled
-          style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
-        />
-        <div style={{ fontSize: "15px" }}>
+  function handleCancel() {
+    Modal.confirm({
+      icon: null,
+      content: (
+        <div style={{ textAlign: "center" }}>
+          <ExclamationCircleFilled
+            style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
+          />
+          <div style={{ fontSize: "15px" }}>
             Are you sure you want to save your changes?
+          </div>
         </div>
-      </div>
-    ),
-    okText: "Ok",
-    cancelText: "Cancel",
-    okButtonProps: {
-      style: {
-        backgroundColor: "#6055F2",
-        borderColor: "#6055F2",
-        color: "#fff",
+      ),
+      okText: "Ok",
+      cancelText: "Cancel",
+      okButtonProps: {
+        style: {
+          backgroundColor: "#6055F2",
+          borderColor: "#6055F2",
+          color: "#fff",
+        },
       },
-    },
-  });
-}
+    });
+  }
   return (
     <div
       style={{
@@ -154,7 +154,7 @@ function handleCancel() {
         {/* Breadcrumb & Title */}
         <div style={{ marginBottom: "20px" }}>
           <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
+          <div style={{ fontSize: 20, fontWeight: "bold", paddingTop: "8px" }}>
             Add New Role
           </div>
         </div>
@@ -165,7 +165,16 @@ function handleCancel() {
           }}
         >
           <Col span={8}>
-            <Typography.Text strong>Role Name</Typography.Text>
+            <div
+              style={{
+                paddingBottom: "10px",
+              }}
+            >
+              {" "}
+              <Typography.Text strong className="text-[16px]">
+                Role Name
+              </Typography.Text>
+            </div>
             <Input
               placeholder="Enter role name"
               size="large"
@@ -178,10 +187,13 @@ function handleCancel() {
             />
             {isError && <div style={{ color: "red" }}>{isError}</div>}
           </Col>
-          <Col span={12} offset={4}>
-            <Typography.Text strong>Status</Typography.Text>
-            <div style={{ paddingTop: "5px" }}>
+          <Col span={12} offset={2}>
+            <Typography.Text strong className="text-[16px]">
+              Status
+            </Typography.Text>
+            <div className="pt-[12px]">
               <Switch
+                className="text-[16px]"
                 checked={isActive}
                 onChange={toggleActive}
                 style={{
