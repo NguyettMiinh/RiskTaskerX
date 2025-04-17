@@ -72,7 +72,7 @@ const HeaderCommon = () => {
               style={{
                 color: "#6055F2",
                 fontFamily: "'Russo One', sans-serif",
-                fontSize: 30,
+                fontSize: 25,
               }}
             >
               RISTASKERX

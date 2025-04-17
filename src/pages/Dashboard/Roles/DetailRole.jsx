@@ -9,26 +9,29 @@ import {
   Row,
   Col,
   Modal,
-  Collapse
+  Collapse,
 } from "antd";
 import { useEffect, useState } from "react";
-import { getPermissions, addRoles } from "@/services/roleService";
+import { getPermissions, getRoles, editRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
-import { getRoles } from "@/services/roleService";
+
 const { Panel } = Collapse;
 function DetailRole() {
   const [categories, setCategories] = useState([]);
-  const [value, setValue] = useState([]);
-  const [permissions, setPermissions] = useState([]);
   const [childCategory, setChildCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [detail, setDetail] = useState([]);
+  const [formEdit, setFormEdit] = useState({
+    name: "",
+    isActive: "false",
+    permissionId: [],
+  });
+  const [isError, setIsError] = useState("");
   const id = useSelector((state) => state.user.id);
 
+  //lay permission hien thi len UIUI
   const fetchPermissions = async () => {
     try {
       const response = await getPermissions();
@@ -37,262 +40,265 @@ function DetailRole() {
       console.error("Failed to fetch permissions:", error);
     }
   };
+
   useEffect(() => {
     fetchPermissions();
   }, []);
 
+  //lay detail de so sanh voi permission
   const fetchDetail = async () => {
-    if (!id) return;
     try {
       const response = await getRoles(id);
-      setDetail(response.data.results);
-      console.log("response", response);
+      //luu gia tri vao form de edit
+      setFormEdit({
+        name: response.data.results.name || "",
+        isActive: response.data.results.isActive ?? false,
+        permissionId:
+          response.data.results.permissions?.map((item) => item.id) || [],
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     fetchDetail();
   }, []);
 
-  // Khi chọn category mới:
+ 
   const handlePermissions = (category) => {
     if (category.name === "Admin & Role Management") {
-      setChildCategory(category.children || []);
-      setSelectedCategory(null);
-      setPermissions([]);
+      setChildCategory(category.children);
     } else {
       setSelectedCategory(category);
-      setPermissions(category.children || []);
     }
   };
 
-  // const checkAll =  selectedCategory?.children.map((item) => item.name).every(item => detail?.permissions.includes(item));
-  const permissionIds = detail?.permissions?.map((item) => item.id) || [];
+  const checkAll =
+    selectedCategory?.children?.length > 0 &&
+    selectedCategory.children.every((item) =>
+      formEdit.permissionId.includes(item.id)
+    );
 
-  const checkAll = selectedCategory?.children?.every((item) =>
-    permissionIds.includes(item.id)
-  );
-  console.log("detail", detail);
+  const navigate = useNavigate();
+  function handleCancel() {
+    navigate("/layout/role-list");
+  }
+
+  const handleSave = async () => {
+    try {
+      await editRoles(
+        id,
+        formEdit.name,
+        formEdit.isActive,
+        formEdit.permissionId
+      );
+      navigate("/layout/role-list");
+      toast.success("Changes have been saved successfully!");
+    } catch (error) {
+      const message = error.response?.data?.message;
+      if (message === "role-name-exists") {
+        setIsError("This role name is already taken.");
+      }
+      if (message === "invalid-valid-name") {
+        setIsError("Role Name is required.");
+      }
+    }
+  };
+  function handleCheckAll(e) {
+    const checked = e.target.checked;
+    // id cua tung categories
+    const allIds = selectedCategory?.children.map((child) => child.id);
+    console.log(allIds);
+    //loai bo trung lap voi formId
+    const updatedPermissions = checked
+      ?  Array.from(new Set([...formEdit.permissionId, ...allIds]))
+      : formEdit.permissionId.filter((id) => !allIds.includes(id));
+
+    setFormEdit({
+      ...formEdit,
+      permissionId: updatedPermissions,
+    });
+  }
+
+  function handleCheckBox(e, child) {
+    const checked = e.target.checked;
+    const updatedPermissions = checked
+      ? [...formEdit.permissionId, child.id]
+      : formEdit.permissionId.filter((id) => id !== child.id);
+
+    setFormEdit({
+      ...formEdit,
+      permissionId: updatedPermissions,
+    });
+  }
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
-        {/* Breadcrumb & Title */}
-        <div style={{ marginBottom: "20px" }}>
+    <div className="flex justify-start min-h-screen p-[10px]">
+      <div className="w-full bg-white p-[50px] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
+        <div className="mb-[20px]">
           <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
-            Add New Role
-          </div>
+          <div className="text-[20px] font-bold pt-2">Role Details</div>
         </div>
 
-        <Row>
+        <Row className="pb-[30px]">
           <Col span={8}>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
-              <div>
-                <Typography.Text strong>Role Name</Typography.Text>
-                <Input
-                  placeholder="Enter role name"
-                  size="large"
-                  value={detail?.name}
-                />
-              </div>
+            <div className="mb-[10px]">
+              <Typography.Text strong className="text-[16px]">
+                Role Name
+              </Typography.Text>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: "20px",
-              }}
-            >
-              <div
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: "10px",
-                  width: "510px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderBottom: "1px solid #eee",
-                    padding: "18px 20px",
-                    backgroundColor: "#EBEAFA",
-                    color: "#6055F2",
-                    fontWeight: "500",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                  }}
-                >
-                  Management Categories
-                </div>
-                {categories.map((item) => {
-                  if (item.name === "Admin & Role Management") {
-                    return (
-                      <Collapse
-                        key={item.id}
-                        expandIcon={({ isActive }) => (
-                          <RightOutlined
-                            rotate={isActive ? 90 : 0}
-                            style={{ color: "#6055F2" }}
-                          />
-                        )}
-                        expandIconPosition="end"
-                        style={{
-                          backgroundColor:
-                            selectedCategory?.id === item.id
-                              ? "#F5F5F5"
-                              : "white",
-                        }}
-                      >
-                        <Panel
-                          header={
-                            <div onClick={() => handlePermissions(item)}>
-                              {item.name}
-                            </div>
-                          }
-                          key={item.id}
-                        >
-                          {childCategory.map((child) => (
-                            <div key={child.id}>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  padding: "20px 20px",
-                                  cursor: "pointer",
-                                  backgroundColor:
-                                    selectedCategory?.id === item.id
-                                      ? "#F5F5F5"
-                                      : "white",
-                                }}
-                                onClick={() => handlePermissions(child)}
-                              >
-                                {child.name}
-                                <RightOutlined style={{ color: "#6055F2" }} />
-                              </div>
-                            </div>
-                          ))}
-                        </Panel>
-                      </Collapse>
-                    );
-                  }
 
-                  return (
-                    <div key={item.id}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "20px 20px",
-                          borderBottom: "1px solid #eee",
-                          cursor: "pointer",
-                          backgroundColor:
-                            selectedCategory?.id === item.id
-                              ? "#F5F5F5"
-                              : "white",
-                        }}
-                        onClick={() => handlePermissions(item)}
-                      >
-                        {item.name}
-                        <RightOutlined style={{ color: "#6055F2" }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+            <Input
+              placeholder="Enter role name"
+              size="large"
+              className="text-14px"
+              status={isError ? "error" : ""}
+              value={formEdit.name}
+              onChange={(e) => {
+                setFormEdit({ ...formEdit, name: e.target.value });
+              }}
+            />
+            {isError && <div className="text-red-500">{isError}</div>}
+          </Col>
+          <Col span={12} offset={2}>
+            <Typography.Text strong className="text-[16px]">
+              Status
+            </Typography.Text>
+
+            <div className="pt-[12px]">
+              <Switch
+                checked={formEdit.isActive}
+                onChange={(checked) =>
+                  setFormEdit({ ...formEdit, isActive: checked })
+                }
+                style={{
+                  backgroundColor: formEdit.isActive ? "#6055F2" : "#d9d9d9",
+                  marginRight: "5px",
+                }}
+              />
+              <span>{formEdit?.isActive ? "Active" : "Inactive"}</span>
             </div>
           </Col>
-          <Col span={12} offset={4}>
-            <div>
-              <div>
-                <Typography.Text strong>Status</Typography.Text>
-
-                <div
-                  style={{
-                    paddingTop: "5px",
-                  }}
-                >
-                  <Switch
-                    checked={detail?.isActive}
-                    onChange={(checked) => toggleActive(checked)}
-                    style={{
-                      backgroundColor: detail?.isActive ? "#6055F2" : "#d9d9d9",
-                      marginRight: "5px",
-                    }}
-                    loading={isLoading}
-                    disabled={isLoading}
-                  />{" "}
-                  <span>{detail?.isActive ? "Active" : "Inactive"}</span>
-                </div>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <div className="border border-[#eee] rounded-[10px]">
+              <div className="flex justify-between border-b border-[#eee] px-5 py-[18px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
+                Management Categories
               </div>
-              <div
-                style={{
-                  paddingTop: "30px",
-                }}
-              >
-                <Card
-                  title={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+              {categories.map((item) => {
+                if (item.name === "Admin & Role Management") {
+                  return (
+                    <Collapse
+                      key={item.id}
+                      expandIcon={({ isActive }) => (
+                        <RightOutlined
+                          rotate={isActive ? 90 : 0}
+                          style={{ color: "#6055F2" }}
+                        />
+                      )}
+                      expandIconPosition="end"
                     >
-                      <div>Permissions</div>
-                      <div>
-                        <Checkbox
-                          checked={checkAll}
-                          className="custom-checkbox"
-                        >
-                          Select All
-                        </Checkbox>
-                      </div>
+                      <Panel
+                        header={
+                          <div onClick={() => handlePermissions(item)}>
+                            {item.name}
+                          </div>
+                        }
+                        key={item.id}
+                      >
+                        {childCategory.map((child) => (
+                          <div key={child.id}>
+                            <div
+                              className={`flex justify-between px-5 py-5 cursor-pointer ${
+                                selectedCategory?.id === item.id
+                                  ? "bg-[#F5F5F5]"
+                                  : "bg-white"
+                              }`}
+                              onClick={() => handlePermissions(child)}
+                            >
+                              {child.name}
+                              <RightOutlined className="text-[#6055F2]" />
+                            </div>
+                          </div>
+                        ))}
+                      </Panel>
+                    </Collapse>
+                  );
+                }
+
+                return (
+                  <div key={item.id}>
+                    <div
+                      className={`flex justify-between px-5 py-5 border-b border-[#eee] cursor-pointer ${
+                        selectedCategory?.id === item.id
+                          ? "bg-[#F5F5F5]"
+                          : "bg-white"
+                      }`}
+                      onClick={() => handlePermissions(item)}
+                    >
+                      {item.name}
+                      <RightOutlined style={{ color: "#6055F2" }} />
                     </div>
-                  }
-                  styles={{ header: { background: "#EBEAFA" } }}
-                  style={{ width: "100%" }}
-                >
-                  {selectedCategory?.children?.length > 0 ? (
-                    <>
-                      {selectedCategory.children.map((child) => (
-                        <div
-                          key={child.id}
-                          style={{
-                            paddingBottom: "10px",
+                  </div>
+                );
+              })}
+            </div>
+          </Col>
+          <Col span={14} offset={2}>
+            <div>
+              <Card
+                title={
+                  <div className="flex justify-between">
+                    <div>Permissions</div>
+                    <div>
+                      <Checkbox
+                        checked={checkAll}
+                        onChange={(e) => {
+                          handleCheckAll(e);
+                        }}
+                        className="custom-checkbox"
+                      >
+                        Select All
+                      </Checkbox>
+                    </div>
+                  </div>
+                }
+                styles={{ header: { background: "#EBEAFA" } }}
+                className="w-full"
+              >
+                {selectedCategory?.children?.length > 0 ? (
+                  <>
+                    {selectedCategory.children.map((child) => (
+                      <div key={child.id} className="pb-[10px]">
+                        <Checkbox
+                          checked={formEdit.permissionId.includes(child.id)}
+                          onChange={(e) => {
+                            handleCheckBox(e, child);
                           }}
                         >
-                          <Checkbox checked={permissionIds.includes(child.id)}>
-                            {" "}
-                            {child.name}
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <div>No permissions available</div>
-                  )}
-                </Card>
-              </div>
+                          {" "}
+                          {child.name}
+                        </Checkbox>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div>No permissions available</div>
+                )}
+              </Card>
+            </div>
+            <div className="flex justify-end mt-2">
+              <Button className="mt-2 mr-2" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button
+                className="mt-2 bg-[#6055F2] text-white"
+                onClick={handleSave}
+              >
+                Save Changes
+              </Button>
             </div>
           </Col>
         </Row>
