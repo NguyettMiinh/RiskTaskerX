@@ -17,10 +17,11 @@ import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
+import { usePermissions } from "@components/hook/usePermissions";
+import { useQuery } from "@tanstack/react-query";
 
 const { Panel } = Collapse;
 function DetailRole() {
-  const [categories, setCategories] = useState([]);
   const [childCategory, setChildCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formEdit, setFormEdit] = useState({
@@ -31,41 +32,24 @@ function DetailRole() {
   const [isError, setIsError] = useState("");
   const id = useSelector((state) => state.user.id);
 
-  //lay permission hien thi len UIUI
-  const fetchPermissions = async () => {
-    try {
-      const response = await getPermissions();
-      setCategories(response.data.results);
-    } catch (error) {
-      console.error("Failed to fetch permissions:", error);
-    }
-  };
+  const {data: categoriesData} = usePermissions();
+  const categories = categoriesData?.data.results;
 
+  const {data: roleData} = useQuery({queryKey: ['role',id], queryFn: () => getRoles(id)});
+//luc dau roleData undefined, set lien vao form se bi loi
+// chi goi khi co roleDate
   useEffect(() => {
-    fetchPermissions();
-  }, []);
-
-  //lay detail de so sanh voi permission
-  const fetchDetail = async () => {
-    try {
-      const response = await getRoles(id);
-      //luu gia tri vao form de edit
+    if (roleData?.data?.results) {
+      const role = roleData.data.results;
       setFormEdit({
-        name: response.data.results.name || "",
-        isActive: response.data.results.isActive ?? false,
-        permissionId:
-          response.data.results.permissions?.map((item) => item.id) || [],
+        name: role.name || '',
+        isActive: role.isActive ?? true,
+        permissionId: role.permissions?.map((item) => item.id) || [],
       });
-    } catch (error) {
-      console.error("Error fetching data:", error);
     }
-  };
+  }, [roleData]);
 
-  useEffect(() => {
-    fetchDetail();
-  }, []);
 
- 
   const handlePermissions = (category) => {
     if (category.name === "Admin & Role Management") {
       setChildCategory(category.children);
@@ -187,7 +171,7 @@ function DetailRole() {
               <div className="flex justify-between border-b border-[#eee] px-5 py-[18px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
                 Management Categories
               </div>
-              {categories.map((item) => {
+              {categories?.map((item) => {
                 if (item.name === "Admin & Role Management") {
                   return (
                     <Collapse
