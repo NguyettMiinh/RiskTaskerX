@@ -109,67 +109,20 @@ function AddRole() {
     }
   };
   function handleCancel() {
-    Modal.confirm({
-      icon: null,
-      content: (
-        <div style={{ textAlign: "center" }}>
-          <ExclamationCircleFilled
-            style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
-          />
-          <div style={{ fontSize: "15px" }}>
-            Are you sure you want to save your changes?
-          </div>
-        </div>
-      ),
-      okText: "Ok",
-      cancelText: "Cancel",
-      okButtonProps: {
-        style: {
-          backgroundColor: "#6055F2",
-          borderColor: "#6055F2",
-          color: "#fff",
-        },
-      },
-    });
+    navigate("/layout/role-list");
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
+    <div className="flex justify-start min-h-screen p-[10px]">
+      <div className="w-full bg-white p-[50px] rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.15)]">
         {/* Breadcrumb & Title */}
-        <div style={{ marginBottom: "20px" }}>
+        <div className="mb-5">
           <Breadcrumbs />
-          <div style={{ fontSize: 20, fontWeight: "bold", paddingTop: "8px" }}>
-            Add New Role
-          </div>
+          <div className="text-[20px] font-bold pt-2">Add New Role</div>
         </div>
         <div></div>
-        <Row
-          style={{
-            paddingBottom: "30px",
-          }}
-        >
+        <Row className="pb-[30px]">
           <Col span={8}>
-            <div
-              style={{
-                paddingBottom: "10px",
-              }}
-            >
-              {" "}
+            <div className="pb-[10px]">
               <Typography.Text strong className="text-[16px]">
                 Role Name
               </Typography.Text>
@@ -181,7 +134,6 @@ function AddRole() {
               status={isError ? "error" : ""}
               onChange={(e) => {
                 setName(e.target.value);
-                setNameError("");
               }}
             />
             {isError && <div style={{ color: "red" }}>{isError}</div>}
@@ -208,25 +160,8 @@ function AddRole() {
         </Row>
         <Row>
           <Col span={8}>
-            <div
-              style={{
-                border: "1px solid #eee",
-                borderRadius: "10px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  borderBottom: "1px solid #eee",
-                  padding: "18px 20px",
-                  backgroundColor: "#EBEAFA",
-                  color: "#6055F2",
-                  fontWeight: "500",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
-                }}
-              >
+            <div className="border border-[#eee] rounded-lg">
+              <div className="flex justify-between border-b border-[#eee] p-[18px_20px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
                 Management Categories
               </div>
               {categories.map((item) => {
@@ -237,16 +172,10 @@ function AddRole() {
                       expandIcon={({ isActive }) => (
                         <RightOutlined
                           rotate={isActive ? 90 : 0}
-                          style={{ color: "#6055F2" }}
+                          className="text-[#6055F2]"
                         />
                       )}
                       expandIconPosition="end"
-                      style={{
-                        backgroundColor:
-                          selectedCategory?.id === item.id
-                            ? "#F5F5F5"
-                            : "white",
-                      }}
                     >
                       <Panel
                         header={
@@ -259,20 +188,15 @@ function AddRole() {
                         {childCategory.map((child) => (
                           <div key={child.id}>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "20px 20px",
-                                cursor: "pointer",
-                                backgroundColor:
-                                  selectedCategory?.id === item.id
-                                    ? "#F5F5F5"
-                                    : "white",
-                              }}
+                              className={`flex justify-between p-[20px] cursor-pointer ${
+                                selectedCategory?.id === item.id
+                                  ? "bg-[#F5F5F5]"
+                                  : "bg-white"
+                              }`}
                               onClick={() => handlePermissions(child)}
                             >
                               {child.name}
-                              <RightOutlined style={{ color: "#6055F2" }} />
+                              <RightOutlined className="text-[#6055F2]" />
                             </div>
                           </div>
                         ))}
@@ -284,17 +208,11 @@ function AddRole() {
                 return (
                   <div key={item.id}>
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "20px 20px",
-                        borderBottom: "1px solid #eee",
-                        cursor: "pointer",
-                        backgroundColor:
-                          selectedCategory?.id === item.id
-                            ? "#F5F5F5"
-                            : "white",
-                      }}
+                      className={`flex justify-between p-[20px] border-b border-[#eee] cursor-pointer ${
+                        selectedCategory?.id === item.id
+                          ? "bg-[#F5F5F5]"
+                          : "bg-white"
+                      }`}
                       onClick={() => handlePermissions(item)}
                     >
                       {item.name}
@@ -309,12 +227,7 @@ function AddRole() {
             <div>
               <Card
                 title={
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <div className="flex justify-between">
                     <div>Permissions</div>
                     <Checkbox
                       checked={checkAll}
@@ -326,7 +239,7 @@ function AddRole() {
                   </div>
                 }
                 styles={{ header: { background: "#EBEAFA" } }}
-                style={{ width: "100%" }}
+                className="w-full"
               >
                 {selectedCategory?.children?.length > 0 ? (
                   selectedCategory.children.map((child) => (
@@ -347,28 +260,12 @@ function AddRole() {
               </Card>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "10px",
-              }}
-            >
-              <Button
-                style={{
-                  marginTop: "10px",
-                  marginRight: "10px",
-                }}
-                onClick={handleCancel}
-              >
+            <div className="flex justify-end mt-[10px]">
+              <Button className="mt-[10px] mr-[10px]" onClick={handleCancel}>
                 Cancel
               </Button>
               <Button
-                style={{
-                  marginTop: "10px",
-                  backgroundColor: "#6055F2",
-                  color: "white",
-                }}
+                className="mt-2.5 bg-[#6055F2] text-white"
                 onClick={handleAdd}
               >
                 Add Now
