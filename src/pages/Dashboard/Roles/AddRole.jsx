@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useState } from "react";
 import { addRoles } from "@/services/roleService";
-import {RightOutlined } from "@ant-design/icons";
+import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";
 import { useNavigate } from "react-router";
@@ -29,8 +29,8 @@ function AddRole() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
- const {data} = usePermissions();
- const categories = data?.data.results;
+  const { data } = usePermissions();
+  const categories = data?.data.results;
 
   const handleCheckBox = (value, checked) => {
     if (checked) {
@@ -157,27 +157,33 @@ function AddRole() {
                   return (
                     <Collapse
                       key={item.id}
-                      expandIcon={({ isActive }) => (
-                        <RightOutlined
-                          rotate={isActive ? 90 : 0}
-                          className="text-[#6055F2]"
-                        />
-                      )}
-                      expandIconPosition="end"
+                      className="!border-none !bg-transparent"
+                      ghost
+                      accordion
                     >
                       <Panel
                         header={
-                          <div onClick={() => handlePermissions(item)}>
-                            {item.name}
+                          <div
+                            className={`flex items-center justify-between px-5 py-5 border-b border-[#eee]`}
+                            onClick={() => handlePermissions(item)}
+                          >
+                            <span>{item.name}</span>
+                            <RightOutlined
+                              className="transition-transform duration-300"
+                              style={{
+                                color: "#6055F2",
+                              }}
+                            />
                           </div>
                         }
                         key={item.id}
+                        className="!p-0 !m-0"
                       >
                         {childCategory.map((child) => (
                           <div key={child.id}>
                             <div
-                              className={`flex justify-between p-[20px] cursor-pointer ${
-                                selectedCategory?.id === item.id
+                              className={`flex items-center justify-between px-5 py-5 border-b border-[#eee] ${
+                                selectedCategory?.id === child.id
                                   ? "bg-[#F5F5F5]"
                                   : "bg-white"
                               }`}
