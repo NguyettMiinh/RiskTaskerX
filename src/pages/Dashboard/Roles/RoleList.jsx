@@ -16,7 +16,7 @@ import { formatTime } from "@/utils/formatTime";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
 import "../../../index.css";
-
+import { toast } from "react-toastify";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -31,12 +31,9 @@ function RoleList() {
   const dataSource = roles?.map((item) => ({ ...item, key: item.id }));
   const [isLoading, setIsLoading] = useState(false);
 
-
   useEffect(() => {
     fetchRoles(currentPage, search, status);
   }, [currentPage, search, status, sortField, sortOrder]);
-
- 
 
   const fetchRoles = async (page, searchValue, status) => {
     try {
@@ -92,7 +89,12 @@ function RoleList() {
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
-    });
+      if (isActive) {
+        toast.success("Role successfully activated");
+      } else {
+        toast.success("Role successfully deactivated");
+      }
+    },"role");
   };
 
   const columns = [
@@ -139,7 +141,7 @@ function RoleList() {
             icon={
               <DeleteOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
             }
-            onClick={() => viewDetails(record.id)}
+            
           />
         </div>
       ),
