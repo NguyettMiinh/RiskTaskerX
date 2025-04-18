@@ -146,7 +146,7 @@ const CustomerList = () => {
           <Button
             type="link"
             icon={
-              <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
+              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails(record.id)}
           />
@@ -237,7 +237,7 @@ const CustomerList = () => {
       >
         <div style={{ marginBottom: "20px" }}>
           <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold" }}>Customer List</div>
+          <div style={{ fontSize: 20, fontWeight: "bold" }}>Customer List</div>
         </div>
 
         <div
@@ -259,7 +259,7 @@ const CustomerList = () => {
             <Input
               placeholder="Search customer by Name, Customer ID"
               style={{
-                width: "400px",
+                width: "450px",
                 height: "40px",
                 borderRadius: "6px 0 0 6px",
                 border: "1px solid #ccc",

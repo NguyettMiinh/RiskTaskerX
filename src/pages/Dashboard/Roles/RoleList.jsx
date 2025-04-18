@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import SelectComponent from "@/components/ui/SelectComponent";
 import constants from "@/constants";
 import {
-  DownloadOutlined,
   PlusOutlined,
   SearchOutlined,
   EyeOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import { useNavigate } from "react-router";
@@ -15,7 +15,7 @@ import Breadcrumbs from "@components/ui/Breadcrumbs";
 import { formatTime } from "@/utils/formatTime";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
-import '../../../index.css';
+import "../../../index.css";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -59,7 +59,7 @@ function RoleList() {
   };
   const dispatch = useDispatch();
   const viewDetails = (id) => {
-     dispatch(setId(id));
+    dispatch(setId(id));
     setTimeout(() => {
       navigate("/layout/role-list/role-detail");
     }, 100);
@@ -92,9 +92,14 @@ function RoleList() {
   };
 
   const columns = [
-    { title: "No", dataIndex: "id", width: "400px"},
-    { title: "Role Name", dataIndex: "name", width: "400px"},
-    { title: "Last Update", dataIndex: "updateAt", sorter: true, width: "400px"},
+    { title: "No", dataIndex: "id", width: "400px" },
+    { title: "Role Name", dataIndex: "name", width: "400px" },
+    {
+      title: "Last Update",
+      dataIndex: "updateAt",
+      sorter: true,
+      width: "400px",
+    },
     {
       title: "Actions",
       dataIndex: "actions",
@@ -114,16 +119,23 @@ function RoleList() {
             onChange={(checked) => toggleActive(record.id, checked)}
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
+              height: "22px",
             }}
             disabled={isLoading}
           />
           <Button
             type="link"
             icon={
-              <EyeOutlined style={{ fontSize: "30px", color: "#BFBFBF" }} />
+              <EyeOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails(record.id)}
-            
+          />
+          <Button
+            type="link"
+            icon={
+              <DeleteOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
+            }
+            onClick={() => viewDetails(record.id)}
           />
         </div>
       ),
@@ -154,52 +166,18 @@ function RoleList() {
     navigate("/layout/role-list/add-role");
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
-        <div style={{ marginBottom: "20px" }}>
-         <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold" }}> Role List</div>
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
+        <div className="mb-5">
+          <Breadcrumbs />
+          <div className="text-[20px] font-bold"> Role List</div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
+        <div className="flex gap-2.5 mb-5 justify-between">
+          <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search role by Name"
-              style={{
-                width: "400px",
-                height: "40px",
-                borderRadius: "6px 0 0 6px",
-                border: "1px solid #ccc",
-              }}
+              className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -211,15 +189,7 @@ function RoleList() {
             />
             <Button
               type="primary"
-              style={{
-                height: "40px",
-                width: "56px",
-                backgroundColor: "#6055F2",
-                color: "#fff",
-                borderRadius: "0 6px 6px 0",
-                border: "none",
-                marginLeft: "-10px",
-              }}
+              className="h-[40px] w-[56px] bg-[#6055F2] text-white rounded-[0_6px_6px_0] border-none -ml-[10px]"
               onClick={() => searchHandle(search)}
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
@@ -231,18 +201,15 @@ function RoleList() {
               onChange={statusHandle}
             />
           </div>
-    
 
           <Button
-            icon={<PlusOutlined style={{ color: "white" }} />}
-            style={{
-              height: "40px",
-              borderColor: "#C9C6ED",
-              backgroundColor: "#6055F2",
-            }}
+            icon={<PlusOutlined className="text-inherit" />}
+            className="h-[40px] border border-[#C9C6ED] bg-[#6055F2] text-white 
+             hover:bg-white hover:text-[#6055F2] hover:border-[#6055F2]
+             transition-colors duration-300"
             onClick={handleRole}
           >
-            <span style={{ color: "white" }}>Add Role</span>
+            Add Role
           </Button>
         </div>
 
@@ -251,13 +218,7 @@ function RoleList() {
           dataSource={dataSource}
           onChange={handleTable}
           pagination={false}
-          className="custom-table"
-          style={{
-            wordWrap: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            wordBreak: "break-word",
-          }}
+          className="custom-table break-words whitespace-normal"
         />
 
         <Pagination
@@ -268,11 +229,7 @@ function RoleList() {
             setCurrentPage(page);
             fetchRoles(page, search, status);
           }}
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "10px",
-          }}
+          className="flex justify-end mt-2.5"
         />
       </div>
     </div>

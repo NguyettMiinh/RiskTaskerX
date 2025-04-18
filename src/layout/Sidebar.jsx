@@ -64,7 +64,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         zIndex: 200,
         paddingTop: "5px",
       }}
-      width={294}
+      width={290}
     >
       {/* Custom Collapse Button */}
       <Button

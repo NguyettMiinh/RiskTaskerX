@@ -9,10 +9,11 @@ import {
   Row,
   Col,
   Collapse,
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
 import { getPermissions, addRoles } from "@/services/roleService";
-import { RightOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled, RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";
 import { useNavigate } from "react-router";
@@ -24,7 +25,7 @@ function AddRole() {
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [childCategory, setChildCategory] = useState([]);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
   const [isError, setIsError] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +62,8 @@ function AddRole() {
       setPermissions(category.children || []);
     }
   };
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const handleAdd = async () => {
     try {
       await addRoles(name, isActive, value);
@@ -71,12 +73,15 @@ const navigate = useNavigate();
       setValue([]);
       setSelectedCategory(null);
       setPermissions([]);
-      setIsActive(false);
+      setIsActive(true);
       setIsError("");
     } catch (error) {
       const message = error.response?.data?.message;
       if (message === "role-already-exists") {
         setIsError("This role name is already taken.");
+      }
+      if (message === "invalid-role-name") {
+        setIsError("Role Name is required.");
       }
     }
   };
@@ -103,36 +108,25 @@ const navigate = useNavigate();
       setValue((prev) => prev.filter((id) => !idsToRemove.includes(id)));
     }
   };
-
+  function handleCancel() {
+    navigate("/layout/role-list");
+  }
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
+    <div className="flex justify-start min-h-screen p-[10px]">
+      <div className="w-full bg-white p-[50px] rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.15)]">
         {/* Breadcrumb & Title */}
-        <div style={{ marginBottom: "20px" }}>
+        <div className="mb-5">
           <Breadcrumbs />
-          <div style={{ fontSize: 30, fontWeight: "bold", paddingTop: "8px" }}>
-            Add New Role
-          </div>
+          <div className="text-[20px] font-bold pt-2">Add New Role</div>
         </div>
-
-        <Row>
+        <div></div>
+        <Row className="pb-[30px]">
           <Col span={8}>
-            <Typography.Text strong>Role Name</Typography.Text>
+            <div className="pb-[10px]">
+              <Typography.Text strong className="text-[16px]">
+                Role Name
+              </Typography.Text>
+            </div>
             <Input
               placeholder="Enter role name"
               size="large"
@@ -140,31 +134,34 @@ const navigate = useNavigate();
               status={isError ? "error" : ""}
               onChange={(e) => {
                 setName(e.target.value);
-                setNameError("");
               }}
             />
             {isError && <div style={{ color: "red" }}>{isError}</div>}
-
-            <div
-              style={{
-                marginTop: "20px",
-                border: "1px solid #eee",
-                borderRadius: "10px",
-              }}
-            >
-              <div
+          </Col>
+          <Col span={12} offset={2}>
+            <Typography.Text strong className="text-[16px]">
+              Status
+            </Typography.Text>
+            <div className="pt-[12px]">
+              <Switch
+                className="text-[16px]"
+                checked={isActive}
+                onChange={toggleActive}
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  borderBottom: "1px solid #eee",
-                  padding: "18px 20px",
-                  backgroundColor: "#EBEAFA",
-                  color: "#6055F2",
-                  fontWeight: "500",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
+                  backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
+                  marginRight: "5px",
                 }}
-              >
+                loading={isLoading}
+                disabled={isLoading}
+              />
+              <span>{isActive ? "Active" : "Inactive"}</span>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <div className="border border-[#eee] rounded-lg">
+              <div className="flex justify-between border-b border-[#eee] p-[18px_20px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
                 Management Categories
               </div>
               {categories.map((item) => {
@@ -175,16 +172,10 @@ const navigate = useNavigate();
                       expandIcon={({ isActive }) => (
                         <RightOutlined
                           rotate={isActive ? 90 : 0}
-                          style={{ color: "#6055F2" }}
+                          className="text-[#6055F2]"
                         />
                       )}
                       expandIconPosition="end"
-                      style={{
-                        backgroundColor:
-                          selectedCategory?.id === item.id
-                            ? "#F5F5F5"
-                            : "white",
-                      }}
                     >
                       <Panel
                         header={
@@ -197,21 +188,15 @@ const navigate = useNavigate();
                         {childCategory.map((child) => (
                           <div key={child.id}>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "20px 20px",
-                                cursor: "pointer",
-                                backgroundColor:
+                              className={`flex justify-between p-[20px] cursor-pointer ${
                                 selectedCategory?.id === item.id
-                                  ? "#F5F5F5"
-                                  : "white",
-
-                              }}
+                                  ? "bg-[#F5F5F5]"
+                                  : "bg-white"
+                              }`}
                               onClick={() => handlePermissions(child)}
                             >
                               {child.name}
-                              <RightOutlined style={{ color: "#6055F2" }} />
+                              <RightOutlined className="text-[#6055F2]" />
                             </div>
                           </div>
                         ))}
@@ -223,17 +208,11 @@ const navigate = useNavigate();
                 return (
                   <div key={item.id}>
                     <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "20px 20px",
-                        borderBottom: "1px solid #eee",
-                        cursor: "pointer",
-                        backgroundColor:
-                          selectedCategory?.id === item.id
-                            ? "#F5F5F5"
-                            : "white",
-                      }}
+                      className={`flex justify-between p-[20px] border-b border-[#eee] cursor-pointer ${
+                        selectedCategory?.id === item.id
+                          ? "bg-[#F5F5F5]"
+                          : "bg-white"
+                      }`}
                       onClick={() => handlePermissions(item)}
                     >
                       {item.name}
@@ -244,83 +223,53 @@ const navigate = useNavigate();
               })}
             </div>
           </Col>
-
-          <Col span={12} offset={4}>
+          <Col span={14} offset={2}>
             <div>
-              <Typography.Text strong>Status</Typography.Text>
-              <div style={{ paddingTop: "5px" }}>
-                <Switch
-                  checked={isActive}
-                  onChange={toggleActive}
-                  style={{
-                    backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
-                    marginRight: "5px",
-                  }}
-                  loading={isLoading}
-                  disabled={isLoading}
-                />
-                <span>{isActive ? "Active" : "Inactive"}</span>
-              </div>
-
-              <div style={{ paddingTop: "30px" }}>
-                <Card
-                  title={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+              <Card
+                title={
+                  <div className="flex justify-between">
+                    <div>Permissions</div>
+                    <Checkbox
+                      checked={checkAll}
+                      onChange={(e) => handleAll(e.target.checked)}
+                      className="custom-checkbox"
                     >
-                      <div>Permissions</div>
+                      Select All
+                    </Checkbox>
+                  </div>
+                }
+                styles={{ header: { background: "#EBEAFA" } }}
+                className="w-full"
+              >
+                {selectedCategory?.children?.length > 0 ? (
+                  selectedCategory.children.map((child) => (
+                    <div key={child.id} style={{ paddingBottom: "10px" }}>
                       <Checkbox
-                        checked={checkAll}
-                        onChange={(e) => handleAll(e.target.checked)}
-                        className="custom-checkbox"
+                        onChange={(e) =>
+                          handleCheckBox(child.id, e.target.checked)
+                        }
+                        checked={value.includes(child.id)}
                       >
-                        Select All
+                        {child.name}
                       </Checkbox>
                     </div>
-                  }
-                  styles={{ header: { background: "#EBEAFA" } }}
-                  style={{ width: "100%" }}
-                >
-                  {selectedCategory?.children?.length > 0 ? (
-                    selectedCategory.children.map((child) => (
-                      <div key={child.id} style={{ paddingBottom: "10px" }}>
-                        <Checkbox
-                          onChange={(e) =>
-                            handleCheckBox(child.id, e.target.checked)
-                          }
-                          checked={value.includes(child.id)}
-                        >
-                          {child.name}
-                        </Checkbox>
-                      </div>
-                    ))
-                  ) : (
-                    <div>No permissions available</div>
-                  )}
-                </Card>
-              </div>
+                  ))
+                ) : (
+                  <div>No permissions available</div>
+                )}
+              </Card>
+            </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginTop: "10px",
-                }}
+            <div className="flex justify-end mt-[10px]">
+              <Button className="mt-[10px] mr-[10px]" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button
+                className="mt-2.5 bg-[#6055F2] text-white"
+                onClick={handleAdd}
               >
-                <Button
-                  style={{
-                    marginTop: "10px",
-                    backgroundColor: "#6055F2",
-                    color: "white",
-                  }}
-                  onClick={handleAdd}
-                >
-                  Add Now
-                </Button>
-              </div>
+                Add Now
+              </Button>
             </div>
           </Col>
         </Row>
