@@ -25,6 +25,47 @@
     transition: all 0.3s, visibility 0s;
 }
 
-:where(.css-dev-only-do-not-override-1d4w9r2).ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+
+:where(.css-dev-only-do-not-override-1261szd).ant-collapse .ant-collapse-content>.ant-collapse-content-box {
     padding: 0;
+}
+
+/* .custom-collapse {
+    background: #fff;
+    border: none;
+    border-radius: 0px;
+    padding: 0px;
+    margin: 0px;
+
+} */
+.ant-collapse > .ant-collapse-item {
+    border-bottom: none;
+  }
+  
+  .ant-collapse-content {
+    border-top: none;
+    padding: 0 !important;
+    background: white;
+  }
+  
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
+  /* .ant-collapse-header .ant-collapse-arrow {
+    display: none !important;
+} */
+.ant-collapse-header {
+    display: flex;
+    justify-content: space-between;
+  }
+ .ant-collapse-expand-icon{
+    display: none !important;
+ }
+ .transition-transform {
+    transition: transform 0.3s ease; /* Điều chỉnh thời gian xoay */
+  }
+
+
+:where(.css-dev-only-do-not-override-1261szd).ant-collapse-ghost >.ant-collapse-item >.ant-collapse-content >.ant-collapse-content-box {
+    padding-block: 0;
 }
