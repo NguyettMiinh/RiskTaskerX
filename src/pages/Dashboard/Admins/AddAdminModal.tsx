@@ -126,6 +126,11 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
       open={visible}
       onCancel={handleCancel}
       onOk={handleOk}
+      okButtonProps={{
+        style: {
+          background: "rgb(96, 85, 242)",
+        }
+      }}
       destroyOnClose={true}
       okText={isEditMode ? "Save Changes" : "Add Now"}
       centered
@@ -153,7 +158,7 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
               <Form.Item label="Status" style={{ marginBottom: 0 }}>
                 <div className="flex font-normal -mt-3">
                   <Form.Item name="isActive" valuePropName="checked" noStyle>
-                    <Switch />
+                    <Switch style={{background:  "rgb(96, 85, 242)"}}/>
                   </Form.Item>
                   <span className="ml-2">
                     {isActive ? "Active" : "Inactive"}
