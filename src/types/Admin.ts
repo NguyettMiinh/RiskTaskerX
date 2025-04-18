@@ -46,11 +46,11 @@ export interface APIResponse<T> {
 }
 
 export interface Role {
-  createAt: string | undefined;
-  updateAt: string | undefined;
+  createAt: string | undefined | null;
+  updateAt: string | undefined | null;
   id: number | undefined;
-  name: string | undefined;
-  isActive: boolean | undefined;
+  name: string | undefined| null;
+  isActive: boolean | undefined | null;
 }
 type SortOrder = "ascend" | "descend" | null;
 export type FieldColumn = {
@@ -91,4 +91,15 @@ export interface FormData {
   phone: string | undefined;
   dateOfBirth: string | undefined;
   status: string | undefined;
+}
+
+export interface AdminUpdateRequest {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string | undefined;
+  isActive: boolean | undefined;
+  role: Role;
+  departmentName: string | undefined;
+  dateOfBirth: string | undefined;
 }

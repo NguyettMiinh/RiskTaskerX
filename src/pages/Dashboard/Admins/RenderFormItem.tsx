@@ -1,7 +1,7 @@
 import { Row, Col, Form, Input, Select, DatePicker, FormInstance } from "antd";
-import { adminFormFields, FormFieldConfig } from "../../../utils/fieldConfigs";
+import { adminFormFields, FormFieldConfig, RoleOption } from "../../../utils/fieldConfigs";
 
-const renderFormItem = (
+const RenderFormItem = (
   field: FormFieldConfig,
   index: number,
 ) => {
@@ -14,7 +14,6 @@ const renderFormItem = (
   };
 
   let inputComponent;
-
   switch (field.type) {
     case "select":
       inputComponent = (
@@ -23,6 +22,7 @@ const renderFormItem = (
           placeholder={field.placeholder}
           optionFilterProp="label"
           filterSort={(a, b) => a.label.localeCompare(b.label)}
+          fieldNames={field.fieldNames}
         />
       );
       break;
@@ -53,4 +53,4 @@ const renderFormItem = (
   );
 };
 
-export default renderFormItem;
+export default RenderFormItem;

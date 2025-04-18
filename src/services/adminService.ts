@@ -1,6 +1,7 @@
 import {
   Admin,
   AdminSearchAndFilterRequest,
+  AdminUpdateRequest,
   APIResponse,
   APIResponseExport,
   PagingResult,
@@ -33,11 +34,19 @@ const setIsActiveAdmin = async (
   return response.data;
 };
 
+const updateAdmin = async (
+  data: AdminUpdateRequest
+): Promise<APIResponse<string>> => {
+  const response = await axios.put(`/admin`, data);
+  return response.data;
+};
+
 const adminService = {
   searchAndFilterAdmin,
   exportAdmin,
   getAdminById,
   setIsActiveAdmin,
+  updateAdmin
 };
 
 export default adminService;

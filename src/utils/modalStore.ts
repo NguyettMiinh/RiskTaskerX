@@ -1,4 +1,4 @@
-import { FormData } from "types/Admin";
+import { Admin, FormData } from "types/Admin";
 import { create } from "zustand";
 
 const defaultFormData: FormData = {
@@ -21,6 +21,9 @@ type ModalState = {
   setFormData: (data: FormData) => void;
   resetForm: () => void;
   setEditingUserId: (id: number | null) => void;
+  admins: Admin[];
+  setAdmins: (admins: Admin[]) => void;
+  updateUser?: (admins: Admin) => void;
 };
 
 export const useModalStore = create<ModalState>((set) => ({
@@ -33,4 +36,10 @@ export const useModalStore = create<ModalState>((set) => ({
   setFormData: (data) => set({ formData: data }),
   resetForm: () => set({ formData: defaultFormData }),
   setEditingUserId: (id) => set({ editingUserId: id }),
+  admins: [],
+  setAdmins: (admins) => set({ admins }),
+  updateUser: (admin: Admin) =>
+    set((state) => ({
+      admins: state.admins.map((u) => (u.id === admin.id ? admin : u)),
+    })),
 }));

@@ -2,6 +2,17 @@ import { Form, FormInstance, Switch } from "antd";
 import { Rule } from "antd/es/form";
 import constants from "../constants/index";
 type FieldType = "input" | "select" | "date" | "switch" | "custom" | "tel";
+export type RoleOption = {
+  label: string;
+  value: number | string;
+};
+
+const roleOptions: RoleOption[] = [
+  { label: "IT Suport", value: 9 },
+  { label: "Manager", value: 7 },
+  { label: "Sales", value: 8},
+  { label: "Admin", value: 1 },
+];
 
 export interface FormFieldConfig {
   name: string | string[];
@@ -11,6 +22,7 @@ export interface FormFieldConfig {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  fieldNames?: { label: "label", value: "value" };
   rules?: Rule[];
   options?: { label: string; value: string | number }[];
   render?: (form: FormInstance) => React.ReactNode;
@@ -29,13 +41,15 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
     className: "!bg-transparent font-normal",
   },
   {
-    name: ["role", "name"],
+    name: ["role","id"],
     label: "Role",
     type: "select",
     rules: [{ required: true, message: "Role is required" }],
     required: false,
     placeholder: "Search to select",
     className: "font-normal",
+    options: roleOptions,
+    fieldNames: { label: "label", value: "value" },
   },
   {
     name: isEditMode ? "fullName" : "email",
@@ -81,7 +95,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
           },
         ],
     required: false,
-    className:isEditMode? "!bg-transparent" : "font-normal",
+    className: isEditMode ? "!bg-transparent" : "font-normal",
   },
   {
     name: "phoneNumber",

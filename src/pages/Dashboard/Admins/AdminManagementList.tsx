@@ -36,7 +36,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 export default function AdminManagementList() {
-  const [admin, setAdmin] = useState<Admin[]>([]);
+  // const [admin, setAdmin] = useState<Admin[]>([]);
   const [originalAdmin, setOriginalAdmin] = useState<Admin[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
@@ -55,6 +55,8 @@ export default function AdminManagementList() {
   const setEditMode = useModalStore((state) => state.setEditMode);
   const setVisible = useModalStore((state) => state.setVisible);
   const setEditingUserId = useModalStore((state) => state.setEditingUserId);
+  const admins = useModalStore((state) => state.admins);
+  const setAdmins = useModalStore((state) => state.setAdmins);
 
   const handleAdd = () => {
     setEditMode(false);
@@ -73,11 +75,10 @@ export default function AdminManagementList() {
     sortBy: sortOrder ? sortOrder : SORTBYASC,
   };
   const updateCustomerStatus = (id: number, isActive: boolean) => {
-    setAdmin((prevAdmins: Admin[]) =>
-      prevAdmins.map((admin: Admin) =>
-        admin.id === id ? { ...admin, isActive } : admin
-      )
+    const updatedAdmins = admins.map((admin) =>
+      admin.id === id ? { ...admin, isActive } : admin
     );
+    setAdmins(updatedAdmins);
   };
   const handleApiUpdate = async (id: number, isActive: boolean) => {
     try {
@@ -92,19 +93,23 @@ export default function AdminManagementList() {
   };
   // put isActive
   const toggleActive = (id: number, isActive: boolean) => {
-    showConfirmModal(isActive, async () => {
-      updateCustomerStatus(id, isActive);
-      await handleApiUpdate(id, isActive);
-      if (isActive) {
-        toast.success("Admin successfully activated", {
-          className: "custom-toast",
-        });
-      } else {
-        toast.success("Admin successfully deactivated", {
-          className: "custom-toast",
-        });
-      }
-    }, "admin");
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateCustomerStatus(id, isActive);
+        await handleApiUpdate(id, isActive);
+        if (isActive) {
+          toast.success("Admin successfully activated", {
+            className: "custom-toast",
+          });
+        } else {
+          toast.success("Admin successfully deactivated", {
+            className: "custom-toast",
+          });
+        }
+      },
+      "admin"
+    );
   };
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -236,7 +241,7 @@ export default function AdminManagementList() {
             item.email.length > 12 ? item.email.substring(0, 12) : item.email,
           lastLogin: dayjs(item.lastLogin).format("HH:mm DD-MM-YYYY"),
         }));
-        setAdmin(truncatedData);
+        setAdmins(truncatedData);
         setOriginalAdmin(truncatedData);
         setTotalAdmins(response.results.totalElements || 0);
         setLoading(false);
@@ -248,7 +253,9 @@ export default function AdminManagementList() {
       setLoading(false);
     }
   };
-
+  const onSuccess = () => {
+    fetchData();
+  };
   return (
     <div className="admin-list">
       <div className="admin-item">
@@ -265,17 +272,18 @@ export default function AdminManagementList() {
               onChange={(e) => {
                 setSearch(e.target.value);
                 if (!e.target.value.trim()) {
-                  setAdmin(originalAdmin);
+                  setAdmins(originalAdmin);
                   setTotalAdmins(originalAdmin.length);
                 }
               }}
             />
             <Button
               type="primary"
+              style={{ background: "rgb(96, 85, 242)" }}
               className="-ml-5 h-10 rounded-s-none"
               onClick={() => searchHandle(search)}
             >
-              <SearchOutlined className="text-[24px]" />
+              <SearchOutlined className="text-[24px] " />
             </Button>
 
             <SelectComponent
@@ -286,7 +294,7 @@ export default function AdminManagementList() {
               allLabel="All Departments"
             />
             <SelectComponent
-              className="w-full sm:w-[100px]"
+              className="w-full sm:w-[110px]"
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
               style={{}}
@@ -312,13 +320,15 @@ export default function AdminManagementList() {
             >
               <span style={{ color: "#fff" }}>Add Admin</span>
             </Button>
-            <AddAdminModal />
+            <AddAdminModal
+              onSuccess={onSuccess}
+            />
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
             columns={columns}
-            dataSource={admin}
+            dataSource={admins}
             loading={loading}
             pagination={false}
             locale={{ emptyText: "No admin matched your search. Try again." }}

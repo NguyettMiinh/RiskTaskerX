@@ -12,24 +12,25 @@ import {
   Switch,
 } from "antd";
 import constants from "../../../constants/index";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import adminService from "../../../services/adminService";
 import dayjs from "dayjs";
-import { Admin } from "../../../types/Admin";
+import { Admin, AdminUpdateRequest } from "../../../types/Admin";
 import InputFormComponent from "@components/ui/InputFormComponent";
 import { adminFormFields } from "../../../utils/fieldConfigs";
-import renderFormItem from "./renderFormItem";
+import renderFormItem from "./RenderFormItem";
+import { toast } from "react-toastify";
 
 type optionFilter = {
   label: string;
   value: string;
 };
-
-const AddAdminModal = () => {
+interface AddAdminModalProps {
+  onSuccess: () => void;
+}
+const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState<dayjs.Dayjs | null>(null);
-  const [detailAdmin, setDetailAdmin] = useState<Admin>();
   const visible = useModalStore((state) => state.visible);
   const isEditMode = useModalStore((state) => state.isEditMode);
   const editingUserId = useModalStore((state) => state.editingUserId);
@@ -43,12 +44,35 @@ const AddAdminModal = () => {
     form.resetFields();
   };
 
+  const handleUpdateAdmin = useCallback(
+    async (values: AdminUpdateRequest) => {
+      const payload = {
+        ...values,
+        dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
+        role: {
+          id: values.role.id,
+          createAt: null,
+          updateAt: null,
+          name: null,
+          isActive: null,
+        },
+        lastLogin: dayjs().toISOString(),
+        name: values.fullName,
+      };
+      console.log(payload);
+      delete (payload as any).lastLogin;
+      await adminService.updateAdmin(payload);
+      toast.success("Changes have been saved successfully");
+      onSuccess();
+    },
+    [isActive, form.getFieldValue]
+  );
   const handleOk = () => {
     form
       .validateFields()
       .then((values) => {
         if (isEditMode) {
-          console.log("Cập nhật dữ liệu:", values);
+          handleUpdateAdmin(values);
         } else {
           console.log("Thêm dữ liệu mới:", values);
         }
@@ -67,8 +91,6 @@ const AddAdminModal = () => {
         const data = await adminService.getAdminById(editingUserId);
         if (data && data.httpStatus == "OK") {
           const formattedDate = dayjs(data.results.dateOfBirth);
-          setDate(formattedDate);
-          setDetailAdmin(data.results);
           form.setFieldsValue({
             ...data.results,
             dateOfBirth: formattedDate,
@@ -93,15 +115,6 @@ const AddAdminModal = () => {
       showAdminDetail();
     }
   }, [visible, isEditMode]);
-
-  const handleFilterSort = (
-    optionA: optionFilter,
-    optionB: optionFilter
-  ): number => {
-    return optionA.label
-      .toLowerCase()
-      .localeCompare(optionB.label.toLowerCase());
-  };
 
   const onFinish = (values: any) => {
     console.log("Form submitted with values: ", values);
@@ -128,7 +141,7 @@ const AddAdminModal = () => {
           className="[&_.ant-form-item]:mb-2 font-medium text-[21px]"
           initialValues={{ isActive: true }}
           onFinish={onFinish}
-          validateTrigger={['onChange', 'onBlur']}
+          validateTrigger={["onChange", "onBlur"]}
         >
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             {adminFormFields(isEditMode).map((field, index) =>
@@ -140,7 +153,7 @@ const AddAdminModal = () => {
               <Form.Item label="Status" style={{ marginBottom: 0 }}>
                 <div className="flex font-normal -mt-3">
                   <Form.Item name="isActive" valuePropName="checked" noStyle>
-                    <Switch/>
+                    <Switch />
                   </Form.Item>
                   <span className="ml-2">
                     {isActive ? "Active" : "Inactive"}
