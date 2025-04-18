@@ -8,8 +8,9 @@ export interface Admin {
   role: Role;
   createAt: string | undefined;
   updateAt: string | undefined;
-  lastLogin: string;
-  departmentName: string;
+  lastLogin: string | undefined;
+  departmentName: string | undefined;
+  dateOfBirth: string | undefined;
 }
 
 export interface AdminSearchAndFilterRequest {
@@ -45,11 +46,11 @@ export interface APIResponse<T> {
 }
 
 export interface Role {
-  createAt: string | undefined;
-  updateAt: string | undefined;
+  createAt: string | undefined | null;
+  updateAt: string | undefined | null;
   id: number | undefined;
-  name: string | undefined;
-  isActive: boolean | undefined;
+  name: string | undefined| null;
+  isActive: boolean | undefined | null;
 }
 type SortOrder = "ascend" | "descend" | null;
 export type FieldColumn = {
@@ -61,6 +62,12 @@ export type FieldColumn = {
   sorter?: boolean;
   sortOrder?: SortOrder;
 };
+
+export interface APIResponseExport {
+  response: string[];
+  fileName: string;
+  password: string;
+}
 
 export const columnAdminFields: FieldColumn[] = [
   { title: "Admin ID", dataIndex: "id", align: "left" },
@@ -75,3 +82,24 @@ export const columnAdminFields: FieldColumn[] = [
     sorter: true,
   },
 ];
+
+export interface FormData {
+  role: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  department: string | undefined;
+  phone: string | undefined;
+  dateOfBirth: string | undefined;
+  status: string | undefined;
+}
+
+export interface AdminUpdateRequest {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string | undefined;
+  isActive: boolean | undefined;
+  role: Role;
+  departmentName: string | undefined;
+  dateOfBirth: string | undefined;
+}

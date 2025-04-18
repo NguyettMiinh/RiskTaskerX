@@ -5,8 +5,8 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import SelectComponent from "@components/ui/SelectComponent";
-import { Button, Input, Pagination, Switch, Table, Tag } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Input, Pagination, Switch, Table } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import constants from "../../../constants";
@@ -23,18 +23,20 @@ import { downloadFile } from "../../../utils/exportUtils";
 import { showExportModal } from "../../../utils/modalUtils";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import adminService from "../../../services/adminService";
-import { formatTime } from "../../../utils/formatTime";
 import {
   FilterValue,
   SorterResult,
   TableCurrentDataSource,
 } from "antd/es/table/interface";
 import { SORTBYASC, SORTBYDESC } from "../../../constants/Variable";
-import ROUTERPATH from "../../../constants/routerConstants";
+import { useModalStore } from "../../../utils/modalStore";
+import AddAdminModal from "./AddAdminModal";
+import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function AdminManagementList() {
-  const navigate = useNavigate();
-  const [admin, setAdmin] = useState<Admin[]>([]);
+  // const [admin, setAdmin] = useState<Admin[]>([]);
   const [originalAdmin, setOriginalAdmin] = useState<Admin[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
@@ -50,6 +52,16 @@ export default function AdminManagementList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<number>(10);
   const totalPages = Math.ceil(totalAdmins / pageSize);
+  const setEditMode = useModalStore((state) => state.setEditMode);
+  const setVisible = useModalStore((state) => state.setVisible);
+  const setEditingUserId = useModalStore((state) => state.setEditingUserId);
+  const admins = useModalStore((state) => state.admins);
+  const setAdmins = useModalStore((state) => state.setAdmins);
+
+  const handleAdd = () => {
+    setEditMode(false);
+    setVisible(true);
+  };
 
   const payload: AdminSearchAndFilterRequest = {
     sortKey: sortField ? sortField : "id",
@@ -62,12 +74,42 @@ export default function AdminManagementList() {
     size: pageSize,
     sortBy: sortOrder ? sortOrder : SORTBYASC,
   };
-
+  const updateCustomerStatus = (id: number, isActive: boolean) => {
+    const updatedAdmins = admins.map((admin) =>
+      admin.id === id ? { ...admin, isActive } : admin
+    );
+    setAdmins(updatedAdmins);
+  };
+  const handleApiUpdate = async (id: number, isActive: boolean) => {
+    try {
+      const response = await adminService.setIsActiveAdmin(id, isActive);
+      if (!response) {
+        updateCustomerStatus(id, !isActive);
+      }
+    } catch (error) {
+      console.error("Error updating admin status:", error);
+      updateCustomerStatus(id, !isActive);
+    }
+  };
   // put isActive
-  const toggleActive = (id?: number, isActive?: boolean, setAdmin?: Admin) => {
-    showConfirmModal(isActive, async () => {
-      console.log("show modal");
-    });
+  const toggleActive = (id: number, isActive: boolean) => {
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateCustomerStatus(id, isActive);
+        await handleApiUpdate(id, isActive);
+        if (isActive) {
+          toast.success("Admin successfully activated", {
+            className: "custom-toast",
+          });
+        } else {
+          toast.success("Admin successfully deactivated", {
+            className: "custom-toast",
+          });
+        }
+      },
+      "admin"
+    );
   };
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -111,13 +153,13 @@ export default function AdminManagementList() {
     },
   ];
 
-  ///filter tier
-  const filterRoleHandle = (value: boolean[]) => {
+  ///filter status
+  const filterStatusHandle = (value: boolean[]) => {
     setFilterRoleAdmin(value);
     setCurrentPage(0);
   };
 
-  //filter status
+  //filter department
   const filterDepartmentHandle = (value: string[]) => {
     setFilterDepartmentAdmin(value);
     setCurrentPage(0);
@@ -133,17 +175,16 @@ export default function AdminManagementList() {
 
   // view detail admin
   const viewDetails = (id: number) => {
-    navigate(`${ROUTERPATH.detailAdmin}/${id}`);
+    setEditMode(true);
+    setEditingUserId(id);
+    setVisible(true);
   };
 
   /// export file
-  const exportHandle = async (
-    searchValue: string,
-    filterRole: boolean[],
-    filterDepartment?: string[]
-  ) => {
+  const exportHandle = async () => {
     try {
-      const password = downloadFile(admin);
+      const response = await adminService.exportAdmin(payload);
+      const password = downloadFile(response);
       showExportModal(password);
     } catch (error) {
       console.error("Error exporting file:", error);
@@ -169,8 +210,8 @@ export default function AdminManagementList() {
   };
 
   useEffect(() => {
-    if ((currentPage - 1) * pageSize >= totalAdmins && currentPage !== 1) {
-      setCurrentPage(1);
+    if (currentPage > totalPages && currentPage > 1) {
+      setCurrentPage(totalPages);
     }
     fetchData();
   }, [
@@ -184,8 +225,6 @@ export default function AdminManagementList() {
     totalPages,
     totalAdmins,
   ]);
-  console.log(filterDepartmentAdmin);
-  console.log(filterStatus);
 
   const fetchData = async () => {
     setLoading(true);
@@ -200,9 +239,9 @@ export default function AdminManagementList() {
               : item.fullName,
           email:
             item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: formatTime(item.lastLogin),
+          lastLogin: dayjs(item.lastLogin).format("HH:mm DD-MM-YYYY"),
         }));
-        setAdmin(truncatedData);
+        setAdmins(truncatedData);
         setOriginalAdmin(truncatedData);
         setTotalAdmins(response.results.totalElements || 0);
         setLoading(false);
@@ -213,6 +252,9 @@ export default function AdminManagementList() {
     } finally {
       setLoading(false);
     }
+  };
+  const onSuccess = () => {
+    fetchData();
   };
   return (
     <div className="admin-list">
@@ -230,17 +272,18 @@ export default function AdminManagementList() {
               onChange={(e) => {
                 setSearch(e.target.value);
                 if (!e.target.value.trim()) {
-                  setAdmin(originalAdmin);
+                  setAdmins(originalAdmin);
                   setTotalAdmins(originalAdmin.length);
                 }
               }}
             />
             <Button
               type="primary"
+              style={{ background: "rgb(96, 85, 242)" }}
               className="-ml-5 h-10 rounded-s-none"
               onClick={() => searchHandle(search)}
             >
-              <SearchOutlined className="text-[24px]" />
+              <SearchOutlined className="text-[24px] " />
             </Button>
 
             <SelectComponent
@@ -251,39 +294,41 @@ export default function AdminManagementList() {
               allLabel="All Departments"
             />
             <SelectComponent
-              className="w-full sm:w-30"
+              className="w-full sm:w-[110px]"
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
-              style={{ with: "135px" }}
-              onChange={filterRoleHandle}
+              style={{}}
+              onChange={filterStatusHandle}
             />
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button
               icon={<DownloadOutlined style={{ color: COLOR.blue }} />}
               style={{ height: "40px", borderColor: "#C9C6ED" }}
-              onClick={() =>
-                exportHandle(search, filterStatus, filterDepartmentAdmin)
-              }
+              onClick={() => exportHandle()}
             >
               <span style={{ color: COLOR.blue }}>Export</span>
             </Button>
             <Button
+              className="h-[40px]"
               style={{
-                height: "40px",
                 background: COLOR.blue,
                 borderColor: "#c9c6ed",
               }}
               icon={<PlusOutlined style={{ color: "#fff" }} />}
+              onClick={handleAdd}
             >
               <span style={{ color: "#fff" }}>Add Admin</span>
             </Button>
+            <AddAdminModal
+              onSuccess={onSuccess}
+            />
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
           <Table
             columns={columns}
-            dataSource={admin}
+            dataSource={admins}
             loading={loading}
             pagination={false}
             locale={{ emptyText: "No admin matched your search. Try again." }}
