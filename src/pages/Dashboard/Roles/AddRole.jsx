@@ -9,18 +9,17 @@ import {
   Row,
   Col,
   Collapse,
-  Modal,
 } from "antd";
-import { useEffect, useState } from "react";
-import { getPermissions, addRoles } from "@/services/roleService";
-import { ExclamationCircleFilled, RightOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { addRoles } from "@/services/roleService";
+import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";
 import { useNavigate } from "react-router";
+import { usePermissions } from "@components/hook/usePermissions";
 const { Panel } = Collapse;
 
 function AddRole() {
-  const [categories, setCategories] = useState([]);
   const [value, setValue] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -28,21 +27,10 @@ function AddRole() {
   const [isActive, setIsActive] = useState(true);
   const [isError, setIsError] = useState("");
   const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [nameError, setNameError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const fetchPermissions = async () => {
-    try {
-      const response = await getPermissions();
-      setCategories(response.data.results);
-    } catch (error) {
-      console.error("Failed to fetch permissions:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPermissions();
-  }, []);
+  const { data } = usePermissions();
+  const categories = data?.data.results;
 
   const handleCheckBox = (value, checked) => {
     if (checked) {
@@ -87,11 +75,11 @@ function AddRole() {
   };
 
   const toggleActive = async (checked) => {
-    if (isLoading) return;
-    setIsLoading(true);
+    if (loading) return;
+    setLoading(true);
     setIsActive(checked);
     setTimeout(() => {
-      setIsLoading(false);
+      setLoading(false);
     }, 1000);
   };
 
@@ -151,8 +139,8 @@ function AddRole() {
                   backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
                   marginRight: "5px",
                 }}
-                loading={isLoading}
-                disabled={isLoading}
+                loading={loading}
+                disabled={loading}
               />
               <span>{isActive ? "Active" : "Inactive"}</span>
             </div>
@@ -164,32 +152,38 @@ function AddRole() {
               <div className="flex justify-between border-b border-[#eee] p-[18px_20px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
                 Management Categories
               </div>
-              {categories.map((item) => {
+              {categories?.map((item) => {
                 if (item.name === "Admin & Role Management") {
                   return (
                     <Collapse
                       key={item.id}
-                      expandIcon={({ isActive }) => (
-                        <RightOutlined
-                          rotate={isActive ? 90 : 0}
-                          className="text-[#6055F2]"
-                        />
-                      )}
-                      expandIconPosition="end"
+                      className="!border-none !bg-transparent"
+                      ghost
+                      accordion
                     >
                       <Panel
                         header={
-                          <div onClick={() => handlePermissions(item)}>
-                            {item.name}
+                          <div
+                            className={`flex items-center justify-between px-5 py-5 border-b border-[#eee]`}
+                            onClick={() => handlePermissions(item)}
+                          >
+                            <span>{item.name}</span>
+                            <RightOutlined
+                              className="transition-transform duration-300"
+                              style={{
+                                color: "#6055F2",
+                              }}
+                            />
                           </div>
                         }
                         key={item.id}
+                        className="!p-0 !m-0"
                       >
                         {childCategory.map((child) => (
                           <div key={child.id}>
                             <div
-                              className={`flex justify-between p-[20px] cursor-pointer ${
-                                selectedCategory?.id === item.id
+                              className={`flex items-center justify-between px-5 py-5 border-b border-[#eee] ${
+                                selectedCategory?.id === child.id
                                   ? "bg-[#F5F5F5]"
                                   : "bg-white"
                               }`}

@@ -8,19 +8,19 @@ import {
   Typography,
   Row,
   Col,
-  Modal,
   Collapse,
 } from "antd";
 import { useEffect, useState } from "react";
-import { getPermissions, getRoles, editRoles } from "@/services/roleService";
+import { getRoles, editRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
-
+import { usePermissions } from "@components/hook/usePermissions";
+import { useQuery } from "@tanstack/react-query";
+import "../../../assets/styles/role.css";
 const { Panel } = Collapse;
 function DetailRole() {
-  const [categories, setCategories] = useState([]);
   const [childCategory, setChildCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [formEdit, setFormEdit] = useState({
@@ -31,41 +31,26 @@ function DetailRole() {
   const [isError, setIsError] = useState("");
   const id = useSelector((state) => state.user.id);
 
-  //lay permission hien thi len UIUI
-  const fetchPermissions = async () => {
-    try {
-      const response = await getPermissions();
-      setCategories(response.data.results);
-    } catch (error) {
-      console.error("Failed to fetch permissions:", error);
-    }
-  };
+  const { data: categoriesData } = usePermissions();
+  const categories = categoriesData?.data.results;
 
+  const { data: roleData } = useQuery({
+    queryKey: ["role", id],
+    queryFn: () => getRoles(id),
+  });
+  //luc dau roleData undefined, set lien vao form se bi loi
+  // chi goi khi co roleDate
   useEffect(() => {
-    fetchPermissions();
-  }, []);
-
-  //lay detail de so sanh voi permission
-  const fetchDetail = async () => {
-    try {
-      const response = await getRoles(id);
-      //luu gia tri vao form de edit
+    if (roleData?.data?.results) {
+      const role = roleData.data.results;
       setFormEdit({
-        name: response.data.results.name || "",
-        isActive: response.data.results.isActive ?? false,
-        permissionId:
-          response.data.results.permissions?.map((item) => item.id) || [],
+        name: role.name || "",
+        isActive: role.isActive ?? true,
+        permissionId: role.permissions?.map((item) => item.id) || [],
       });
-    } catch (error) {
-      console.error("Error fetching data:", error);
     }
-  };
+  }, [roleData]);
 
-  useEffect(() => {
-    fetchDetail();
-  }, []);
-
- 
   const handlePermissions = (category) => {
     if (category.name === "Admin & Role Management") {
       setChildCategory(category.children);
@@ -112,7 +97,7 @@ function DetailRole() {
     console.log(allIds);
     //loai bo trung lap voi formId
     const updatedPermissions = checked
-      ?  Array.from(new Set([...formEdit.permissionId, ...allIds]))
+      ? Array.from(new Set([...formEdit.permissionId, ...allIds]))
       : formEdit.permissionId.filter((id) => !allIds.includes(id));
 
     setFormEdit({
@@ -183,69 +168,77 @@ function DetailRole() {
         </Row>
         <Row>
           <Col span={8}>
-            <div className="border border-[#eee] rounded-[10px]">
+            <div className="border border-[#eee] rounded-[10px] overflow-hidden">
               <div className="flex justify-between border-b border-[#eee] px-5 py-[18px] bg-[#EBEAFA] text-[#6055F2] font-medium rounded-t-[10px]">
                 Management Categories
               </div>
-              {categories.map((item) => {
+
+              {categories?.map((item) => {
+                const isSelected = selectedCategory?.id === item.id;
+
                 if (item.name === "Admin & Role Management") {
                   return (
                     <Collapse
                       key={item.id}
-                      expandIcon={({ isActive }) => (
-                        <RightOutlined
-                          rotate={isActive ? 90 : 0}
-                          style={{ color: "#6055F2" }}
-                        />
-                      )}
-                      expandIconPosition="end"
+                      ghost
+                      className="!border-none !bg-transparent"
                     >
                       <Panel
+                        key={item.id}
                         header={
-                          <div onClick={() => handlePermissions(item)}>
-                            {item.name}
+                          <div
+                            className={`flex items-center justify-between px-5 py-5 border-b border-[#eee]`}
+                            onClick={() => handlePermissions(item)}
+                          >
+                            <span>{item.name}</span>
+                            <RightOutlined
+                              className="transition-transform duration-300"
+                              style={{
+                                color: "#6055F2",                               
+                               
+                              }}
+                            />
                           </div>
                         }
-                        key={item.id}
+                        className="!p-0 !m-0"
                       >
-                        {childCategory.map((child) => (
-                          <div key={child.id}>
+                        {childCategory.map((child) => {
+                          const isChildSelected =
+                            selectedCategory?.id === child.id;
+                          return (
                             <div
-                              className={`flex justify-between px-5 py-5 cursor-pointer ${
-                                selectedCategory?.id === item.id
-                                  ? "bg-[#F5F5F5]"
-                                  : "bg-white"
+                              key={child.id}
+                              className={`flex items-center justify-between px-5 py-5 border-b border-[#eee] cursor-pointer ${
+                                isChildSelected ? "bg-[#F5F5F5]" : "bg-white"
                               }`}
                               onClick={() => handlePermissions(child)}
                             >
-                              {child.name}
-                              <RightOutlined className="text-[#6055F2]" />
+                              <span>{child.name}</span>
+                              <RightOutlined style={{ color: "#6055F2" }} />
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </Panel>
                     </Collapse>
                   );
                 }
 
                 return (
-                  <div key={item.id}>
-                    <div
-                      className={`flex justify-between px-5 py-5 border-b border-[#eee] cursor-pointer ${
-                        selectedCategory?.id === item.id
-                          ? "bg-[#F5F5F5]"
-                          : "bg-white"
-                      }`}
-                      onClick={() => handlePermissions(item)}
-                    >
-                      {item.name}
-                      <RightOutlined style={{ color: "#6055F2" }} />
-                    </div>
+                  <div
+                    key={item.id}
+                    className={`flex items-center justify-between px-5 py-5 border-b border-[#eee] cursor-pointer ${
+                      isSelected ? "bg-[#F5F5F5]" : "bg-white"
+                    }`}
+                    onClick={() => handlePermissions(item)}
+                  >
+                    <span>{item.name}</span>
+                    <RightOutlined style={{ color: "#6055F2" }} />
                   </div>
                 );
               })}
             </div>
           </Col>
+
           <Col span={14} offset={2}>
             <div>
               <Card
