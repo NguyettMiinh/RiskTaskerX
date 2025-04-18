@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
-export const showConfirmModal = (isActive, onConfirm) => {
+export const showConfirmModal = (isActive, onConfirm, name) => {
     Modal.confirm({
       icon: null,
       content: (
@@ -11,8 +11,8 @@ export const showConfirmModal = (isActive, onConfirm) => {
           />
           <div style={{ fontSize: "15px" }}>
             {isActive
-              ? "Are you sure you want to activate this customer?"
-              : "Are you sure you want to deactivate this customer?"}
+              ? `Are you sure you want to activate this ${name}?`
+              : `Are you sure you want to deactivate this ${name}?`}
           </div>
         </div>
       ),

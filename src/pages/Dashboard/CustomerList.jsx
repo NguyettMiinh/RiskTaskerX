@@ -179,7 +179,7 @@ const CustomerList = () => {
     showConfirmModal(isActive, async () => {
       updateCustomerStatus(id, isActive, setCustomers);
       await handleApiUpdate(id, isActive, setCustomers);
-    });
+    }, "customer");
   };
 
   /// search customer

@@ -5,8 +5,8 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import SelectComponent from "@components/ui/SelectComponent";
-import { Button, Input, Pagination, Switch, Table, Tag } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Input, Pagination, Switch, Table } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import constants from "../../../constants";
@@ -23,20 +23,19 @@ import { downloadFile } from "../../../utils/exportUtils";
 import { showExportModal } from "../../../utils/modalUtils";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import adminService from "../../../services/adminService";
-import { formatTime } from "../../../utils/formatTime";
 import {
   FilterValue,
   SorterResult,
   TableCurrentDataSource,
 } from "antd/es/table/interface";
 import { SORTBYASC, SORTBYDESC } from "../../../constants/Variable";
-import ROUTERPATH from "../../../constants/routerConstants";
 import { useModalStore } from "../../../utils/modalStore";
 import AddAdminModal from "./AddAdminModal";
 import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function AdminManagementList() {
-  const navigate = useNavigate();
   const [admin, setAdmin] = useState<Admin[]>([]);
   const [originalAdmin, setOriginalAdmin] = useState<Admin[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -53,7 +52,14 @@ export default function AdminManagementList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<number>(10);
   const totalPages = Math.ceil(totalAdmins / pageSize);
-  const { openModal } = useModalStore();
+  const setEditMode = useModalStore((state) => state.setEditMode);
+  const setVisible = useModalStore((state) => state.setVisible);
+  const setEditingUserId = useModalStore((state) => state.setEditingUserId);
+
+  const handleAdd = () => {
+    setEditMode(false);
+    setVisible(true);
+  };
 
   const payload: AdminSearchAndFilterRequest = {
     sortKey: sortField ? sortField : "id",
@@ -66,12 +72,39 @@ export default function AdminManagementList() {
     size: pageSize,
     sortBy: sortOrder ? sortOrder : SORTBYASC,
   };
-
+  const updateCustomerStatus = (id: number, isActive: boolean) => {
+    setAdmin((prevAdmins: Admin[]) =>
+      prevAdmins.map((admin: Admin) =>
+        admin.id === id ? { ...admin, isActive } : admin
+      )
+    );
+  };
+  const handleApiUpdate = async (id: number, isActive: boolean) => {
+    try {
+      const response = await adminService.setIsActiveAdmin(id, isActive);
+      if (!response) {
+        updateCustomerStatus(id, !isActive);
+      }
+    } catch (error) {
+      console.error("Error updating admin status:", error);
+      updateCustomerStatus(id, !isActive);
+    }
+  };
   // put isActive
-  const toggleActive = (id?: number, isActive?: boolean, setAdmin?: Admin) => {
+  const toggleActive = (id: number, isActive: boolean) => {
     showConfirmModal(isActive, async () => {
-      console.log("show modal");
-    });
+      updateCustomerStatus(id, isActive);
+      await handleApiUpdate(id, isActive);
+      if (isActive) {
+        toast.success("Admin successfully activated", {
+          className: "custom-toast",
+        });
+      } else {
+        toast.success("Admin successfully deactivated", {
+          className: "custom-toast",
+        });
+      }
+    }, "admin");
   };
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -115,13 +148,13 @@ export default function AdminManagementList() {
     },
   ];
 
-  ///filter tier
-  const filterRoleHandle = (value: boolean[]) => {
+  ///filter status
+  const filterStatusHandle = (value: boolean[]) => {
     setFilterRoleAdmin(value);
     setCurrentPage(0);
   };
 
-  //filter status
+  //filter department
   const filterDepartmentHandle = (value: string[]) => {
     setFilterDepartmentAdmin(value);
     setCurrentPage(0);
@@ -137,15 +170,15 @@ export default function AdminManagementList() {
 
   // view detail admin
   const viewDetails = (id: number) => {
-    navigate(`${ROUTERPATH.detailAdmin}/${id}`);
+    setEditMode(true);
+    setEditingUserId(id);
+    setVisible(true);
   };
 
   /// export file
   const exportHandle = async () => {
     try {
       const response = await adminService.exportAdmin(payload);
-      console.log(response);
-
       const password = downloadFile(response);
       showExportModal(password);
     } catch (error) {
@@ -187,8 +220,6 @@ export default function AdminManagementList() {
     totalPages,
     totalAdmins,
   ]);
-  console.log(filterDepartmentAdmin);
-  console.log(filterStatus);
 
   const fetchData = async () => {
     setLoading(true);
@@ -203,7 +234,7 @@ export default function AdminManagementList() {
               : item.fullName,
           email:
             item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: dayjs(item.lastLogin).format('HH:mm DD-MM-YYYY'),
+          lastLogin: dayjs(item.lastLogin).format("HH:mm DD-MM-YYYY"),
         }));
         setAdmin(truncatedData);
         setOriginalAdmin(truncatedData);
@@ -217,6 +248,7 @@ export default function AdminManagementList() {
       setLoading(false);
     }
   };
+
   return (
     <div className="admin-list">
       <div className="admin-item">
@@ -258,7 +290,7 @@ export default function AdminManagementList() {
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
               style={{}}
-              onChange={filterRoleHandle}
+              onChange={filterStatusHandle}
             />
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -276,11 +308,11 @@ export default function AdminManagementList() {
                 borderColor: "#c9c6ed",
               }}
               icon={<PlusOutlined style={{ color: "#fff" }} />}
-              onClick={openModal}
+              onClick={handleAdd}
             >
               <span style={{ color: "#fff" }}>Add Admin</span>
             </Button>
-            <AddAdminModal/>
+            <AddAdminModal />
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -292,7 +324,7 @@ export default function AdminManagementList() {
             locale={{ emptyText: "No admin matched your search. Try again." }}
             onChange={handleTable}
             className="table-admin-list border-b-0"
-            scroll={{ x: "max-content"}}
+            scroll={{ x: "max-content" }}
             rowKey="id"
           />
         </div>

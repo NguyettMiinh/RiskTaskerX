@@ -58,3 +58,15 @@
 .ant-table-cell{
   border-bottom: none !important;
 }
+
+.custom-toast {
+  width: 350px;
+  min-height: 10px;
+  color: #000;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 70px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}

@@ -8,8 +8,9 @@ export interface Admin {
   role: Role;
   createAt: string | undefined;
   updateAt: string | undefined;
-  lastLogin: string;
-  departmentName: string;
+  lastLogin: string | undefined;
+  departmentName: string | undefined;
+  dateOfBirth: string | undefined;
 }
 
 export interface AdminSearchAndFilterRequest {
@@ -62,7 +63,7 @@ export type FieldColumn = {
   sortOrder?: SortOrder;
 };
 
-export interface APIResponseExport{
+export interface APIResponseExport {
   response: string[];
   fileName: string;
   password: string;
@@ -81,3 +82,13 @@ export const columnAdminFields: FieldColumn[] = [
     sorter: true,
   },
 ];
+
+export interface FormData {
+  role: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  department: string | undefined;
+  phone: string | undefined;
+  dateOfBirth: string | undefined;
+  status: string | undefined;
+}

@@ -64,10 +64,10 @@ const DEPARTMENT_LIST = [
 ];
 
 const ROLE_LIST = [
-  { label: "Customer Manager", value: "customerManager" },
-  { label: "Operations Manager", value: "operationsManager" },
-  { label: "Sales Manager", value: "salesManager" },
-  { label: "System Admin", value: "systemAdmin" },
+  { label: "Customer Manager", value: "Customer Manager" },
+  { label: "Operations Manager", value: "Operations Manager" },
+  { label: "Sales Manager", value: "Sales Manager" },
+  { label: "System Admin", value: "System Admin" },
 ];
 
 

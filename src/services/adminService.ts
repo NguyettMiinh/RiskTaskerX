@@ -20,10 +20,24 @@ const exportAdmin = async (
   const response = await axios.post("/export/admin", data);
   return response.data;
 };
+const getAdminById = async (id: number): Promise<APIResponse<Admin>> => {
+  const response = await axios.get(`/admin/${id}`);
+  return response.data;
+};
+
+const setIsActiveAdmin = async (
+  id: number,
+  isActive: boolean
+): Promise<APIResponse<string>> => {
+  const response = await axios.post(`/auth/activate/${id}`, { id, isActive });
+  return response.data;
+};
 
 const adminService = {
   searchAndFilterAdmin,
-  exportAdmin
+  exportAdmin,
+  getAdminById,
+  setIsActiveAdmin,
 };
 
 export default adminService;
