@@ -1,45 +1,47 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
+
+import { exportApi, isActiveApi, segCustomer } from "@/services/customerService";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
-import {
-  SearchOutlined,
-  DownloadOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
-import {
-  exportApi,
-  isActiveApi,
-  segCustomer,
-} from "@/services/customerService";
-import "@assets/styles/list.css";
-import "@assets/styles/filter.css";
+import { SearchOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
+import "@assets/styles/list.css";
+import "@assets/styles/filter.css";
+
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [search, setSearch] = useState(null);
-  const [filterCustomer, setFilterCustomer] = useState([]);
-  const [status, setStatus] = useState([]);
-  const [totalCustomers, setTotalCustomers] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+
+  const [formData, setFormData] = useState({
+    search: "",
+    tiers: [],
+    status: [], 
+    pageSize: 10,
+    totalCustomers: 0,
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { search, tiers, status, pageSize, totalCustomers } = formData;
 
   useEffect(() => {
-    fetchCustomers(currentPage, search, filterCustomer, status,pageSize);
-  }, [currentPage, search, filterCustomer, status,pageSize]);
+    fetchCustomers(currentPage, search, tiers, status, pageSize);
+  }, [currentPage, search, tiers, status, pageSize]);
 
-  const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
+  const fetchCustomers = async (page) => {
     try {
       const response = await segCustomer({
-        searchKey: searchValue,
-        tier: filterCustomer,
+        searchKey: search,
+        tier: tiers,
         isActive: status,
         page: page,
         size: pageSize,
@@ -65,15 +67,16 @@ const CustomerList = () => {
         }));
         setCustomers(truncatedData);
         setOriginalCustomers(truncatedData);
-        setTotalCustomers(response.results.totalElements || 0);
+        setFormData({
+          ...formData,
+          totalCustomers: response.results.totalElements,
+        });
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
@@ -81,7 +84,82 @@ const CustomerList = () => {
     }, 100);
   };
 
-  /// columns data
+  const updateCustomerStatus = (id, isActive) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer.id === id ? { ...customer, isActive } : customer
+      )
+    );
+  };
+
+  const handleApiUpdate = async (id, isActive, setCustomers) => {
+    try {
+      const response = await isActiveApi(id, isActive);
+      if (!response) {
+        updateCustomerStatus(id, !isActive, setCustomers);
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      updateCustomerStatus(id, !isActive, setCustomers);
+    }
+  };
+
+  const toggleActive = (id, isActive, setCustomers) => {
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateCustomerStatus(id, isActive, setCustomers);
+        await handleApiUpdate(id, isActive, setCustomers);
+      },
+      "customer"
+    );
+  };
+
+  const searchHandle = (value) => {
+    setFormData({ ...formData, search: value });
+    setCurrentPage(0);
+  };
+
+  const tierHandle = (value) => {
+    setFormData({ ...formData, tiers: value });
+    setCurrentPage(0);
+  };
+
+  const statusHandle = (value) => {
+    setFormData({ ...formData, status: value });
+    setCurrentPage(0);
+  };
+
+  const handleOnChangeSearch = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => {
+      const updated = { ...prev, search: value };
+      if (!value.trim()) {
+        setCustomers(originalCustomers);
+        updated.totalCustomers = originalCustomers.length;
+      }
+      return updated;
+    });
+  };
+
+  const exportHandle = async (searchValue, filterCustomer, status) => {
+    try {
+      const response = await exportApi({
+        tier: filterCustomer,
+        isActive: status,
+        searchKey: searchValue,
+        page: currentPage,
+        size: pageSize,
+      });
+      const password = downloadFile(response);
+      showExportModal(password);
+    } catch (error) {
+      console.error("Error exporting file:", error);
+    }
+  };
+
+  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
+
   const columns = [
     ...constants.CUSTOMER_LIST,
     {
@@ -144,9 +222,7 @@ const CustomerList = () => {
           />
           <Button
             type="link"
-            icon={
-              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
-            }
+            icon={<EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />}
             onClick={() => viewDetails(record.id)}
           />
         </div>
@@ -154,72 +230,6 @@ const CustomerList = () => {
     },
   ];
 
-  const updateCustomerStatus = (id, isActive) => {
-    setCustomers((prevCustomers) =>
-      prevCustomers.map((customer) =>
-        customer.id === id ? { ...customer, isActive } : customer
-      )
-    );
-  };
-  const handleApiUpdate = async (id, isActive, setCustomers) => {
-    try {
-      const response = await isActiveApi(id, isActive);
-      if (!response) {
-        updateCustomerStatus(id, !isActive, setCustomers);
-      }
-    } catch (error) {
-      console.error("Error updating customer status:", error);
-      updateCustomerStatus(id, !isActive, setCustomers);
-    }
-  };
-
-  // put isActive
-  const toggleActive = (id, isActive, setCustomers) => {
-    showConfirmModal(
-      isActive,
-      async () => {
-        updateCustomerStatus(id, isActive, setCustomers);
-        await handleApiUpdate(id, isActive, setCustomers);
-      },
-      "customer"
-    );
-  };
-
-  /// search customer
-  const searchHandle = (searchValue) => {
-    setSearch(searchValue);
-    setCurrentPage(0);
-  };
-
-  ///filter tier
-  const filterHandle = (value) => {
-    setFilterCustomer(value);
-    setCurrentPage(0);
-  };
-
-  //filter status
-  const statusHandle = (value) => {
-    setStatus(value);
-    setCurrentPage(0);
-  };
-
-  /// export file
-  const exportHandle = async (searchValue, filterCustomer, status) => {
-    try {
-      const response = await exportApi({
-        tier: filterCustomer,
-        isActive: status,
-        searchKey: searchValue,
-        page: currentPage,
-        size: pageSize,
-      });
-      const password = downloadFile(response);
-      showExportModal(password);
-    } catch (error) {
-      console.error("Error exporting file:", error);
-    }
-  };
-  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
   return (
     <div
       style={{
@@ -268,13 +278,7 @@ const CustomerList = () => {
                 border: "1px solid #ccc",
               }}
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                if (!e.target.value.trim()) {
-                  setCustomers(originalCustomers);
-                  setTotalCustomers(originalCustomers.length);
-                }
-              }}
+              onChange={handleOnChangeSearch}
             />
             <Button
               type="primary"
@@ -293,10 +297,9 @@ const CustomerList = () => {
             </Button>
             <SelectComponent
               options={constants.TIER_OPTIONS}
-              onChange={filterHandle}
+              onChange={tierHandle}
               allLabel="All Tiers"
             />
-
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
@@ -326,10 +329,10 @@ const CustomerList = () => {
           pageSize={pageSize}
           showSizeChanger
           pageSizeOptions={["5", "10", "20", "50"]}
-            onChange={(page, pageSize) => {
-              setPageSize(pageSize);
-              setCurrentPage(page);
-            }}
+          onChange={(page, pageSize) => {
+            setFormData({ ...formData, pageSize: pageSize });
+            setCurrentPage(page);
+          }}
           showTotal={(total) => `Total ${total} items`}
           className="flex justify-end mt-2.5"
         />

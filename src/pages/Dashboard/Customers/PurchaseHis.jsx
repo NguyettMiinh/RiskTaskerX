@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
-import { exportPurchase, getPurchase } from "@/services/customerService";
-import { useSelector } from "react-redux";
+
+import { useEffect, useState } from "react";
 import { Table, Button, Modal } from "antd";
+import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { exportPurchase, getPurchase } from "@/services/customerService";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
 import { formatDate } from "@/utils/formatDate";
 import { formatMoney } from "@/utils/formatMoney";
 import { formatCenter } from "@/utils/formatCenter";
+
 
 const PurchaseHis = () => {
   const [purchase, setPurchase] = useState([]);

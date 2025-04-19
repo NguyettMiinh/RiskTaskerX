@@ -1,17 +1,18 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Flex, Form, Modal, Dropdown } from "antd";
-import "@assets/styles/common.css";
-import ButtonComponent from "@components/ui/ButtonComponent";
-import InputField from "@components/ui/InputField";
+import { Modal, Form, Dropdown, Flex } from "antd";
 import { LockOutlined } from "@ant-design/icons";
-import { changePasswordApi } from "@/services/userService";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+
+import { changePasswordApi } from "@/services/userService";
 import { getPasswordRules } from "@/utils/passwordRules";
 import { changeSchema } from "@/validations/changeSchema";
-import { useNavigate } from "react-router";
+import ButtonComponent from "@components/ui/ButtonComponent";
+import InputField from "@components/ui/InputField";
+import "@assets/styles/common.css";
+
 
 const ChangePassword = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

@@ -1,4 +1,4 @@
-// IImport thư viện ngoài
+// Import thư viện ngoài
 import { useState, useEffect } from "react";
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import { useDispatch } from "react-redux";
@@ -35,6 +35,7 @@ function RoleList() {
     pageSize: 10,
     totalRoles: 0,
   });
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -135,7 +136,18 @@ function RoleList() {
     setFormData({ ...formData, status: value });
     setCurrentPage(0);
   };
- 
+  const handleOnChangeSearch = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => {
+      const updated = { ...prev, search: value };
+      if (!value.trim()) {
+        setRoles(originalRoles);
+        updated.totalRoles = originalRoles.length;
+      }
+      return updated;
+    });
+  };
+
   function handleRole() {
     navigate("/layout/role-list/add-role");
   }
@@ -203,16 +215,9 @@ function RoleList() {
               placeholder="Search role by Name"
               className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
-              onChange={(e) => {
-                setFormData({ ...formData, search: e.target.value });
-                if (!e.target.value.trim()) {
-                  setRoles(originalRoles);
-                  setFormData({
-                    ...formData,
-                    totalRoles: originalRoles.length,
-                  });
-                }
-              }}
+              onChange={(e) => 
+                handleOnChangeSearch(e)
+              }
             />
             <Button
               type="primary"
