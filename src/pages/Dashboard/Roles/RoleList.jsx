@@ -1,64 +1,78 @@
-import React, { useState, useEffect } from "react";
-import SelectComponent from "@/components/ui/SelectComponent";
-import constants from "@/constants";
+// IImport thư viện ngoài
+import { useState, useEffect } from "react";
+import { Button, Input, Pagination, Table, Switch } from "antd";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   PlusOutlined,
   SearchOutlined,
   EyeOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Pagination, Table, Switch } from "antd";
-import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+
+// Import nội bộ
+import SelectComponent from "@/components/ui/SelectComponent";
+import Breadcrumbs from "@components/ui/Breadcrumbs";
+import constants from "@/constants";
 import { roleSearchFilter, roleActive } from "@/services/roleService";
 import { showConfirmModal } from "@/utils/showConfimModal";
-import Breadcrumbs from "@components/ui/Breadcrumbs";
 import { formatTime } from "@/utils/formatTime";
-import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
-import "../../../index.css";
-import { toast } from "react-toastify";
+
+// Import style
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
-  const [originalCustomers, setOriginalCustomers] = useState([]);
+  const [originalRoles, setOriginalRoles] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [search, setSearch] = useState(null);
-  const [status, setStatus] = useState([]);
-  const [totalCustomers, setTotalCustomers] = useState(0);
-  const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
-  const pageSize = 10;
   const dataSource = roles?.map((item) => ({ ...item, key: item.id }));
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    search: "",
+    status: [],
+    sortField: "",
+    sortOrder: "ASC",
+    pageSize: 10,
+    totalRoles: 0,
+  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const { search, status, sortField, sortOrder, pageSize, totalRoles } =
+    formData;
+    
   useEffect(() => {
-    fetchRoles(currentPage, search, status);
-  }, [currentPage, search, status, sortField, sortOrder]);
+    fetchRoles(currentPage, search, status, pageSize, sortField, sortOrder);
+  }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
-  const fetchRoles = async (page, searchValue, status) => {
+  const fetchRoles = async (page) => {
     try {
       const response = await roleSearchFilter({
         sortKey: sortField,
         sortBy: sortOrder,
-        searchKey: searchValue,
+        searchKey: search,
         isActive: status,
         page: page,
         size: pageSize,
       });
-      const results = response.data.results.content;
-      const newResult = results.map((item) => ({
+      const results = response.data.results;
+      const newResult = results?.content.map((item) => ({
         ...item,
         updateAt: formatTime(item.updateAt),
       }));
 
       setRoles(newResult);
-      setOriginalCustomers(newResult);
-      setTotalCustomers(response.data.results.totalElements || 0);
+      setOriginalRoles(newResult);
+      setFormData({
+        ...formData,
+        totalRoles: results.totalElements,
+      });
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
-  const dispatch = useDispatch();
+
+
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
@@ -70,32 +84,61 @@ function RoleList() {
       prevRoles.map((role) => (role.id === id ? { ...role, isActive } : role))
     );
   };
-  const handleApiUpdate = async (id, isActive, setCustomers) => {
+  const handleApiUpdate = async (id, isActive, setRoles) => {
     try {
       const response = await roleActive(id, isActive);
       if (!response) {
-        updateRoleStatus(id, !isActive, setCustomers);
+        updateRoleStatus(id, !isActive, setRoles);
       }
     } catch (error) {
       console.error("Error updating customer status:", error);
-      updateRoleStatus(id, !isActive, setCustomers);
+      updateRoleStatus(id, !isActive, setRoles);
     }
   };
   // put isActive
   const toggleActive = (id, isActive, setRoles) => {
-    showConfirmModal(isActive, async () => {
-      updateRoleStatus(id, isActive, setRoles);
-      await handleApiUpdate(id, isActive, setRoles);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-      if (isActive) {
-        toast.success("Role successfully activated");
-      } else {
-        toast.success("Role successfully deactivated");
-      }
-    },"role");
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateRoleStatus(id, isActive, setRoles);
+        await handleApiUpdate(id, isActive, setRoles);
+        if (isActive) {
+          toast.success("Role successfully activated");
+        } else {
+          toast.success("Role successfully deactivated");
+        }
+      },
+      "role"
+    );
   };
+
+
+  //sort
+  const handleTable = (pagination, filters, sorter) => {
+    if (sorter.order) {
+      setFormData({
+        ...formData,
+        sortField: sorter.field,
+        sortOrder: sorter.order === "ascend" ? "ASC" : "DESC",
+      });
+    } else {
+      setFormData({ ...formData, sortField: null, sortOrder: null });
+    }
+  };
+  /// search customer
+  const searchHandle = (value) => {
+    setFormData({ ...formData, search: value });
+    setCurrentPage(0);
+  };
+  //status filter
+  const statusHandle = (value) => {
+    setFormData({ ...formData, status: value });
+    setCurrentPage(0);
+  };
+ 
+  function handleRole() {
+    navigate("/layout/role-list/add-role");
+  }
 
   const columns = [
     { title: "No", dataIndex: "id", width: "400px" },
@@ -127,7 +170,7 @@ function RoleList() {
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
               height: "22px",
             }}
-            disabled={isLoading}
+            
           />
           <Button
             type="link"
@@ -141,37 +184,11 @@ function RoleList() {
             icon={
               <DeleteOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
             }
-            
           />
         </div>
       ),
     },
   ];
-
-  //sort
-  const handleTable = (pagination, filters, sorter) => {
-    if (sorter.order) {
-      setSortField(sorter.field);
-      setSortOrder(sorter.order === "ascend" ? "ASC" : "DESC");
-    } else {
-      setSortField(null);
-      setSortOrder(null);
-    }
-  };
-  /// search customer
-  const searchHandle = (searchValue) => {
-    setSearch(searchValue);
-    setCurrentPage(0);
-  };
-  const statusHandle = (value) => {
-    setStatus(value);
-    setCurrentPage(0);
-  };
-  const navigate = useNavigate();
-  function handleRole() {
-    navigate("/layout/role-list/add-role");
-  }
-  console.log("page",totalCustomers);
   return (
     <div className="flex justify-start min-h-screen p-2.5">
       <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
@@ -187,10 +204,13 @@ function RoleList() {
               className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
               onChange={(e) => {
-                setSearch(e.target.value);
+                setFormData({ ...formData, search: e.target.value });
                 if (!e.target.value.trim()) {
-                  setCustomers(originalCustomers);
-                  setTotalCustomers(originalCustomers.length);
+                  setRoles(originalRoles);
+                  setFormData({
+                    ...formData,
+                    totalRoles: originalRoles.length,
+                  });
                 }
               }}
             />
@@ -230,13 +250,15 @@ function RoleList() {
 
         <Pagination
           current={currentPage}
-          total={totalCustomers}
+          total={totalRoles}
           pageSize={pageSize}
-          onChange={(page) => {
+          showSizeChanger
+          pageSizeOptions={["5", "10", "20", "50"]}
+          onChange={(page, pageSize) => {
+            setFormData({ ...formData, pageSize: pageSize });
             setCurrentPage(page);
-            fetchRoles(page, search, status);
           }}
-          showTotal={(total) => `Total ${total} items`} 
+          showTotal={(total) => `Total ${total} items`}
           className="flex justify-end mt-2.5"
         />
       </div>

@@ -29,12 +29,11 @@ const CustomerList = () => {
   const [filterCustomer, setFilterCustomer] = useState([]);
   const [status, setStatus] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
-
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    fetchCustomers(currentPage, search, filterCustomer, status);
-  }, [currentPage, search, filterCustomer, status]);
+    fetchCustomers(currentPage, search, filterCustomer, status,pageSize);
+  }, [currentPage, search, filterCustomer, status,pageSize]);
 
   const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
     try {
@@ -176,10 +175,14 @@ const CustomerList = () => {
 
   // put isActive
   const toggleActive = (id, isActive, setCustomers) => {
-    showConfirmModal(isActive, async () => {
-      updateCustomerStatus(id, isActive, setCustomers);
-      await handleApiUpdate(id, isActive, setCustomers);
-    }, "customer");
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateCustomerStatus(id, isActive, setCustomers);
+        await handleApiUpdate(id, isActive, setCustomers);
+      },
+      "customer"
+    );
   };
 
   /// search customer
@@ -292,16 +295,12 @@ const CustomerList = () => {
               options={constants.TIER_OPTIONS}
               onChange={filterHandle}
               allLabel="All Tiers"
-             
-              
             />
 
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
-              
-              
             />
           </div>
 
@@ -318,29 +317,21 @@ const CustomerList = () => {
           columns={columns}
           dataSource={dataSource}
           pagination={false}
-          className="custom-table"
-          style={{
-            wordWrap: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            wordBreak: "break-word",
-          }}
+          className="custom-table break-words whitespace-normal"
         />
 
         <Pagination
           current={currentPage}
           total={totalCustomers}
           pageSize={pageSize}
-          onChange={(page) => {
-            setCurrentPage(page);
-            fetchCustomers(page, search, filterCustomer, status);
-          }}
-          showTotal={(total) => `Total ${total} items`} 
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "10px",
-          }}
+          showSizeChanger
+          pageSizeOptions={["5", "10", "20", "50"]}
+            onChange={(page, pageSize) => {
+              setPageSize(pageSize);
+              setCurrentPage(page);
+            }}
+          showTotal={(total) => `Total ${total} items`}
+          className="flex justify-end mt-2.5"
         />
       </div>
     </div>

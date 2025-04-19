@@ -8,8 +8,7 @@ const ROUTER_PATH = {
     customer: '/layout/customer',
     detail: '/layout/customer/detail/:id',
     detailAdmin: '/layout/admin/detail',
-    
-   
+       
 }
 
 export default ROUTER_PATH;
