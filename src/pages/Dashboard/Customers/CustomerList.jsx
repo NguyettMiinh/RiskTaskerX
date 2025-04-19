@@ -4,11 +4,19 @@ import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
 
-import { exportApi, isActiveApi, segCustomer } from "@/services/customerService";
+import {
+  exportApi,
+  isActiveApi,
+  segCustomer,
+} from "@/services/customerService";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
-import { SearchOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  DownloadOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
@@ -23,7 +31,7 @@ const CustomerList = () => {
   const [formData, setFormData] = useState({
     search: "",
     tiers: [],
-    status: [], 
+    status: [],
     pageSize: 10,
     totalCustomers: 0,
   });
@@ -222,7 +230,9 @@ const CustomerList = () => {
           />
           <Button
             type="link"
-            icon={<EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />}
+            icon={
+              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
+            }
             onClick={() => viewDetails(record.id)}
           />
         </div>
@@ -231,66 +241,23 @@ const CustomerList = () => {
   ];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-[50px] rounded-lg shadow-custom">
         <div style={{ marginBottom: "20px" }}>
           <Breadcrumbs />
-          <div style={{ fontSize: 20, fontWeight: "bold" }}>Customer List</div>
+          <div className="text-[20px] font-bold">Customer List</div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
+        <div className="flex justify-between gap-[10px] mb-[20px]">
+          <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search customer by Name, Customer ID"
-              style={{
-                width: "450px",
-                height: "40px",
-                borderRadius: "6px 0 0 6px",
-                border: "1px solid #ccc",
-              }}
+              className="w-[450px] h-10 rounded-l-[6px] border border-[#ccc]"
               value={search}
               onChange={handleOnChangeSearch}
             />
             <Button
-              type="primary"
-              style={{
-                height: "40px",
-                width: "56px",
-                backgroundColor: "#6055F2",
-                color: "#fff",
-                borderRadius: "0 6px 6px 0",
-                border: "none",
-                marginLeft: "-10px",
-              }}
+              className="h-10 w-14 bg-[#6055F2] text-white rounded-r-[6px] border-none -ml-[10px]"
               onClick={() => searchHandle(search)}
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
