@@ -3,13 +3,14 @@ import ForgotPasswordForm from "@/pages/auth/ForgotPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import OtpPage from "@/pages/auth/OtpPage";
 import ResetPage from "@/pages/auth/ResetPage";
-import CustomerList from "@/pages/dashboard/CustomerList";
-import DashboardPage from "@/pages/dashboard/DashboardPage";
-import DetailCustomer from "@/pages/dashboard/DetailCustomer";
+
+import CustomerList from "@/pages/Dashboard/Customers/CustomerList";
+import DashboardPage from "@/pages/Dashboard/Customers/DashboardPage";
+import DetailCustomer from "@/pages/Dashboard/Customers/DetailCustomer";
 import AddRole from "@/pages/Dashboard/Roles/AddRole";
 import DetailRole from "@/pages/Dashboard/Roles/DetailRole";
 import RoleList from "@/pages/Dashboard/Roles/RoleList";
-import ChangePassword from "@/pages/Dashboard/ChangePasswordPage";
+import ChangePassword from "@/pages/Dashboard/Customers/ChangePasswordPage";
 import AdminManagementList from "@/pages/Dashboard/Admins/AdminManagementList";
 
 

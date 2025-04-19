@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "@/redux/userSlice";
+
+import {
+  exportApi,
+  isActiveApi,
+  segCustomer,
+} from "@/services/customerService";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
@@ -11,36 +17,39 @@ import {
   DownloadOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import {
-  exportApi,
-  isActiveApi,
-  segCustomer,
-} from "@/services/customerService";
-import "@assets/styles/list.css";
-import "@assets/styles/filter.css";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
+import "@assets/styles/list.css";
+import "@assets/styles/filter.css";
+
 const CustomerList = () => {
   const [customer, setCustomers] = useState([]);
   const [originalCustomers, setOriginalCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [search, setSearch] = useState(null);
-  const [filterCustomer, setFilterCustomer] = useState([]);
-  const [status, setStatus] = useState([]);
-  const [totalCustomers, setTotalCustomers] = useState(0);
 
-  const pageSize = 10;
+  const [formData, setFormData] = useState({
+    search: "",
+    tiers: [],
+    status: [],
+    pageSize: 10,
+    totalCustomers: 0,
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { search, tiers, status, pageSize, totalCustomers } = formData;
 
   useEffect(() => {
-    fetchCustomers(currentPage, search, filterCustomer, status);
-  }, [currentPage, search, filterCustomer, status]);
+    fetchCustomers(currentPage, search, tiers, status, pageSize);
+  }, [currentPage, search, tiers, status, pageSize]);
 
-  const fetchCustomers = async (page, searchValue, filterCustomer, status) => {
+  const fetchCustomers = async (page) => {
     try {
       const response = await segCustomer({
-        searchKey: searchValue,
-        tier: filterCustomer,
+        searchKey: search,
+        tier: tiers,
         isActive: status,
         page: page,
         size: pageSize,
@@ -66,15 +75,16 @@ const CustomerList = () => {
         }));
         setCustomers(truncatedData);
         setOriginalCustomers(truncatedData);
-        setTotalCustomers(response.results.totalElements || 0);
+        setFormData({
+          ...formData,
+          totalCustomers: response.results.totalElements,
+        });
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const viewDetails = (id) => {
     dispatch(setId(id));
     setTimeout(() => {
@@ -82,7 +92,82 @@ const CustomerList = () => {
     }, 100);
   };
 
-  /// columns data
+  const updateCustomerStatus = (id, isActive) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer.id === id ? { ...customer, isActive } : customer
+      )
+    );
+  };
+
+  const handleApiUpdate = async (id, isActive, setCustomers) => {
+    try {
+      const response = await isActiveApi(id, isActive);
+      if (!response) {
+        updateCustomerStatus(id, !isActive, setCustomers);
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      updateCustomerStatus(id, !isActive, setCustomers);
+    }
+  };
+
+  const toggleActive = (id, isActive, setCustomers) => {
+    showConfirmModal(
+      isActive,
+      async () => {
+        updateCustomerStatus(id, isActive, setCustomers);
+        await handleApiUpdate(id, isActive, setCustomers);
+      },
+      "customer"
+    );
+  };
+
+  const searchHandle = (value) => {
+    setFormData({ ...formData, search: value });
+    setCurrentPage(0);
+  };
+
+  const tierHandle = (value) => {
+    setFormData({ ...formData, tiers: value });
+    setCurrentPage(0);
+  };
+
+  const statusHandle = (value) => {
+    setFormData({ ...formData, status: value });
+    setCurrentPage(0);
+  };
+
+  const handleOnChangeSearch = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => {
+      const updated = { ...prev, search: value };
+      if (!value.trim()) {
+        setCustomers(originalCustomers);
+        updated.totalCustomers = originalCustomers.length;
+      }
+      return updated;
+    });
+  };
+
+  const exportHandle = async (searchValue, filterCustomer, status) => {
+    try {
+      const response = await exportApi({
+        tier: filterCustomer,
+        isActive: status,
+        searchKey: searchValue,
+        page: currentPage,
+        size: pageSize,
+      });
+      const password = downloadFile(response);
+      showExportModal(password);
+    } catch (error) {
+      console.error("Error exporting file:", error);
+    }
+  };
+
+  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
+
   const columns = [
     ...constants.CUSTOMER_LIST,
     {
@@ -155,153 +240,37 @@ const CustomerList = () => {
     },
   ];
 
-  const updateCustomerStatus = (id, isActive) => {
-    setCustomers((prevCustomers) =>
-      prevCustomers.map((customer) =>
-        customer.id === id ? { ...customer, isActive } : customer
-      )
-    );
-  };
-  const handleApiUpdate = async (id, isActive, setCustomers) => {
-    try {
-      const response = await isActiveApi(id, isActive);
-      if (!response) {
-        updateCustomerStatus(id, !isActive, setCustomers);
-      }
-    } catch (error) {
-      console.error("Error updating customer status:", error);
-      updateCustomerStatus(id, !isActive, setCustomers);
-    }
-  };
-
-  // put isActive
-  const toggleActive = (id, isActive, setCustomers) => {
-    showConfirmModal(isActive, async () => {
-      updateCustomerStatus(id, isActive, setCustomers);
-      await handleApiUpdate(id, isActive, setCustomers);
-    }, "customer");
-  };
-
-  /// search customer
-  const searchHandle = (searchValue) => {
-    setSearch(searchValue);
-    setCurrentPage(0);
-  };
-
-  ///filter tier
-  const filterHandle = (value) => {
-    setFilterCustomer(value);
-    setCurrentPage(0);
-  };
-
-  //filter status
-  const statusHandle = (value) => {
-    setStatus(value);
-    setCurrentPage(0);
-  };
-
-  /// export file
-  const exportHandle = async (searchValue, filterCustomer, status) => {
-    try {
-      const response = await exportApi({
-        tier: filterCustomer,
-        isActive: status,
-        searchKey: searchValue,
-        page: currentPage,
-        size: pageSize,
-      });
-      const password = downloadFile(response);
-      showExportModal(password);
-    } catch (error) {
-      console.error("Error exporting file:", error);
-    }
-  };
-  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-        minHeight: "100vh",
-        padding: "10px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          background: "#fff",
-          padding: "50px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}
-      >
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-[50px] rounded-lg shadow-custom">
         <div style={{ marginBottom: "20px" }}>
           <Breadcrumbs />
-          <div style={{ fontSize: 20, fontWeight: "bold" }}>Customer List</div>
+          <div className="text-[20px] font-bold">Customer List</div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
+        <div className="flex justify-between gap-[10px] mb-[20px]">
+          <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search customer by Name, Customer ID"
-              style={{
-                width: "450px",
-                height: "40px",
-                borderRadius: "6px 0 0 6px",
-                border: "1px solid #ccc",
-              }}
+              className="w-[450px] h-10 rounded-l-[6px] border border-[#ccc]"
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                if (!e.target.value.trim()) {
-                  setCustomers(originalCustomers);
-                  setTotalCustomers(originalCustomers.length);
-                }
-              }}
+              onChange={handleOnChangeSearch}
             />
             <Button
-              type="primary"
-              style={{
-                height: "40px",
-                width: "56px",
-                backgroundColor: "#6055F2",
-                color: "#fff",
-                borderRadius: "0 6px 6px 0",
-                border: "none",
-                marginLeft: "-10px",
-              }}
+              className="h-10 w-14 bg-[#6055F2] text-white rounded-r-[6px] border-none -ml-[10px]"
               onClick={() => searchHandle(search)}
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
             <SelectComponent
               options={constants.TIER_OPTIONS}
-              onChange={filterHandle}
+              onChange={tierHandle}
               allLabel="All Tiers"
-             
-              
             />
-
             <SelectComponent
               options={constants.STATUS_OPTIONS}
               onChange={statusHandle}
               allLabel="All Status"
-              
-              
             />
           </div>
 
@@ -318,28 +287,21 @@ const CustomerList = () => {
           columns={columns}
           dataSource={dataSource}
           pagination={false}
-          className="custom-table"
-          style={{
-            wordWrap: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            wordBreak: "break-word",
-          }}
+          className="custom-table break-words whitespace-normal"
         />
 
         <Pagination
           current={currentPage}
           total={totalCustomers}
           pageSize={pageSize}
-          onChange={(page) => {
+          showSizeChanger
+          pageSizeOptions={["5", "10", "20", "50"]}
+          onChange={(page, pageSize) => {
+            setFormData({ ...formData, pageSize: pageSize });
             setCurrentPage(page);
-            fetchCustomers(page, search, filterCustomer, status);
           }}
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "10px",
-          }}
+          showTotal={(total) => `Total ${total} items`}
+          className="flex justify-end mt-2.5"
         />
       </div>
     </div>

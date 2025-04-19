@@ -1,10 +1,10 @@
-import PersonalInfor from "./PersonalInfor";
 import { Tabs } from "antd";
-import "@assets/styles/customTabs.css";
+import PersonalInfor from "./PersonalInfor";
 import PurchaseHis from "./PurchaseHis";
 import Warranty from "./WarrantyHis";
-import { Link } from "react-router";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
+import "@assets/styles/customTabs.css";
+
 const DetailCustomer = () => {
   
   const items = [
