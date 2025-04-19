@@ -29,6 +29,7 @@ function RoleList() {
     viewDetails,
   } = useRole();
   const { search,pageSize, totalRoles } = formData;
+  console.log("formData", formData);
   const columns = [
     { title: "No", dataIndex: "id", width: "400px" },
     { title: "Role Name", dataIndex: "name", width: "400px" },
