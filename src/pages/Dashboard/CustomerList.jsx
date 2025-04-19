@@ -335,6 +335,7 @@ const CustomerList = () => {
             setCurrentPage(page);
             fetchCustomers(page, search, filterCustomer, status);
           }}
+          showTotal={(total) => `Total ${total} items`} 
           style={{
             display: "flex",
             justifyContent: "flex-end",

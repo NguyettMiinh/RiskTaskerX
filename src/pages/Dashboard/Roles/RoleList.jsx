@@ -171,6 +171,7 @@ function RoleList() {
   function handleRole() {
     navigate("/layout/role-list/add-role");
   }
+  console.log("page",totalCustomers);
   return (
     <div className="flex justify-start min-h-screen p-2.5">
       <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
@@ -235,6 +236,7 @@ function RoleList() {
             setCurrentPage(page);
             fetchRoles(page, search, status);
           }}
+          showTotal={(total) => `Total ${total} items`} 
           className="flex justify-end mt-2.5"
         />
       </div>
