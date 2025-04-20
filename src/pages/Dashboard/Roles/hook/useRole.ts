@@ -4,17 +4,19 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 // Import nội bộ
-import { roleSearchFilter, roleActive } from "@/services/roleService";
-import { showConfirmModal } from "@/utils/showConfimModal";
-import { formatTime } from "@/utils/formatTime";
-import { setId } from "@/redux/userSlice";
+import { Role, RoleForm, RoleTable } from "../../../../types/Role";
+import { roleSearchFilter, roleActive } from "../../../../services/roleService";
+import { showConfirmModal } from "../../../../utils/showConfimModal";
+import { formatTime } from "../../../../utils/formatTime";
+import { setId } from "../../../../redux/userSlice";
 
 function useRole() {
-  const [roles, setRoles] = useState([]);
-  const [originalRoles, setOriginalRoles] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const dataSource = roles?.map((item) => ({ ...item, key: item.id }));
-  const [formData, setFormData] = useState({
+  //mang ca doi tuong role
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [originalRoles, setOriginalRoles] = useState<Role[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const dataSource: RoleTable[]  = roles?.map((item) => ({ ...item, key: item.id }));
+  const [formData, setFormData] = useState<RoleForm>({
     search: "",
     status: [],
     sortField: "",
@@ -26,14 +28,14 @@ function useRole() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { search, status, sortField, sortOrder, pageSize, totalRoles } =
+  const { search, status, sortField, sortOrder, pageSize} =
     formData;
     
   useEffect(() => {
-    fetchRoles(currentPage, search, status, pageSize, sortField, sortOrder);
+    fetchRoles(currentPage);
   }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
-  const fetchRoles = async (page) => {
+  const fetchRoles = async (page: number) => {
     try {
       const response = await roleSearchFilter({
         sortKey: sortField,
@@ -43,8 +45,9 @@ function useRole() {
         page: page,
         size: pageSize,
       });
+      // cấu trúc ko xác định rõ
       const results = response.data.results;
-      const newResult = results?.content.map((item) => ({
+      const newResult = results?.content.map((item: Role) => ({
         ...item,
         updateAt: formatTime(item.updateAt),
       }));
@@ -55,41 +58,45 @@ function useRole() {
         ...formData,
         totalRoles: results.totalElements,
       });
+      console.log("....render1");
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
+    
   };
 
 
-  const viewDetails = (id) => {
+  const viewDetails = (id: string | number) => {
     dispatch(setId(id));
     setTimeout(() => {
       navigate("/layout/role-list/role-detail");
     }, 100);
   };
-  const updateRoleStatus = (id, isActive) => {
+  const updateRoleStatus = (id: string | number, isActive: boolean) => {
     setRoles((prevRoles) =>
       prevRoles.map((role) => (role.id === id ? { ...role, isActive } : role))
     );
   };
-  const handleApiUpdate = async (id, isActive, setRoles) => {
+  const handleApiUpdate = async (id: string | number, isActive: boolean) => {
     try {
       const response = await roleActive(id, isActive);
       if (!response) {
-        updateRoleStatus(id, !isActive, setRoles);
+        updateRoleStatus(id, !isActive);
       }
+      console.log("....render2");
     } catch (error) {
       console.error("Error updating customer status:", error);
-      updateRoleStatus(id, !isActive, setRoles);
+      updateRoleStatus(id, !isActive);
     }
+    
   };
   // put isActive
-  const toggleActive = (id, isActive, setRoles) => {
+  const toggleActive = (id: string | number, isActive: boolean) => {
     showConfirmModal(
       isActive,
       async () => {
-        updateRoleStatus(id, isActive, setRoles);
-        await handleApiUpdate(id, isActive, setRoles);
+        updateRoleStatus(id, isActive);
+        await handleApiUpdate(id, isActive);
         if (isActive) {
           toast.success("Role successfully activated");
         } else {
@@ -102,7 +109,7 @@ function useRole() {
 
 
   //sort
-  const handleTable = (pagination, filters, sorter) => {
+  const handleTable = (pagination: any, filters: any, sorter: any) => {
     if (sorter.order) {
       setFormData({
         ...formData,
@@ -110,21 +117,21 @@ function useRole() {
         sortOrder: sorter.order === "ascend" ? "ASC" : "DESC",
       });
     } else {
-      setFormData({ ...formData, sortField: null, sortOrder: null });
+      setFormData({ ...formData, sortField: "", sortOrder: "ASC" });
     }
   };
   /// search customer
-  const searchHandle = (value) => {
+  const searchHandle = (value: string) => {
     setFormData({ ...formData, search: value });
     setCurrentPage(0);
   };
   //status filter
-  const statusHandle = (value) => {
+  const statusHandle = (value: boolean[]) => {
     setFormData({ ...formData, status: value });
     setCurrentPage(0);
   };
   // onChange input search
-  const handleOnChangeSearch = (e) => {
+  const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData((prev) => {
       const updated = { ...prev, search: value };

@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
 import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
-import constants from "@/constants/index";
 import useCustomer from "./hook/useCustomer";
+import constants from "@/constants/index";
 import {
   SearchOutlined,
   DownloadOutlined,
@@ -11,6 +10,20 @@ import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import "@assets/styles/list.css";
 import "@assets/styles/filter.css";
+
+const CUSTOMER_LIST = [
+  { title: "Customer ID", dataIndex: "id", align: 'center', },
+  { title: "Customer Name", dataIndex: "fullName", align: 'center', },
+  { title: "Phone Number", dataIndex: "phoneNumber", align: 'center', },
+  { title: "Address", dataIndex: "address", align: 'center', },
+  { title: "Email", dataIndex: "email", align: 'center', }
+];
+const TIER_OPTIONS = [
+  { label: "Diamond", value: "Diamond" },
+  { label: "Gold", value: "Gold" },
+  { label: "Silver", value: "Silver" },
+  { label: "Bronze", value: "Bronze" },
+];
 
 const CustomerList = () => {
   const {
@@ -28,10 +41,10 @@ const CustomerList = () => {
     toggleActive,
   } = useCustomer();
 
-  const { search, tiers, status, pageSize, totalCustomers} = formData;
-console.log("formData", formData);
+  const { search, tiers, status, pageSize, totalCustomers } = formData;
+
   const columns = [
-    ...constants.CUSTOMER_LIST,
+    ...CUSTOMER_LIST,
     {
       title: "Tier",
       dataIndex: "tier",
@@ -105,7 +118,7 @@ console.log("formData", formData);
   return (
     <div className="flex justify-start min-h-screen p-2.5">
       <div className="w-full bg-white p-[50px] rounded-lg shadow-custom">
-        <div style={{ marginBottom: "20px" }}>
+        <div className="mb-[20px]">
           <Breadcrumbs />
           <div className="text-[20px] font-bold">Customer List</div>
         </div>
@@ -114,18 +127,18 @@ console.log("formData", formData);
           <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search customer by Name, Customer ID"
-              className="w-[450px] h-10 rounded-l-[6px] border border-[#ccc]"
+              className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
               onChange={(e) => handleOnChangeSearch(e)}
             />
             <Button
-              className="h-10 w-14 bg-[#6055F2] text-white rounded-r-[6px] border-none -ml-[10px]"
+             className="h-[40px] w-[56px] bg-[#6055F2] text-white rounded-[0_6px_6px_0] border-none -ml-[10px]"
               onClick={() => searchHandle(search)}
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
             <SelectComponent
-              options={constants.TIER_OPTIONS}
+              options={TIER_OPTIONS}
               onChange={tierHandle}
               allLabel="All Tiers"
             />

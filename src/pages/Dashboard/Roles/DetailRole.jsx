@@ -8,8 +8,7 @@ import {
   Typography,
   Row,
   Col,
-  Collapse,
-} from "antd";
+  Collapse} from "antd";
 import { useEffect, useState } from "react";
 import { getRoles, editRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";
@@ -23,6 +22,7 @@ const { Panel } = Collapse;
 function DetailRole() {
   const [childCategory, setChildCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  
   const [formEdit, setFormEdit] = useState({
     name: "",
     isActive: "false",

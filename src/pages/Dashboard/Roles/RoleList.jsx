@@ -1,5 +1,4 @@
 // Import thư viện ngoài
-import { useState, useEffect } from "react";
 import { Button, Input, Pagination, Table, Switch } from "antd";
 import {
   PlusOutlined,
@@ -29,7 +28,7 @@ function RoleList() {
     viewDetails,
   } = useRole();
   const { search,pageSize, totalRoles } = formData;
-  console.log("formData", formData);
+
   const columns = [
     { title: "No", dataIndex: "id", width: "400px" },
     { title: "Role Name", dataIndex: "name", width: "400px" },

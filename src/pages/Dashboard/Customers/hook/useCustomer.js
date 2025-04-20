@@ -41,7 +41,6 @@ const useCustomer = () => {
         page: page,
         size: pageSize,
       });
-      console.log("response", response);
       if (response && response.results) {
         const truncatedData = response.results.content.map((item) => ({
           ...item,
@@ -113,17 +112,17 @@ const useCustomer = () => {
 
   const searchHandle = (value) => {
     setFormData({ ...formData, search: value });
-    setCurrentPage(1); // Reset to page 1 on search
+    setCurrentPage(0); 
   };
 
   const tierHandle = (value) => {
     setFormData({ ...formData, tiers: value });
-    setCurrentPage(1); // Reset to page 1 on tier change
+    setCurrentPage(0); 
   };
 
   const statusHandle = (value) => {
     setFormData({ ...formData, status: value });
-    setCurrentPage(1); // Reset to page 1 on status change
+    setCurrentPage(0); 
   };
 
   const handleOnChangeSearch = (e) => {
