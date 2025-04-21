@@ -3,12 +3,16 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import type { TablePaginationConfig } from 'antd/es/table';
+import type { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface';
+
 // Import nội bộ
 import { Role, RoleForm, RoleTable } from "../../../../types/Role";
 import { roleSearchFilter, roleActive } from "../../../../services/roleService";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
+import {OptionValue} from "../../../../types/Select";
 
 function useRole() {
   //mang ca doi tuong role
@@ -108,12 +112,14 @@ function useRole() {
 
 
   //sort
-  const handleTable = (pagination: any, filters: any, sorter: any) => {
-    if (sorter.order) {
+  const handleTable = (pagination: TablePaginationConfig,  filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<Role> | SorterResult<Role>[],  extra: TableCurrentDataSource<Role>) => {
+    const sort = Array.isArray(sorter) ? sorter[0] : sorter;
+    if (sort.order) {
       setFormData({
         ...formData,
-        sortField: sorter.field,
-        sortOrder: sorter.order === "ascend" ? "ASC" : "DESC",
+        sortField: sort.field as string,
+        sortOrder: sort.order === "ascend" ? "ASC" : "DESC",
       });
     } else {
       setFormData({ ...formData, sortField: "", sortOrder: "ASC" });
@@ -125,8 +131,9 @@ function useRole() {
     setCurrentPage(0);
   };
   //status filter
-  const statusHandle = (value: boolean[]) => {
-    setFormData({ ...formData, status: value });
+  const statusHandle = (value: OptionValue[]) => {
+    const booleanValues = value as boolean[];
+    setFormData({ ...formData, status: booleanValues });
     setCurrentPage(0);
   };
   // onChange input search

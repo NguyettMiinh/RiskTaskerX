@@ -288,7 +288,6 @@ export default function AdminManagementList() {
 
             <SelectComponent
               className="w-full sm:w-40"
-              style={{}}
               options={constants.DEPARTMENT_LIST}
               onChange={filterDepartmentHandle}
               allLabel="All Departments"
@@ -297,7 +296,6 @@ export default function AdminManagementList() {
               className="w-full sm:w-[110px]"
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
-              style={{}}
               onChange={filterStatusHandle}
             />
           </div>

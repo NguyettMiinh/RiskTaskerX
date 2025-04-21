@@ -34,11 +34,9 @@ const LoginPage = () => {
     setLoginError("");
     try {
       const response =  await loginApi(data.email, data.password);
-      console.log(data.password);
       const token = response.data.results.token;
       localStorage.setItem("authToken", token);
       navigate("/layout/dashboard");
-      console.log("Login successful");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       setLoginError("Invalid email or password. Please try again.");

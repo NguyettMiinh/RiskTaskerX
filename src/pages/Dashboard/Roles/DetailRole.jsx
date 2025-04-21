@@ -22,7 +22,6 @@ const { Panel } = Collapse;
 function DetailRole() {
   const [childCategory, setChildCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
   const [formEdit, setFormEdit] = useState({
     name: "",
     isActive: "false",

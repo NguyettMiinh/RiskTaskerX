@@ -7,12 +7,16 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 // Import nội bộ
-import SelectComponent from "@/components/ui/SelectComponent";
-import Breadcrumbs from "@components/ui/Breadcrumbs";
-import constants from "@/constants";
+import SelectComponent from "../../../components/ui/SelectComponent";
+import Breadcrumbs from "../../../components/ui/Breadcrumbs";
+import constants from "../../../constants";
 import useRole from "./hook/useRole";
+import { Role } from "../../../types/Role";
+import { ColumnsType } from "antd/es/table";
+
 
 function RoleList() {
+
   const {
     dataSource,
     currentPage,
@@ -27,9 +31,10 @@ function RoleList() {
     toggleActive,
     viewDetails,
   } = useRole();
-  const { search,pageSize, totalRoles } = formData;
 
-  const columns = [
+  const { search, pageSize, totalRoles } = formData;
+
+  const columns: ColumnsType<Role> = [
     { title: "No", dataIndex: "id", width: "400px" },
     { title: "Role Name", dataIndex: "name", width: "400px" },
     {
@@ -43,23 +48,19 @@ function RoleList() {
       dataIndex: "actions",
       align: "center",
       width: "309px",
-      render: (_, record) => (
+      render: (_: Role, record: Role) => (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-          }}
+          className="flex items-center justify-center [gap:10px]"
+
         >
           <Switch
-            checked={record.isActive}
+            checked={record.isActive ?? false}
             onChange={(checked) => toggleActive(record.id, checked)}
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
               height: "22px",
             }}
-            
+
           />
           <Button
             type="link"
@@ -78,6 +79,7 @@ function RoleList() {
       ),
     },
   ];
+  
   return (
     <div className="flex justify-start min-h-screen p-2.5">
       <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
@@ -92,7 +94,7 @@ function RoleList() {
               placeholder="Search role by Name"
               className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
-              onChange={(e) => 
+              onChange={(e) =>
                 handleOnChangeSearch(e)
               }
             />
@@ -104,7 +106,7 @@ function RoleList() {
               <SearchOutlined style={{ fontSize: "24px" }} />
             </Button>
 
-            <SelectComponent
+            <SelectComponent<boolean>
               options={constants.STATUS_OPTIONS}
               allLabel="All Status"
               onChange={statusHandle}
