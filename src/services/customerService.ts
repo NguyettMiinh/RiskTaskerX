@@ -1,14 +1,15 @@
-import axios from "@/api/axios";
+import axios from "../api/axios";
+import { CustomerDetail, GetCustomer, Warranty} from "../types/Customer";
 
 const exportApi = async ({
   page,
-  size = 10,
-  searchKey = null,
-  tier = null,
-  isActive = null,
-  sortKey = "id",
-  sortBy = "ASC",
-}) => {
+  size,
+  searchKey,
+  tier,
+  isActive,
+  sortKey ,
+  sortBy
+}: GetCustomer) => {
   const response = await axios.post("/export/customers", {
     sortKey,
     filters: {
@@ -23,39 +24,16 @@ const exportApi = async ({
   return response.data;
 };
 
-//full
-const listCustomer = async ({
-  page,
-  size = 10,
-  searchKey = null,
-  tier = null,
-  isActive = null,
-  sortKey = "id",
-  sortBy = "ASC",
-}) => {
-  const response = await axios.post("/customers/full-search-and-filter", {
-    sortKey,
-    filters: {
-      searchKey,
-      tier,
-      isActive,
-    },
-    page,
-    size,
-    sortBy,
-  });
-  return response.data;
-};
 
-const segCustomer = async ({
+const getCustomer = async ({
   page,
-  size = 10,
-  searchKey = null,
-  tier = null,
-  isActive = null,
-  sortKey = "id",
-  sortBy = "ASC",
-}) => {
+  size,
+  searchKey,
+  tier,
+  isActive,
+  sortKey,
+  sortBy,
+}: GetCustomer) => {
   const response = await axios.post("/customers/search-and-filter", {
     sortKey,
     filters: {
@@ -70,7 +48,7 @@ const segCustomer = async ({
   return response.data;
 };
 
-const isActiveApi = async (id, isActive) => {
+const isActiveApi = async (id: string | number, isActive: boolean ) => {
   return axios.put("/customers/status", { id, isActive });
 };
 
@@ -78,11 +56,10 @@ const isActiveApi = async (id, isActive) => {
 const getWarranty = async ({
   sortKey,
   customerId,
-
   page,
   size,
   sortBy,
-}) => {
+}: CustomerDetail) => {
   return axios.post(`/history/warranty`, {
     sortKey,
     filters: {
@@ -97,11 +74,10 @@ const getWarranty = async ({
 const getPurchase = async ({
   sortKey,
   customerId,
-
   page,
   size,
   sortBy,
-}) => {
+}: CustomerDetail) => {
   return axios.post(`/history/purchase`, {
     sortKey,
     filters: {
@@ -113,11 +89,11 @@ const getPurchase = async ({
   });
 };
 
-const exportPurchase = async (id) => {
+const exportPurchase = async (id: string | number) => {
   return axios.get(`/export/customers/purchase/${id}`);
 };
 
-const exportWarranty = async (id) => {
+const exportWarranty = async (id: string | number) => {
   return axios.get(`/export/customers/warranty/${id}`);
 };
 
@@ -129,7 +105,7 @@ const addWarrantyData = async ({
   serviceCenter,
   serviceDate,
   serviceCost,
-}) => {
+}: Warranty) => {
   return axios.post(`/customers/warranty/${customerId}`, {
     customerId,
     carModel,
@@ -144,8 +120,7 @@ const addWarrantyData = async ({
 export {
   exportApi,
   isActiveApi,
-  listCustomer,
-  segCustomer,
+  getCustomer,
   getPurchase,
   getWarranty,
   exportPurchase,

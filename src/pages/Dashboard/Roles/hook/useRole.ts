@@ -58,7 +58,6 @@ function useRole() {
         ...formData,
         totalRoles: results.totalElements,
       });
-      console.log("....render1");
     } catch (error) {
       console.error("Error fetching customers:", error);
     }

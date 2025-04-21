@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setId } from "@/redux/userSlice";
+import { setId } from "../../../../redux/userSlice";
 import {
   exportApi,
   isActiveApi,
-  segCustomer,
-} from "@/services/customerService";
-import { downloadFile } from "@/utils/exportUtils";
-import { showExportModal } from "@/utils/modalUtils";
-import { showConfirmModal } from "@/utils/showConfimModal";
+  getCustomer,
+} from "../../../../services/customerService";
+import { downloadFile } from "../../../../utils/exportUtils";
+import { showExportModal } from "../../../../utils/modalUtils";
+import { showConfirmModal } from "../../../../utils/showConfimModal";
+import { Customer, CustomerForm, CustomerTable} from "../../../../types/Customer";
 
 const useCustomer = () => {
-  const [customer, setCustomers] = useState([]);
-  const [originalCustomers, setOriginalCustomers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Default to page 1
-  const [formData, setFormData] = useState({
+  const [customer, setCustomers] = useState<Customer[]>([]);
+  const [originalCustomers, setOriginalCustomers] = useState<Customer[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [formData, setFormData] = useState<CustomerForm>({
     search: "",
     tiers: [],
     status: [],
@@ -29,12 +30,12 @@ const useCustomer = () => {
   const { search, tiers, status, pageSize,totalCustomers } = formData;
 
   useEffect(() => {
-    fetchCustomers(currentPage, search, tiers, status, pageSize);
+    fetchCustomers(currentPage);
   }, [currentPage, search, tiers, status, pageSize]);
 
-  const fetchCustomers = async (page) => {
+  const fetchCustomers = async (page:number) => {
     try {
-      const response = await segCustomer({
+      const response = await getCustomer({
         searchKey: search,
         tier: tiers,
         isActive: status,
@@ -42,7 +43,7 @@ const useCustomer = () => {
         size: pageSize,
       });
       if (response && response.results) {
-        const truncatedData = response.results.content.map((item) => ({
+        const truncatedData = response.results.content.map((item: Customer) => ({
           ...item,
           id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
           fullName:
@@ -72,14 +73,14 @@ const useCustomer = () => {
     }
   };
 
-  const viewDetails = (id) => {
+  const viewDetails = (id: string) => {
     dispatch(setId(id));
     setTimeout(() => {
       navigate(`/layout/customer/detail/${id}`);
     }, 100);
   };
 
-  const updateCustomerStatus = (id, isActive) => {
+  const updateCustomerStatus = (id: string, isActive: boolean) => {
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
         customer.id === id ? { ...customer, isActive } : customer
@@ -87,7 +88,7 @@ const useCustomer = () => {
     );
   };
 
-  const handleApiUpdate = async (id, isActive) => {
+  const handleApiUpdate = async (id: string, isActive: boolean) => {
     try {
       const response = await isActiveApi(id, isActive);
       if (!response) {
@@ -99,7 +100,7 @@ const useCustomer = () => {
     }
   };
 
-  const toggleActive = (id, isActive) => {
+  const toggleActive = (id: string, isActive: boolean) => {
     showConfirmModal(
       isActive,
       async () => {
@@ -110,22 +111,22 @@ const useCustomer = () => {
     );
   };
 
-  const searchHandle = (value) => {
+  const searchHandle = (value: string) => {
     setFormData({ ...formData, search: value });
     setCurrentPage(0); 
   };
 
-  const tierHandle = (value) => {
+  const tierHandle = (value: string[]) => {
     setFormData({ ...formData, tiers: value });
     setCurrentPage(0); 
   };
 
-  const statusHandle = (value) => {
+  const statusHandle = (value: boolean[]) => {
     setFormData({ ...formData, status: value });
     setCurrentPage(0); 
   };
 
-  const handleOnChangeSearch = (e) => {
+  const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData((prev) => {
       const updated = { ...prev, search: value };
@@ -137,12 +138,12 @@ const useCustomer = () => {
     });
   };
 
-  const exportHandle = async (searchValue, filterCustomer, status) => {
+  const exportHandle = async () => {
     try {
       const response = await exportApi({
-        tier: filterCustomer,
+        tier: tiers,
         isActive: status,
-        searchKey: searchValue,
+        searchKey: search,
         page: currentPage,
         size: pageSize,
       });
@@ -153,9 +154,10 @@ const useCustomer = () => {
     }
   };
 
-  const dataSource = customer?.map((item) => ({ ...item, key: item.id }));
+  const dataSource: CustomerTable[] = customer?.map((item) => ({ ...item, key: item.id }));
 
   return {
+    totalCustomers,
     currentPage,
     formData,
     dataSource,
