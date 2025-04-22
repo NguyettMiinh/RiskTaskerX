@@ -55,6 +55,7 @@ function DetailRole() {
       setChildCategory(category.children);
     } else {
       setSelectedCategory(category);
+      console.log("ca",category);
     }
   };
 
@@ -93,6 +94,7 @@ function DetailRole() {
     const checked = e.target.checked;
     // id cua tung categories
     const allIds = selectedCategory?.children.map((child) => child.id);
+    console.log(selectedCategory);
     console.log(allIds);
     //loai bo trung lap voi formId
     const updatedPermissions = checked

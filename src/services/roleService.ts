@@ -31,8 +31,8 @@ const getPermissions = () => {
   return axios.get("/permissions");
 };
 
-const addRoles = (role: Role) => {
-  return axios.post("/roles", role);
+const addRoles = (name: string, isActive: boolean, permissionId: number[]) => {
+  return axios.post("/roles", {name, isActive, permissionId});
 };
 
 const getRoles = (id: string | number) => {

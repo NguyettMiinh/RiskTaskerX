@@ -3,7 +3,7 @@ export interface Role {
     id: string | number,
     name: string,
     isActive: boolean, 
-    updateAt: string,
+    updateAt?: string,
     permissions: string[]
 }
 
