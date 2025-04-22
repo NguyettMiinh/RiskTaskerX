@@ -1,7 +1,6 @@
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import {
   Button,
-  Card,
   Checkbox,
   Input,
   Switch,
@@ -19,22 +18,22 @@ import { usePermissions } from "@components/hook/usePermissions";
 const { Panel } = Collapse;
 
 function AddRole() {
-  const [isError, setIsError] = useState("");
   const [loading, setLoading] = useState(false);
   const [addForm, setAddForm] = useState({
     name: "",
     isActive: true,
     permissions: [],
+    isError: "",
   });
 
-  const { name, isActive, permissions } = addForm;
+  const { name, isActive, permissions, isError } = addForm;
 
   const { data } = usePermissions();
   const categories = data?.data.results;
 
   const navigate = useNavigate();
 
-  const handleAdd = async () => { 
+  const handleAdd = async () => {
     try {
       await addRoles(name, isActive, permissions);
       navigate("/layout/role-list");
@@ -43,16 +42,15 @@ function AddRole() {
         name: "",
         isActive: true,
         permissions: [],
+        isError: "",
       });
-      setValue([]);
-      setIsError("");
     } catch (error) {
       const message = error.response?.data?.message;
       if (message === "role-already-exists") {
-        setIsError("This role name is already taken.");
+        setAddForm({ ...addForm, isError: "This role name is already taken." });
       }
       if (message === "invalid-role-name") {
-        setIsError("Role Name is required.");
+        setAddForm({ ...addForm, isError: "Role name is required." });
       }
     }
   };
@@ -74,27 +72,26 @@ function AddRole() {
       ...prev,
       permissions: checked
         ? [...prev.permissions, value] // thêm
-        : prev.permissions.filter((item) => item !== value) // xoá
+        : prev.permissions.filter((item) => item !== value), // xoá
     }));
   };
-  
+
   const handleAllCheckBox = (checked, all) => {
     if (checked) {
       setAddForm((prev) => ({
         ...prev,
-        permissions: [...prev.permissions, ...all]
-      }));     
+        permissions: [...prev.permissions, ...all],
+      }));
     } else {
       setAddForm((prev) => ({
         ...prev,
-        permissions: prev.permissions.filter((id) => !all.includes(id))
+        permissions: prev.permissions.filter((id) => !all.includes(id)),
       }));
     }
   };
   function handleCancel() {
     navigate("/layout/role-list");
   }
-
 
   return (
     <div className="flex justify-start min-h-screen p-[10px]">
@@ -118,16 +115,16 @@ function AddRole() {
               value={name}
               status={isError ? "error" : ""}
               onChange={(e) => {
-                  setAddForm({...addForm,name: e.target.value});
+                setAddForm({ ...addForm, name: e.target.value });
               }}
             />
             {isError && <div style={{ color: "red" }}>{isError}</div>}
           </Col>
-          <Col span={8} offset={4}>
+          <Col span={6} offset={2}>
             <Typography.Text strong className="text-[16px]">
               Status
             </Typography.Text>
-            <div className="pt-[12px]">
+            <div className="pt-[16px]">
               <Switch
                 className="text-[16px]"
                 checked={isActive}
@@ -142,8 +139,8 @@ function AddRole() {
               <span>{isActive ? "Active" : "Inactive"}</span>
             </div>
           </Col>
-          <Col>
-            <div className="flex justify-end mt-[10px]">
+          <Col span={8}>
+            <div className="flex justify-end mt-[10px] pt-[20px]">
               <Button className="mt-[10px] mr-[10px]" onClick={handleCancel}>
                 Cancel
               </Button>
@@ -180,18 +177,26 @@ function AddRole() {
                   <Panel header={item.name} key={item.id}>
                     <Row gutter={[16, 16]}>
                       <Col span={24}>
-                        <Checkbox                  
-                        checked={checkAll}
-                        onChange={(e) => {
-                          handleAllCheckBox(e.target.checked, allIds)
-                        }}>Select All</Checkbox>
+                        <Checkbox
+                          checked={checkAll}
+                          onChange={(e) => {
+                            handleAllCheckBox(e.target.checked, allIds);
+                          }}
+                        >
+                          Select All
+                        </Checkbox>
                       </Col>
                       {item?.children.map((child) => {
                         return (
                           <Col key={child.id} span={24}>
-                            <Checkbox checked={addForm.permissions.includes(child.id)} onChange={(e) => {
-                              handleCheckBox(child.id, e.target.checked);
-                            }}>{child.name}</Checkbox>
+                            <Checkbox
+                              checked={addForm.permissions.includes(child.id)}
+                              onChange={(e) => {
+                                handleCheckBox(child.id, e.target.checked);
+                              }}
+                            >
+                              {child.name}
+                            </Checkbox>
                           </Col>
                         );
                       })}

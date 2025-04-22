@@ -24,8 +24,8 @@ const roleSearchFilter = ({
 const roleActive = (id: string | number, isActive: boolean) => {
   return axios.put("/roles/status", { id, isActive });
 };
-const editRoles = (role: Role) => {
-  return axios.put("/roles", role);
+const editRoles = (id: string| number, name: string, isActive: boolean, permissionId: number[]) => {
+  return axios.put("/roles", { id, name, isActive, permissionId });
 };
 const getPermissions = () => {
   return axios.get("/permissions");
