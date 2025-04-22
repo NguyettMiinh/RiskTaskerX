@@ -19,9 +19,6 @@ const DetailCustomer = () => {
       children: <Warranty />,
     },
   ];
-  const onChange = (key) => {
-    console.log(key);
-  };
   return (
     <div  style={{
       display: "flex",
@@ -53,7 +50,7 @@ const DetailCustomer = () => {
                 paddingLeft: "20px",
               }}
             >
-              <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+              <Tabs defaultActiveKey="1" items={items} />
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import { Table, Pagination, Input, Button, Switch, Modal, Tag } from "antd";
 import useCustomer from "./hook/useCustomer";
-import constants from "@/constants/index";
+import constants from "../../../constants/index";
 import {
   SearchOutlined,
   DownloadOutlined,
@@ -10,15 +10,21 @@ import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import "@assets/styles/list.css";
 import "@assets/styles/filter.css";
+import { Customer} from "types/Customer";
+import { ColumnsType} from "antd/es/table";
+import { AlignType } from 'rc-table/lib/interface';
+import { OptionType} from "types/Select";
 
-const CUSTOMER_LIST = [
-  { title: "Customer ID", dataIndex: "id", align: 'center', },
-  { title: "Customer Name", dataIndex: "fullName", align: 'center', },
-  { title: "Phone Number", dataIndex: "phoneNumber", align: 'center', },
-  { title: "Address", dataIndex: "address", align: 'center', },
-  { title: "Email", dataIndex: "email", align: 'center', }
-];
-const TIER_OPTIONS = [
+
+const CUSTOMER_LIST: ColumnsType<Customer> = [
+  { title: "Customer ID", dataIndex: "id", align: "center" as AlignType },
+  { title: "Customer Name", dataIndex: "fullName", align: "center" as AlignType },
+  { title: "Phone Number", dataIndex: "phoneNumber", align: "center" as AlignType },
+  { title: "Address", dataIndex: "address", align: "center" as AlignType },
+  { title: "Email", dataIndex: "email", align: "center" as AlignType },
+]
+
+const TIER_OPTIONS: OptionType[] = [
   { label: "Diamond", value: "Diamond" },
   { label: "Gold", value: "Gold" },
   { label: "Silver", value: "Silver" },
@@ -41,15 +47,15 @@ const CustomerList = () => {
     toggleActive,
   } = useCustomer();
 
-  const { search, tiers, status, pageSize, totalCustomers } = formData;
+  const { search, pageSize, totalCustomers } = formData;
 
   const columns = [
     ...CUSTOMER_LIST,
     {
       title: "Tier",
       dataIndex: "tier",
-      align: "center",
-      render: (tier) => {
+      align: "center" as AlignType,
+      render: (tier: string) => {
         let colorB = "#EDF1F2";
         let colorF = "#8696A0";
 
@@ -86,8 +92,8 @@ const CustomerList = () => {
     {
       title: "Actions",
       dataIndex: "actions",
-      align: "center",
-      render: (_, record) => (
+      align: "center" as AlignType,
+      render: (_: Customer, record: Customer) => (
         <div
           style={{
             display: "flex",
@@ -152,7 +158,7 @@ const CustomerList = () => {
           <Button
             icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
             style={{ height: "40px", borderColor: "#C9C6ED" }}
-            onClick={() => exportHandle(search, tiers, status)}
+            onClick={() => exportHandle()}
           >
             <span style={{ color: "#6055F2" }}>Export Customer List</span>
           </Button>
@@ -171,7 +177,7 @@ const CustomerList = () => {
           pageSize={pageSize}
           showSizeChanger
           pageSizeOptions={["5", "10", "20", "50"]}
-          onChange={(page, pageSize) => {
+          onChange={(page: number, pageSize: number) => {
             setFormData({ ...formData, pageSize: pageSize });
             setCurrentPage(page);
           }}

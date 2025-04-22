@@ -49,3 +49,4 @@ export interface Warranty {
   serviceDate: string;
   serviceCost: string | number;
 }
+

@@ -1,7 +1,7 @@
 import axios from "../api/axios";
 import { CustomerDetail, GetCustomer, Warranty} from "../types/Customer";
 
-const exportApi = async ({
+const exportApi =  async({
   page,
   size,
   searchKey,
@@ -25,7 +25,7 @@ const exportApi = async ({
 };
 
 
-const getCustomer = async ({
+const getCustomer =  async({
   page,
   size,
   searchKey,
@@ -48,12 +48,12 @@ const getCustomer = async ({
   return response.data;
 };
 
-const isActiveApi = async (id: string | number, isActive: boolean ) => {
+const isActiveApi =  (id: string | number, isActive: boolean ) => {
   return axios.put("/customers/status", { id, isActive });
 };
 
 
-const getWarranty = async ({
+const getWarranty =  ({
   sortKey,
   customerId,
   page,
@@ -71,7 +71,7 @@ const getWarranty = async ({
   });
 };
 
-const getPurchase = async ({
+const getPurchase =  ({
   sortKey,
   customerId,
   page,
@@ -89,15 +89,18 @@ const getPurchase = async ({
   });
 };
 
-const exportPurchase = async (id: string | number) => {
-  return axios.get(`/export/customers/purchase/${id}`);
+const exportPurchase =  <T extends string | number>(id: T, paymentsId: T) => {
+  return axios.post(`/export/customers/purchase`,{
+    id,
+    paymentsId
+  });
 };
 
-const exportWarranty = async (id: string | number) => {
+const exportWarranty =  (id: string | number) => {
   return axios.get(`/export/customers/warranty/${id}`);
 };
 
-const addWarrantyData = async ({
+const addWarrantyData =  ({
   customerId,
   carModel,
   licensePlate,
