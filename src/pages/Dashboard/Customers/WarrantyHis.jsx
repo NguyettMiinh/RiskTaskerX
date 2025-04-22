@@ -1,19 +1,30 @@
-import { useEffect, useState, useRef } from "react";
-import { Button, Table, Input, Modal, Select, Typography, DatePicker } from "antd";
-import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  exportWarranty,
+  getWarranty,
+  addWarrantyData,
+} from "@/services/customerService";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { exportWarranty,getWarranty, addWarrantyData} from "@/services/customerService";
+import {
+  Button,
+  Table,
+  Input,
+  Modal,
+  Select,
+  Typography,
+  DatePicker,
+} from "antd";
+import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import constants from "@/constants/index";
 import { downloadFile } from "@/utils/exportUtils";
 import { showExportModal } from "@/utils/modalUtils";
 import { formatDate } from "@/utils/formatDate";
 import { formatMoney } from "@/utils/formatMoney";
 import { formatCenter } from "@/utils/formatCenter";
+import { toast } from "react-toastify";
 
 const Warranty = () => {
   const [warranty, setWarranty] = useState();
-
   const warrantyData = useRef({
     model: "",
     license: "",
