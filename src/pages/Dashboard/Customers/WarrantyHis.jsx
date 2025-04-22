@@ -202,7 +202,7 @@ const Warranty = () => {
           style={{ height: "40px", borderColor: "#C9C6ED", marginRight: "5px" }}
           onClick={() => addHandle(id)}
         >
-          <span style={{ color: "#6055F2" }}> Add Warranty Information</span>
+          <span style={{ color: "#6055F2" }}> Add </span>
         </Button>
         <Button
           icon={<DownloadOutlined style={{ color: "#6055F2" }} />}

@@ -119,8 +119,12 @@ const addWarrantyData =  ({
     serviceCost,
   });
 };
+const getPayment = (paymentId: string | number) => {
+  return axios.get(`history/purchase/${paymentId}`);
+}
 
 export {
+  getPayment,
   exportApi,
   isActiveApi,
   getCustomer,

@@ -135,8 +135,11 @@ const PurchaseHis = () => {
   };
 
   const exportHandle = async () => {
-    const purchaseItem = purchase.find((item) => item.key === id);
-    console.log("paymentid", purchaseItem);
+    const purchaseItem = purchase[0]?.paymentId;
+    console.log(purchase);
+    console.log(purchaseItem);
+    const paymentId = purchaseItem?.paymentId;
+    console.log("id",id,paymentId);
     // const paymentId = purchaseItem?.paymentId;
     // try {
     //   const response = await exportPurchase(id, paymentId);
@@ -172,7 +175,7 @@ const PurchaseHis = () => {
           style={{ height: 40, borderColor: "#C9C6ED" }}
           onClick={exportHandle}
         >
-          <span style={{ color: "#6055F2" }}>Export Purchase History</span>
+          <span style={{ color: "#6055F2" }}>Export</span>
         </Button>
       </div>
 
