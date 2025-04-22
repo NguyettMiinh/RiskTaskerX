@@ -20,7 +20,7 @@ export const showExportModal = (password) => {
               value={password}
               readOnly
               style={{
-                width: "300px",
+                width: "270px",
                 borderRadius: "6px 0 0 6px",
                 border: "1px solid #ccc",
                 height: "40px",
@@ -32,6 +32,7 @@ export const showExportModal = (password) => {
                 <CopyOutlined
                   style={{
                     color: "white",
+                    fontSize: "18px",
                   }}
                 />
               }
@@ -45,7 +46,7 @@ export const showExportModal = (password) => {
                 borderRadius: "0 6px 6px 0",
                 border: "1px solid #ccc",
                 height: "40px",
-                width: "50px",
+                width: "80px",
               }}
             ></Button>
           </div>
@@ -57,6 +58,9 @@ export const showExportModal = (password) => {
           backgroundColor: "#6055F2",
           borderColor: "#6055F2",
           color: "white",
+          position: "relative",
+          left: "-18px",
+          borderRadius: "3px",
         },
       },
       icon: null,

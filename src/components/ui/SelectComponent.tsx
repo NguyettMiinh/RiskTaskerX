@@ -1,21 +1,26 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Checkbox, Select, Button } from "antd";
 import "@assets/styles/filter.css";
-const SelectComponent = ({options, allLabel, onChange, style, className}) => {
+import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import {OptionValue,SelectType} from "../../types/Select";
+
+const SelectComponent = <T extends OptionValue>({options, allLabel, className, onChange}: SelectType<T>) => {
+
   // tra ve mang cac option value
-  const [value, setValue] = useState(options.map((option) => option.value));
+  const [value, setValue] = useState<OptionValue[]>(options.map((option) => option.value));
   const indeterminate = value.length > 0 && value.length < options.length;
   const checkAll = options.length === value.length;
-
-  // xóa dấu x ở tag
-  function tagRender(props) {
+  const tagRender = (props: CustomTagProps) => {
     const { label } = props;
-    return <div closable="false" style={{
-      paddingLeft: "10px"
-    }}>{label}</div>;
-  }
+    return (
+      <div style={{ paddingLeft: "10px" }}>
+        {label}
+      </div>
+    );
+  };
   // khi nhấn vào checkbox thì sẽ thêm hoặc xóa giá trị của checkbox đó vào mảng value
-  function handleCheckBox(value, checked) {
+  function handleCheckBox(value: OptionValue, checked: boolean) {
     if (checked) {
       setValue((prev) => [...prev, value]);
     } else {
@@ -24,7 +29,7 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
   }
   // khi nhấn vào checkbox all thì sẽ chọn tất cả các checkbox khác
   // nếu đã chọn hết thì bỏ chọn tất cả
-  const onCheckAllChange = (e) => {
+  const onCheckAllChange = (e:  CheckboxChangeEvent) => {
     const checked = e.target.checked;
     if (checked) {
       setValue(options.map((option) => option.value));
@@ -38,7 +43,7 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
   }
   // khi nhan btn OK
   function handleOk() {
-    onChange(value);
+    onChange(value as T[]);
   }
   // custom lại dropdown của select
   function dropdownRender() {
@@ -47,7 +52,7 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
         {options.map((option) => {
           return (
             <div
-              key={option.value}
+              key={String(option.value)}
               style={{ display: "flex", alignItems: "center", padding: "8px" }}
             >
               <Checkbox
@@ -106,3 +111,5 @@ const SelectComponent = ({options, allLabel, onChange, style, className}) => {
 export default SelectComponent;
 
 //  onChang(value) = filterHandle(value)
+// e: checkbox dung type : import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+// e: React.ChangeEvent<HTMLInputElement>: dung cho inputinput
