@@ -11,6 +11,7 @@ import { downloadFile } from "../../../../utils/exportUtils";
 import { showExportModal } from "../../../../utils/modalUtils";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { Customer, CustomerForm, CustomerTable} from "../../../../types/Customer";
+import { toast } from "react-toastify";
 
 const useCustomer = () => {
   const [customer, setCustomers] = useState<Customer[]>([]);
@@ -80,7 +81,7 @@ const useCustomer = () => {
     }, 100);
   };
 
-  const updateCustomerStatus = (id: string, isActive: boolean) => {
+  const updateCustomerStatus = (id: string | number, isActive: boolean) => {
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
         customer.id === id ? { ...customer, isActive } : customer
@@ -88,7 +89,7 @@ const useCustomer = () => {
     );
   };
 
-  const handleApiUpdate = async (id: string, isActive: boolean) => {
+  const handleApiUpdate = async (id: string | number, isActive: boolean) => {
     try {
       const response = await isActiveApi(id, isActive);
       if (!response) {
@@ -100,15 +101,20 @@ const useCustomer = () => {
     }
   };
 
-  const toggleActive = (id: string, isActive: boolean) => {
-    showConfirmModal(
-      isActive,
+
+  const toggleActive = (id: string | number, isActive: boolean) => {
+    showConfirmModal({ onConfirm:
       async () => {
         updateCustomerStatus(id, isActive);
         await handleApiUpdate(id, isActive);
+        if (isActive) {
+          toast.success("Role successfully activated");
+        } else {
+          toast.success("Role successfully deactivated");
+        }
       },
-      "customer"
-    );
+      name: "customer", action: isActive ? "activate" : "deactivate"
+  });
   };
 
   const searchHandle = (value: string) => {
