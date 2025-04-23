@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { Row, Col, Card, Switch } from "antd";
-import { TrophyOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Row, Col, Card, Switch, Modal } from "antd";
+import avt from "@assets/images/maomao.jpg";
 import { getWarranty, isActiveApi } from "@/services/customerService";
+import { useSelector } from "react-redux";
+import { TrophyOutlined } from "@ant-design/icons";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import { formatDate } from "@/utils/formatDate";
-import avt from "@assets/images/maomao.jpg";
 
-const PersonalInfor = () => {
+const Personal = () => {
   const [detail, setDetail] = useState(null);
   const id = useSelector((state) => state.user.id);
   
@@ -174,4 +174,4 @@ const PersonalInfor = () => {
   );
 };
 
-export default PersonalInfor;
+export default Personal;

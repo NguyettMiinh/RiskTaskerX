@@ -1,7 +1,7 @@
 import { Tabs } from "antd";
-import PersonalInfor from "./PersonalInfor";
-import PurchaseHis from "./PurchaseHis";
-import Warranty from "./WarrantyHis";
+import Personal from "./Personal";
+import Purchase from "./Purchase";
+import Warranty from "./Warranty";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import "@assets/styles/customTabs.css";
 
@@ -11,7 +11,7 @@ const DetailCustomer = () => {
     {
       key: "1",
       label: "Purchase history",
-      children: <PurchaseHis />,
+      children: <Purchase />,
     },
     {
       key: "2",
@@ -19,6 +19,7 @@ const DetailCustomer = () => {
       children: <Warranty />,
     },
   ];
+  
   return (
     <div  style={{
       display: "flex",
@@ -43,7 +44,7 @@ const DetailCustomer = () => {
               display: "flex",
             }}
           >
-            <PersonalInfor />
+            <Personal />
             
             <div
               style={{
