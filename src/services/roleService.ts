@@ -1,14 +1,14 @@
 import axios from "../api/axios";
-import {Role, RoleSearchFilter} from "../types/Role";
+import { Role, RoleSearchFilter } from "../types/Role";
 
 const roleSearchFilter = ({
   page,
-  size ,
-  searchKey ,
+  size,
+  searchKey,
   isActive,
   sortKey,
-  sortBy ,
-}: RoleSearchFilter ) => {
+  sortBy,
+}: RoleSearchFilter) => {
   return axios.post("/roles/search-and-filter", {
     sortKey,
     filters: {
@@ -21,21 +21,33 @@ const roleSearchFilter = ({
   });
 };
 
-const roleActive =  (id: string | number, isActive: boolean) => {
+const roleActive = (id: string | number, isActive: boolean) => {
   return axios.put("/roles/status", { id, isActive });
 };
-const editRoles =  (role: Role) => {
-  return axios.put("/roles", role);
+const editRoles = (id: string| number, name: string, isActive: boolean, permissionId: number[]) => {
+  return axios.put("/roles", { id, name, isActive, permissionId });
 };
-const getPermissions =  () => {
+const getPermissions = () => {
   return axios.get("/permissions");
 };
 
-const addRoles =  (role: Role) => {
-  return axios.post("/roles", role);
-}
+const addRoles = (name: string, isActive: boolean, permissionId: number[]) => {
+  return axios.post("/roles", {name, isActive, permissionId});
+};
 
-const getRoles =  (id: string | number) => {
+const getRoles = (id: string | number) => {
   return axios.get(`/roles/${id}`);
-}
-export { roleSearchFilter, roleActive, getPermissions , addRoles, getRoles, editRoles};
+};
+
+const deleteRole = (id: string | number) => {
+  return axios.delete(`/roles/${id}`);
+};
+export {
+  roleSearchFilter,
+  roleActive,
+  getPermissions,
+  addRoles,
+  getRoles,
+  editRoles,
+  deleteRole,
+};

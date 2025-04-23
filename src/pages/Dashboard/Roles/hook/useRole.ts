@@ -8,11 +8,12 @@ import type { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/
 
 // Import nội bộ
 import { Role, RoleForm, RoleTable } from "../../../../types/Role";
-import { roleSearchFilter, roleActive } from "../../../../services/roleService";
+import { roleSearchFilter, roleActive, deleteRole } from "../../../../services/roleService";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
 import {OptionValue} from "../../../../types/Select";
+
 
 function useRole() {
   //mang ca doi tuong role
@@ -95,8 +96,7 @@ function useRole() {
   };
   // put isActive
   const toggleActive = (id: string | number, isActive: boolean) => {
-    showConfirmModal(
-      isActive,
+    showConfirmModal({ onConfirm:
       async () => {
         updateRoleStatus(id, isActive);
         await handleApiUpdate(id, isActive);
@@ -106,8 +106,8 @@ function useRole() {
           toast.success("Role successfully deactivated");
         }
       },
-      "role"
-    );
+      name: "role", action: isActive ? "activate" : "deactivate"
+  });
   };
 
 
@@ -152,6 +152,30 @@ function useRole() {
   function handleRole() {
     navigate("/layout/role-list/add-role");
   }
+
+  
+  const handleDelete = async (id: string | number) => {
+    showConfirmModal({
+      onConfirm: async () => {
+        try {
+          await deleteRole(id);
+          setRoles((prev) => prev.filter((role) => role.id !== id));
+          setOriginalRoles((prev) => prev.filter((role) => role.id !== id));
+          toast.success("Role deleted successfully!");
+        } catch (error: any) {
+          const message = error.response?.data?.message;
+          if (message === "role-in-use-by-admin") {
+            toast.error("Cannot delete role. There are still admins assigned to this role.");
+          } else {
+            toast.error("Something went wrong.");
+          }
+        }
+      },
+      name: "role",
+      action: "delete",
+    });
+  };
+  
   return {
     dataSource,
     currentPage,
@@ -165,6 +189,7 @@ function useRole() {
     setFormData,
     toggleActive,
     viewDetails,
+    handleDelete
   }
 }
 
