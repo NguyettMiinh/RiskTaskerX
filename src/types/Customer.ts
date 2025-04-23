@@ -22,9 +22,9 @@ export interface CustomerForm {
 }
 
 export interface CustomerInput {
-  page: number;
-  size: number;
-  searchKey: string | null;
+  page?: number;
+  size?: number;
+  searchKey?: string | null;
   sortKey?: string;
   sortBy?: "ASC" | "DESC";
 }

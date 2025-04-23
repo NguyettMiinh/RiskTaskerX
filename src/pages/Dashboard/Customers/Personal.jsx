@@ -7,7 +7,7 @@ import { TrophyOutlined } from "@ant-design/icons";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import { formatDate } from "@/utils/formatDate";
 
-const PersonalInfor = () => {
+const Personal = () => {
   const [detail, setDetail] = useState(null);
   const id = useSelector((state) => state.user.id);
   
@@ -174,4 +174,4 @@ const PersonalInfor = () => {
   );
 };
 
-export default PersonalInfor;
+export default Personal;

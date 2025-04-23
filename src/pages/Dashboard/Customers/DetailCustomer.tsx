@@ -1,5 +1,5 @@
 import { Tabs } from "antd";
-import PersonalInfor from "./Personal";
+import Personal from "./Personal";
 import Purchase from "./Purchase";
 import Warranty from "./Warranty";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
@@ -19,6 +19,7 @@ const DetailCustomer = () => {
       children: <Warranty />,
     },
   ];
+  
   return (
     <div  style={{
       display: "flex",
@@ -43,7 +44,7 @@ const DetailCustomer = () => {
               display: "flex",
             }}
           >
-            <PersonalInfor />
+            <Personal />
             
             <div
               style={{
