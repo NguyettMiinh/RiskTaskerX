@@ -89,11 +89,8 @@ const getPurchase =  ({
   });
 };
 
-const exportPurchase =  <T extends string | number>(id: T, paymentsId: T) => {
-  return axios.post(`/export/customers/purchase`,{
-    id,
-    paymentsId
-  });
+const exportPurchase =  (id: string | number) => {
+  return axios.get(`/export/customers/purchase/${id}`);
 };
 
 const exportWarranty =  (id: string | number) => {

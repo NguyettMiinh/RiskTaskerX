@@ -28,53 +28,9 @@ const DetailRow = ({ label, value }) => (
     <Col>{value}</Col>
   </Row>
 );
-const columnsDetail = [
-  {
-    title: "No",
-    dataIndex: "id",
-  },
-  {
-    title: "Due Date",
-    dataIndex: "dueDate",
-  },
-  {
-    title: "Amount",
-    dataIndex: "monthlyPayment",
-  },
-  {
-    title: "Payment Method",
-    dataIndex: "paymentMethods",
-  },
-  {
-    title: "Payment Date",
-    dataIndex: "paymentDate",
-  },
-  {
-    title: "Invoice",
-    dataIndex: "invoice",
-    render: (_, record) => (
-      <Button
-        type="link"
-        icon={
-          <>
-            <FileTextOutlined style={{ fontSize: 16, color: "#6055F2" }} />
-            <span
-              style={{
-                fontSize: 12,
-                color: "black",
-                textDecoration: "underline",
-              }}
-            >
-              Download
-            </span>
-          </>
-        }
-      />
-    ),
-  },
-];
 
-const PurchaseHis = () => {
+
+const Purchase = () => {
   const id = useSelector((state) => state.user.id);
   const [purchase, setPurchase] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -86,6 +42,7 @@ const PurchaseHis = () => {
     try {
       const response = await getPurchase({ page: 0, customerId: id });
       const rawData = response.data.content || [];
+      console.log(rawData);
       const formatted = rawData.map((item) => ({
         ...item,
         key: item.id,
@@ -110,6 +67,51 @@ const PurchaseHis = () => {
     fetchPurchase();
   }, [id]);
 
+  const columnsDetail = [
+    {
+      title: "No",
+      dataIndex: "id",
+    },
+    {
+      title: "Due Date",
+      dataIndex: "dueDate",
+    },
+    {
+      title: "Amount",
+      dataIndex: "monthlyPayment",
+    },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethods",
+    },
+    {
+      title: "Payment Date",
+      dataIndex: "paymentDate",
+    },
+    {
+      title: "Invoice",
+      dataIndex: "invoice",
+      render: (_, record) => (
+        <Button
+          type="link"
+          icon={
+            <>
+              <FileTextOutlined style={{ fontSize: 16, color: "#6055F2" }} />
+              <span
+                style={{
+                  fontSize: 12,
+                  color: "black",
+                  textDecoration: "underline",
+                }}
+              >
+                Download
+              </span>
+            </>
+          }
+        />
+      ),
+    },
+  ];
   const viewDetails = async (id) => {
     console.log("hello");
     const purchaseItem = purchase.find((item) => item.key === id);
@@ -135,19 +137,13 @@ const PurchaseHis = () => {
   };
 
   const exportHandle = async () => {
-    const purchaseItem = purchase[0]?.paymentId;
-    console.log(purchase);
-    console.log(purchaseItem);
-    const paymentId = purchaseItem?.paymentId;
-    console.log("id",id,paymentId);
-    // const paymentId = purchaseItem?.paymentId;
-    // try {
-    //   const response = await exportPurchase(id, paymentId);
-    //   const password = downloadFile(response.data);
-    //   showExportModal(password);
-    // } catch (error) {
-    //   console.error("Error exporting file:", error);
-    // }
+    try {
+      const response = await exportPurchase(id);
+      const password = downloadFile(response.data);
+      showExportModal(password);
+    } catch (error) {
+      console.error("Error exporting file:", error);
+    }
   };
 
   const columns = [
@@ -310,4 +306,4 @@ const PurchaseHis = () => {
   );
 };
 
-export default PurchaseHis;
+export default Purchase;

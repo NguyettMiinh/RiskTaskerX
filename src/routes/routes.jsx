@@ -41,7 +41,7 @@ const routes = [
           {path: 'change-password', element: <ChangePassword />},
           {path: 'customer', element: <CustomerList /> ,breadcrumb: "Customer Management"},
           {path: 'customer/detail/:id', element: <DetailCustomer /> , breadcrumb: "Customer Details"},
-          {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Acount List"},
+          {path: 'admin', element: <AdminManagementList />, breadcrumb: "Admin Account List"},
           {path: 'admin/detail/:id', element: <AdminManagementList />, breadcrumb: "Detail"},
           {path: 'role-list', element: <RoleList />, breadcrumb: "Role Management"},
           {path: 'role-list/add-role', element: <AddRole />, breadcrumb: "Add New Role"},
