@@ -9,90 +9,21 @@ import {
   Col,
   Collapse,
 } from "antd";
-import { useState } from "react";
-import { addRoles } from "../../../services/roleService";
-import { toast } from "react-toastify";
-import "../../../assets/styles/role.css";
-import { useNavigate } from "react-router";
-import { usePermissions } from "@components/hook/usePermissions";
+import useAddRole from "./hook/useAddRole";
 const { Panel } = Collapse;
 
 function AddRole() {
-  const [loading, setLoading] = useState(false);
-  const [addForm, setAddForm] = useState({
-    name: "",
-    isActive: true,
-    permissions: [],
-    isError: "",
-  });
-
+  const {
+    addForm,
+    categories,
+    setAddForm,
+    handleAdd,
+    toggleActive,
+    handleCheckBox,
+    handleAllCheckBox,
+    handleCancel,
+  } = useAddRole();
   const { name, isActive, permissions, isError } = addForm;
-
-  const { data } = usePermissions();
-  const categories = data?.data.results;
-
-  const navigate = useNavigate();
-
-  const handleAdd = async () => {
-    try {
-      await addRoles(name, isActive, permissions);
-      navigate("/layout/role-list");
-      toast.success("New role has been added successfully!");
-      setAddForm({
-        name: "",
-        isActive: true,
-        permissions: [],
-        isError: "",
-      });
-    } catch (error) {
-      const message = error.response?.data?.message;
-      if (message === "role-already-exists") {
-        setAddForm({ ...addForm, isError: "This role name is already taken." });
-      }
-      if (message === "invalid-role-name") {
-        setAddForm({ ...addForm, isError: "Role name is required." });
-      }
-    }
-  };
-
-  const toggleActive = async (checked) => {
-    if (loading) return;
-    setLoading(true);
-    setAddForm({
-      ...addForm,
-      isActive: checked,
-    });
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  };
-
-  const handleCheckBox = (value, checked) => {
-    setAddForm((prev) => ({
-      ...prev,
-      permissions: checked
-        ? [...prev.permissions, value] // thêm
-        : prev.permissions.filter((item) => item !== value), // xoá
-    }));
-  };
-
-  const handleAllCheckBox = (checked, all) => {
-    if (checked) {
-      setAddForm((prev) => ({
-        ...prev,
-        permissions: [...prev.permissions, ...all],
-      }));
-    } else {
-      setAddForm((prev) => ({
-        ...prev,
-        permissions: prev.permissions.filter((id) => !all.includes(id)),
-      }));
-    }
-  };
-  function handleCancel() {
-    navigate("/layout/role-list");
-  }
-
   return (
     <div className="flex justify-start min-h-screen p-[10px]">
       <div className="w-full bg-white p-[50px] rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.15)]">
@@ -133,8 +64,6 @@ function AddRole() {
                   backgroundColor: isActive ? "#6055F2" : "#d9d9d9",
                   marginRight: "5px",
                 }}
-                loading={loading}
-                disabled={loading}
               />
               <span>{isActive ? "Active" : "Inactive"}</span>
             </div>
