@@ -21,24 +21,12 @@ const CENTER_OPTIONS = [
   { label: "RISKTASKERX Quy Nhon", value: "Quy_Nhon" },
 ];
 
-const TIER_OPTIONS = [
-  { label: "Diamond", value: "Diamond" },
-  { label: "Gold", value: "Gold" },
-  { label: "Silver", value: "Silver" },
-  { label: "Bronze", value: "Bronze" },
-];
+
 const STATUS_OPTIONS = [
   { label: "Active", value: true },
   { label: "Inactive", value: false },
 ];
 
-const CUSTOMER_LIST = [
-  { title: "Customer ID", dataIndex: "id", align: 'center', },
-  { title: "Customer Name", dataIndex: "fullName", align: 'center', },
-  { title: "Phone Number", dataIndex: "phoneNumber", align: 'center', },
-  { title: "Address", dataIndex: "address", align: 'center', },
-  { title: "Email", dataIndex: "email", align: 'center', }
-];
 
 const PURCHASE_LIST = [
   { title: "Car Model", dataIndex: "carModel", width: 150},
@@ -74,12 +62,10 @@ const ROLE_LIST = [
 export default {
   MODEL_OPTIONS,
   TYPE_OPTIONS,
-  TIER_OPTIONS,
-  STATUS_OPTIONS,
   CENTER_OPTIONS,
-  CUSTOMER_LIST,
   PURCHASE_LIST,
   WARRANTY_LIST,
   DEPARTMENT_LIST,
-  ROLE_LIST
+  ROLE_LIST,
+  STATUS_OPTIONS
 };

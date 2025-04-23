@@ -8,8 +8,7 @@ import {
   Typography,
   Row,
   Col,
-  Collapse,
-} from "antd";
+  Collapse} from "antd";
 import { useEffect, useState } from "react";
 import { getRoles, editRoles } from "@/services/roleService";
 import { RightOutlined } from "@ant-design/icons";

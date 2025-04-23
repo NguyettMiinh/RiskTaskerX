@@ -11,7 +11,7 @@ import {
   Collapse,
 } from "antd";
 import { useState } from "react";
-import { addRoles } from "@/services/roleService";
+import { addRoles } from "../../../services/roleService";
 import { RightOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import "../../../assets/styles/role.css";

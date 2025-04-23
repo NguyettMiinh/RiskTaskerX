@@ -1,10 +1,10 @@
-import PersonalInfor from "./PersonalInfor";
 import { Tabs } from "antd";
-import "@assets/styles/customTabs.css";
+import PersonalInfor from "./PersonalInfor";
 import PurchaseHis from "./PurchaseHis";
 import Warranty from "./WarrantyHis";
-import { Link } from "react-router";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
+import "@assets/styles/customTabs.css";
+
 const DetailCustomer = () => {
   
   const items = [
@@ -19,9 +19,6 @@ const DetailCustomer = () => {
       children: <Warranty />,
     },
   ];
-  const onChange = (key) => {
-    console.log(key);
-  };
   return (
     <div  style={{
       display: "flex",
@@ -53,7 +50,7 @@ const DetailCustomer = () => {
                 paddingLeft: "20px",
               }}
             >
-              <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+              <Tabs defaultActiveKey="1" items={items} />
             </div>
           </div>
 

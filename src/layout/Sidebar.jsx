@@ -1,4 +1,3 @@
-import React, { Children } from "react";
 import "@assets/styles/dashboard.css";
 import { Layout, Menu, Button } from "antd";
 import {
@@ -35,8 +34,12 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       navigate("/layout/dashboard")
     ),
     getItem("User Roles & Permissions", "ad", <SafetyOutlined />, [
-      getItem("Admin Management", "2", null,null, () => navigate("/layout/admin")),
-      getItem("Role Management", "3",null,null, () => navigate('/layout/role-list')),
+      getItem("Admin Management", "2", null, null, () =>
+        navigate("/layout/admin")
+      ),
+      getItem("Role Management", "3", null, null, () =>
+        navigate("/layout/role-list")
+      ),
     ]),
     getItem("Customer Management", "4", <UsergroupAddOutlined />, null, () =>
       navigate("/layout/customer")
@@ -55,30 +58,14 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       collapsed={collapsed}
       onCollapse={setCollapsed}
       trigger={null}
-      style={{
-        position: "fixed",
-        left: 0,
-        bottom: 0,
-        top: "60px",
-        backgroundColor: "#001529",
-        zIndex: 200,
-        paddingTop: "5px",
-      }}
+      className="fixed left-0 bottom-0 top-[60px] bg-[#001529] z-[200] pt-[5px]"
       width={290}
     >
       {/* Custom Collapse Button */}
       <Button
         type="text"
         onClick={() => setCollapsed(!collapsed)}
-        style={{
-          position: "absolute",
-          bottom: "10px",
-          right: collapsed ? "20px" : "10px",
-          backgroundColor: "#001529",
-          color: "#fff",
-          border: "none",
-          zIndex: 300,
-        }}
+        className="absolute bottom-[10px] right-[10px] bg-[#001529] text-white border-none z-[300]"
       >
         {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </Button>
@@ -86,7 +73,6 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       {/* Sidebar Menu */}
       <Menu
         theme="dark"
-        defaultSelectedKeys={["1"]}
         mode="inline"
         items={items}
         style={{ background: "inherit", paddingTop: 10 }}
