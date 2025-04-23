@@ -257,15 +257,15 @@ export default function AdminManagementList() {
     fetchData();
   };
   return (
-    <div className="admin-list">
-      <div className="admin-item">
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
         <div className="mb-5">
           <Breadcrumbs />
-          <div className="text-[30px] font-bold">Admin Account List</div>
+          <div className="text-[20px] font-bold">Admin Account List</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-10 mb-5 w-full flex-grow">
-          <div className="flex gap-3 flex-grow">
+        <div className="flex gap-2.5 mb-5 justify-between">
+          <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search admin by Name, Admin ID"
               className="w-full sm:w-72 h-10"

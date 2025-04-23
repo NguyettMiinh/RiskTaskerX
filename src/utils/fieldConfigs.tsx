@@ -1,6 +1,7 @@
 import { Form, FormInstance, Switch } from "antd";
 import { Rule } from "antd/es/form";
 import constants from "../constants/index";
+import dayjs, { Dayjs } from "dayjs";
 type FieldType = "input" | "select" | "date" | "switch" | "custom" | "tel";
 export type RoleOption = {
   label: string;
@@ -8,9 +9,9 @@ export type RoleOption = {
 };
 
 const roleOptions: RoleOption[] = [
-  { label: "IT Suport", value: 9 },
-  { label: "Manager", value: 7 },
-  { label: "Sales", value: 8},
+  { label: "IT Suport", value: 4 },
+  { label: "Manager", value: 2 },
+  { label: "Sales", value: 3 },
   { label: "Admin", value: 1 },
 ];
 
@@ -22,11 +23,16 @@ export interface FormFieldConfig {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  fieldNames?: { label: "label", value: "value" };
+  fieldNames?: { label: "label"; value: "value" };
   rules?: Rule[];
   options?: { label: string; value: string | number }[];
   render?: (form: FormInstance) => React.ReactNode;
+  disabledDate?: (currentDay: Dayjs) => boolean;
 }
+
+const disableFutureDates = (current: Dayjs) : boolean => {
+  return current && current.isAfter(dayjs(), "day");
+};
 export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
   {
     name: isEditMode ? "id" : "fullName",
@@ -41,7 +47,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
     className: "!bg-transparent font-normal",
   },
   {
-    name: ["role","id"],
+    name: ["role", "id"],
     label: "Role",
     type: "select",
     rules: [{ required: true, message: "Role is required" }],
@@ -85,7 +91,9 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
     placeholder: isEditMode ? "Select Date" : undefined,
     disabled: isEditMode,
     rules: !isEditMode
-      ? [{ required: true, message: "Date of birth is required" }]
+      ? [
+          { required: true, message: "Date of birth is required" },
+        ]
       : [
           { required: true, message: "Email is required" },
           {
@@ -96,6 +104,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
         ],
     required: false,
     className: isEditMode ? "!bg-transparent" : "font-normal",
+    disabledDate: disableFutureDates,
   },
   {
     name: "phoneNumber",
@@ -119,7 +128,9 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
           label: "Date of Birth",
           type: "date" as FieldType,
           placeholder: "Select Date",
-          rules: [{ required: true, message: "Date of birth is required" }],
+          rules: [
+            { required: true, message: "Date of birth is required" },
+          ],
           required: false,
           className: "font-normal",
         },

@@ -14,7 +14,7 @@ import {
 import constants from "../../../constants/index";
 import { useCallback, useEffect, useState } from "react";
 import adminService from "../../../services/adminService";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Admin, AdminUpdateRequest } from "../../../types/Admin";
 import InputFormComponent from "@components/ui/InputFormComponent";
 import { adminFormFields } from "../../../utils/fieldConfigs";
@@ -46,6 +46,8 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
 
   const handleUpdateAdmin = useCallback(
     async (values: AdminUpdateRequest) => {
+      console.log(values);
+      
       const payload = {
         ...values,
         dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
@@ -62,7 +64,9 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
       console.log(payload);
       delete (payload as any).lastLogin;
       await adminService.updateAdmin(payload);
-      toast.success("Changes have been saved successfully");
+      toast.success("Changes have been saved successfully", {
+        className: "custom-toast",
+      });
       onSuccess();
     },
     [isActive, form.getFieldValue]
@@ -90,12 +94,13 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
         setLoading(true);
         const data = await adminService.getAdminById(editingUserId);
         if (data && data.httpStatus == "OK") {
-          const formattedDate = dayjs(data.results.dateOfBirth);
+          const formattedDate = data.results.dateOfBirth? dayjs(data.results.dateOfBirth): null;
           form.setFieldsValue({
             ...data.results,
             dateOfBirth: formattedDate,
             lastLogin: dayjs(data.results.lastLogin).format("HH:mm DD-MM-YYYY"),
           });
+          console.log(data.results);
         } else {
           console.log("Lỗi");
         }
@@ -114,9 +119,11 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
     if (visible && isEditMode) {
       showAdminDetail();
     }
-  }, [visible, isEditMode]);
+  }, [visible, isEditMode,form]);
 
   const onFinish = (values: any) => {
+    console.log(values);
+    
     console.log("Form submitted with values: ", values);
   };
   return (
@@ -129,7 +136,7 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
       okButtonProps={{
         style: {
           background: "rgb(96, 85, 242)",
-        }
+        },
       }}
       destroyOnClose={true}
       okText={isEditMode ? "Save Changes" : "Add Now"}
@@ -158,7 +165,9 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
               <Form.Item label="Status" style={{ marginBottom: 0 }}>
                 <div className="flex font-normal -mt-3">
                   <Form.Item name="isActive" valuePropName="checked" noStyle>
-                    <Switch style={{background:  "rgb(96, 85, 242)"}}/>
+                    <Switch
+                      style={{ background: isActive ? "rgb(96, 85, 242)" : "" }}
+                    />
                   </Form.Item>
                   <span className="ml-2">
                     {isActive ? "Active" : "Inactive"}
