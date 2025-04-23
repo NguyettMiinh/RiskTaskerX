@@ -30,6 +30,7 @@ function RoleList() {
     setFormData,
     toggleActive,
     viewDetails,
+    handleDelete
   } = useRole();
 
   const { search, pageSize, totalRoles } = formData;
@@ -74,6 +75,7 @@ function RoleList() {
             icon={
               <DeleteOutlined style={{ fontSize: "22px", color: "#BFBFBF" }} />
             }
+            onClick={() => handleDelete(record.id)}
           />
         </div>
       ),
