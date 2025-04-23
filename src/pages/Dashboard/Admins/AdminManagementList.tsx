@@ -6,111 +6,40 @@ import {
 } from "@ant-design/icons";
 import SelectComponent from "@components/ui/SelectComponent";
 import { Button, Input, Pagination, Switch, Table } from "antd";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
+import type { ColumnsType } from "antd/es/table";
 import constants from "../../../constants";
 import "../../../assets/styles/admin.css";
-import {
-  Admin,
-  AdminSearchAndFilterRequest,
-  columnAdminFields,
-  FieldColumn,
-} from "../../../types/Admin";
-import { showConfirmModal } from "../../../utils/showConfimModal";
+import { Admin, columnAdminFields, FieldColumn } from "../../../types/Admin";
 import { COLOR } from "../../../constants/ColorKey";
-import { downloadFile } from "../../../utils/exportUtils";
-import { showExportModal } from "../../../utils/modalUtils";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
-import adminService from "../../../services/adminService";
-import {
-  FilterValue,
-  SorterResult,
-  TableCurrentDataSource,
-} from "antd/es/table/interface";
-import { SORTBYASC, SORTBYDESC } from "../../../constants/Variable";
-import { useModalStore } from "../../../utils/modalStore";
 import AddAdminModal from "./AddAdminModal";
-import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import useAdmin from "./hook/useAdmin";
+import { PageName } from "../../../constants/Variable";
 
 export default function AdminManagementList() {
-  // const [admin, setAdmin] = useState<Admin[]>([]);
-  const [originalAdmin, setOriginalAdmin] = useState<Admin[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [search, setSearch] = useState<string>("");
-  const [filterStatus, setFilterRoleAdmin] = useState<boolean[]>([]);
-  const [filterDepartmentAdmin, setFilterDepartmentAdmin] = useState<string[]>(
-    []
-  );
-  const [totalAdmins, setTotalAdmins] = useState<number>(0);
-  const [sortField, setSortField] = useState<string | undefined>("");
-  const [sortOrder, setSortOrder] = useState<
-    typeof SORTBYASC | typeof SORTBYDESC | ""
-  >("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const totalPages = Math.ceil(totalAdmins / pageSize);
-  const setEditMode = useModalStore((state) => state.setEditMode);
-  const setVisible = useModalStore((state) => state.setVisible);
-  const setEditingUserId = useModalStore((state) => state.setEditingUserId);
-  const admins = useModalStore((state) => state.admins);
-  const setAdmins = useModalStore((state) => state.setAdmins);
-
-  const handleAdd = () => {
-    setEditMode(false);
-    setVisible(true);
-  };
-
-  const payload: AdminSearchAndFilterRequest = {
-    sortKey: sortField ? sortField : "id",
-    filters: {
-      searchKey: search,
-      departmentName: filterDepartmentAdmin,
-      isActive: filterStatus,
-    },
-    page: currentPage,
-    size: pageSize,
-    sortBy: sortOrder ? sortOrder : SORTBYASC,
-  };
-  const updateCustomerStatus = (id: number, isActive: boolean) => {
-    const updatedAdmins = admins.map((admin) =>
-      admin.id === id ? { ...admin, isActive } : admin
-    );
-    setAdmins(updatedAdmins);
-  };
-  const handleApiUpdate = async (id: number, isActive: boolean) => {
-    try {
-      const response = await adminService.setIsActiveAdmin(id, isActive);
-      if (!response) {
-        updateCustomerStatus(id, !isActive);
-      }
-    } catch (error) {
-      console.error("Error updating admin status:", error);
-      updateCustomerStatus(id, !isActive);
-    }
-  };
-  // put isActive
-  const toggleActive = (id: number, isActive: boolean) => {
-    showConfirmModal(
-      isActive,
-      async () => {
-        updateCustomerStatus(id, isActive);
-        await handleApiUpdate(id, isActive);
-        if (isActive) {
-          toast.success("Admin successfully activated", {
-            className: "custom-toast",
-          });
-        } else {
-          toast.success("Admin successfully deactivated", {
-            className: "custom-toast",
-          });
-        }
-      },
-      "admin"
-    );
-  };
+  const {
+    viewDetails,
+    exportHandle,
+    filterDepartmentHandle,
+    filterStatusHandle,
+    handleAdd,
+    handleTable,
+    searchHandle,
+    toggleActive,
+    setAdmins,
+    setSearch,
+    setTotalAdmins,
+    setCurrentPage,
+    setPageSize,
+    totalAdmins,
+    pageSize,
+    totalPages,
+    currentPage,
+    loading,
+    originalAdmin,
+    search,
+    admins,
+  } = useAdmin();
   /// columns data
   const columns: ColumnsType<Admin> = [
     ...columnAdminFields.map((field: FieldColumn) => ({
@@ -153,119 +82,16 @@ export default function AdminManagementList() {
     },
   ];
 
-  ///filter status
-  const filterStatusHandle = (value: boolean[]) => {
-    setFilterRoleAdmin(value);
-    setCurrentPage(0);
-  };
-
-  //filter department
-  const filterDepartmentHandle = (value: string[]) => {
-    setFilterDepartmentAdmin(value);
-    setCurrentPage(0);
-  };
-  // searchHandle
-  const searchHandle = useCallback(
-    (value: string) => {
-      setSearch(value);
-      setCurrentPage(0);
-    },
-    [search]
-  );
-
-  // view detail admin
-  const viewDetails = (id: number) => {
-    setEditMode(true);
-    setEditingUserId(id);
-    setVisible(true);
-  };
-
-  /// export file
-  const exportHandle = async () => {
-    try {
-      const response = await adminService.exportAdmin(payload);
-      const password = downloadFile(response);
-      showExportModal(password);
-    } catch (error) {
-      console.error("Error exporting file:", error);
-    }
-  };
-
-  const handleTable = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<Admin> | SorterResult<Admin>[],
-    extra: TableCurrentDataSource<Admin>
-  ) => {
-    const sort = Array.isArray(sorter) ? sorter[0] : sorter;
-
-    if (sort && sort.order && sort.field) {
-      const { field, order } = sort;
-      setSortField(field as string);
-      setSortOrder(order === "ascend" ? SORTBYASC : SORTBYDESC);
-    } else {
-      setSortField("id");
-      setSortOrder(SORTBYASC);
-    }
-  };
-
-  useEffect(() => {
-    if (currentPage > totalPages && currentPage > 1) {
-      setCurrentPage(totalPages);
-    }
-    fetchData();
-  }, [
-    currentPage,
-    search,
-    filterStatus,
-    filterDepartmentAdmin,
-    sortField,
-    sortOrder,
-    pageSize,
-    totalPages,
-    totalAdmins,
-  ]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const response = await adminService.searchAndFilterAdmin(payload);
-      if (response && response) {
-        const truncatedData = response.results.content.map((item: Admin) => ({
-          ...item,
-          fullName:
-            item.fullName.length > 12
-              ? item.fullName.substring(0, 12)
-              : item.fullName,
-          email:
-            item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: dayjs(item.lastLogin).format("HH:mm DD-MM-YYYY"),
-        }));
-        setAdmins(truncatedData);
-        setOriginalAdmin(truncatedData);
-        setTotalAdmins(response.results.totalElements || 0);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching admin list:", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const onSuccess = () => {
-    fetchData();
-  };
   return (
-    <div className="admin-list">
-      <div className="admin-item">
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
         <div className="mb-5">
           <Breadcrumbs />
-          <div className="text-[30px] font-bold">Admin Account List</div>
+          <div className="text-[20px] font-bold">{PageName.accountList}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-10 mb-5 w-full flex-grow">
-          <div className="flex gap-3 flex-grow">
+        <div className="flex gap-2.5 mb-5 justify-between">
+          <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search admin by Name, Admin ID"
               className="w-full sm:w-72 h-10"
@@ -302,25 +128,23 @@ export default function AdminManagementList() {
           <div className="flex items-center gap-2 shrink-0">
             <Button
               icon={<DownloadOutlined style={{ color: COLOR.blue }} />}
-              style={{ height: "40px", borderColor: "#C9C6ED" }}
+              style={{ height: "40px", borderColor: COLOR.grayishBlue }}
               onClick={() => exportHandle()}
             >
-              <span style={{ color: COLOR.blue }}>Export</span>
+              <span style={{ color: COLOR.blue }}>{PageName.exportText}</span>
             </Button>
             <Button
               className="h-[40px]"
               style={{
                 background: COLOR.blue,
-                borderColor: "#c9c6ed",
+                borderColor: COLOR.grayishBlue,
               }}
               icon={<PlusOutlined style={{ color: "#fff" }} />}
               onClick={handleAdd}
             >
-              <span style={{ color: "#fff" }}>Add Admin</span>
+              <span style={{ color: "#fff" }}>{PageName.addAdminText}</span>
             </Button>
-            <AddAdminModal
-              onSuccess={onSuccess}
-            />
+            <AddAdminModal/>
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>

@@ -1,10 +1,12 @@
-import { Row, Col, Form, Input, Select, DatePicker, FormInstance } from "antd";
-import { adminFormFields, FormFieldConfig, RoleOption } from "../../../utils/fieldConfigs";
+import { Col, Form, Input, Select, DatePicker} from "antd";
+import { FormFieldConfig } from "../../../utils/fieldConfigs";
+import { PageName } from "../../../constants/Variable";
 
 const RenderFormItem = (
   field: FormFieldConfig,
   index: number,
 ) => {
+   
   const commonProps = {
     name: field.name,
     label: field.label,
@@ -20,9 +22,9 @@ const RenderFormItem = (
         <Select
           options={field.options}
           placeholder={field.placeholder}
+          fieldNames={field.fieldNames}
           optionFilterProp="label"
           filterSort={(a, b) => a.label.localeCompare(b.label)}
-          fieldNames={field.fieldNames}
         />
       );
       break;
@@ -31,7 +33,8 @@ const RenderFormItem = (
         <DatePicker
           style={{ width: "100%" }}
           placeholder={field.placeholder}
-          format={"DD/MM/YYYY"}
+          format={PageName.formatDate}
+          disabledDate={field.disabledDate}
           className={field.className}
         />
       );
