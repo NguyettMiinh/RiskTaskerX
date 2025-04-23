@@ -1,30 +1,17 @@
-import { useModalStore } from "../../../utils/modalStore";
 import {
   Col,
-  DatePicker,
   Form,
-  Input,
-  message,
   Modal,
   Row,
-  Select,
   Spin,
   Switch,
 } from "antd";
-import constants from "../../../constants/index";
-import { useCallback, useEffect, useState } from "react";
-import adminService from "../../../services/adminService";
-import dayjs, { Dayjs } from "dayjs";
-import { Admin, AdminUpdateRequest } from "../../../types/Admin";
-import InputFormComponent from "@components/ui/InputFormComponent";
 import { adminFormFields } from "../../../utils/fieldConfigs";
 import renderFormItem from "./RenderFormItem";
-import { toast } from "react-toastify";
 import useAdmin from "./hook/useAdmin";
-interface AddAdminModalProps {
-  onSuccess: () => void;
-}
-const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
+import { PageName } from "../../../constants/Variable";
+
+const AddAdminModal= () => {
   const {
     handleCancel,
     handleOk,
@@ -33,11 +20,10 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
     isActive,
     visible,
     form,
-    onFinish
   } = useAdmin();
   return (
     <Modal
-      title={isEditMode ? "Admin Accound Details" : "Add New Admin"}
+      title={isEditMode ? PageName.adminDetail : PageName.addNewAdmin}
       className="font-bold"
       open={visible}
       onCancel={handleCancel}
@@ -48,7 +34,7 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
         },
       }}
       destroyOnClose={true}
-      okText={isEditMode ? "Save Changes" : "Add Now"}
+      okText={isEditMode ? PageName.saveChangeText : PageName.addNowText}
       centered
       width={800}
       style={{ height: "auto", marginLeft: "75px", top: "30px" }}
@@ -61,7 +47,6 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
           layout="vertical"
           className="[&_.ant-form-item]:mb-2 font-medium text-[21px]"
           initialValues={{ isActive: true }}
-          onFinish={onFinish}
           validateTrigger={["onChange", "onBlur"]}
         >
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -79,7 +64,7 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
                     />
                   </Form.Item>
                   <span className="ml-2">
-                    {isActive ? "Active" : "Inactive"}
+                    {isActive ? PageName.activeText : PageName.inactiveText}
                   </span>
                 </div>
               </Form.Item>

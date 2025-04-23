@@ -1,5 +1,6 @@
 import { Col, Form, Input, Select, DatePicker} from "antd";
-import { FormFieldConfig, RoleOption } from "../../../utils/fieldConfigs";
+import { FormFieldConfig } from "../../../utils/fieldConfigs";
+import { PageName } from "../../../constants/Variable";
 
 const RenderFormItem = (
   field: FormFieldConfig,
@@ -32,7 +33,7 @@ const RenderFormItem = (
         <DatePicker
           style={{ width: "100%" }}
           placeholder={field.placeholder}
-          format={"DD/MM/YYYY"}
+          format={PageName.formatDate}
           disabledDate={field.disabledDate}
           className={field.className}
         />

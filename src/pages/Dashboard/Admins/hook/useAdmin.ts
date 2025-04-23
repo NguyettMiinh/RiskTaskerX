@@ -8,7 +8,7 @@ import {
   SorterResult,
   TableCurrentDataSource,
 } from "antd/es/table/interface";
-import { SORTBYASC, SORTBYDESC } from "../../../../constants/Variable";
+import { PageName, SORTBYASC, SORTBYDESC, ToastNotif } from "../../../../constants/Variable";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -17,14 +17,8 @@ import {
   Admin,
   AdminSearchAndFilterRequest,
   AdminUpdateRequest,
-  FieldColumn,
 } from "../../../../types/Admin";
 import { Form } from "antd";
-
-type optionFilter = {
-  label: string;
-  value: string;
-};
 
 function useAdmin() {
   const [form] = Form.useForm();
@@ -64,12 +58,14 @@ function useAdmin() {
     size: pageSize,
     sortBy: sortOrder ? sortOrder : SORTBYASC,
   };
+
   const updateAdminStatus = (id: number, isActive: boolean) => {
     const updatedAdmins = admins.map((admin) =>
       admin.id === id ? { ...admin, isActive } : admin
     );
     setAdmins(updatedAdmins);
   };
+
   const handleApiUpdate = async (id: number, isActive: boolean) => {
     try {
       const response = await adminService.setIsActiveAdmin(id, isActive);
@@ -81,25 +77,26 @@ function useAdmin() {
       updateAdminStatus(id, !isActive);
     }
   };
+  
   // put isActive
   const toggleActive = (id: number, isActive: boolean) => {
-    showConfirmModal(
-      isActive,
-      async () => {
+    showConfirmModal({
+      onConfirm: async () => {
         updateAdminStatus(id, isActive);
         await handleApiUpdate(id, isActive);
         if (isActive) {
-          toast.success("Admin successfully activated", {
-            className: "custom-toast",
+          toast.success(ToastNotif.toastActived, {
+            className: ToastNotif.classNameToast,
           });
         } else {
-          toast.success("Admin successfully deactivated", {
-            className: "custom-toast",
+          toast.success(ToastNotif.toastDeActived, {
+            className: ToastNotif.classNameToast,
           });
         }
       },
-      "admin"
-    );
+      name: ToastNotif.adminName,
+      action: isActive ? ToastNotif.active : ToastNotif.deactive,
+    });
   };
 
   ///filter status
@@ -147,7 +144,6 @@ function useAdmin() {
     extra: TableCurrentDataSource<Admin>
   ) => {
     const sort = Array.isArray(sorter) ? sorter[0] : sorter;
-
     if (sort && sort.order && sort.field) {
       const { field, order } = sort;
       setSortField(field as string);
@@ -188,7 +184,7 @@ function useAdmin() {
               : item.fullName,
           email:
             item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: dayjs(item.lastLogin).format("HH:mm DD-MM-YYYY"),
+          lastLogin: dayjs(item.lastLogin).format(PageName.formatDateTime),
         }));
         setAdmins(truncatedData);
         setOriginalAdmin(truncatedData);
@@ -201,9 +197,6 @@ function useAdmin() {
     } finally {
       setLoading(false);
     }
-  };
-  const onSuccess = () => {
-    fetchData();
   };
 
   const handleAdd = () => {
@@ -236,10 +229,10 @@ function useAdmin() {
       console.log(payload);
       delete (payload as any).lastLogin;
       await adminService.updateAdmin(payload);
-      toast.success("Changes have been saved successfully", {
-        className: "custom-toast",
+      toast.success(ToastNotif.toastUpdateAdmin, {
+        className: ToastNotif.classNameToast,
       });
-      onSuccess();
+      fetchData()
     },
     [isActive, form.getFieldValue]
   );
@@ -265,14 +258,14 @@ function useAdmin() {
       if (editingUserId) {
         setLoading(true);
         const data = await adminService.getAdminById(editingUserId);
-        if (data && data.httpStatus == "OK") {
+        if (data && data.httpStatus === "OK") {
           const formattedDate = data.results.dateOfBirth
             ? dayjs(data.results.dateOfBirth)
             : null;
           form.setFieldsValue({
             ...data.results,
             dateOfBirth: formattedDate,
-            lastLogin: dayjs(data.results.lastLogin).format("HH:mm DD-MM-YYYY"),
+            lastLogin: dayjs(data.results.lastLogin).format(PageName.formatDateTime),
           });
           console.log(data.results);
         } else {
@@ -295,13 +288,8 @@ function useAdmin() {
     }
   }, [visible, isEditMode, form]);
 
-  const onFinish = (values: any) => {
-    console.log(values);
-    console.log("Form submitted with values: ", values);
-  };
   return {
     handleAdd,
-    onSuccess,
     fetchData,
     handleTable,
     exportHandle,
@@ -319,7 +307,6 @@ function useAdmin() {
     showAdminDetail,
     handleUpdateAdmin,
     handleOk,
-    onFinish,
     visible,
     isEditMode,
     editingUserId,

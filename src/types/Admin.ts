@@ -103,9 +103,3 @@ export interface AdminUpdateRequest {
   departmentName: string | undefined;
   dateOfBirth: string | undefined;
 }
-
-export interface FormDataPage{
-  currentPage:number | undefined;
-  search: string | undefined;
-  totalAdmins: number | undefined;
-}

@@ -24,7 +24,6 @@ export default function AdminManagementList() {
     filterStatusHandle,
     handleAdd,
     handleTable,
-    onSuccess,
     searchHandle,
     toggleActive,
     setAdmins,
@@ -145,7 +144,7 @@ export default function AdminManagementList() {
             >
               <span style={{ color: "#fff" }}>{PageName.addAdminText}</span>
             </Button>
-            <AddAdminModal onSuccess={onSuccess} />
+            <AddAdminModal/>
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
