@@ -4,7 +4,7 @@ export interface Role {
   name: string;
   isActive: boolean;
   updateAt?: string;
-  permissions: string[];
+  permissions: Category[];
 }
 
 //tabel ke thua role: interface: ko co method, ke thua dc nhiu interface
@@ -38,4 +38,10 @@ export interface Category {
   children: Category[]; // kieu de quy, kieu tu tham chieu
 };
 
-
+export interface ActionForm {
+    id?: number | string,
+    name: string;
+    isActive: boolean;
+    permissions: number[];
+    isError?: string;
+}

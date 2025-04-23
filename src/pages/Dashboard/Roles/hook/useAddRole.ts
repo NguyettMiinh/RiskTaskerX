@@ -3,17 +3,13 @@ import { addRoles } from "../../../../services/roleService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { usePermissions } from "@components/hook/usePermissions";
-import { Category, Role } from "../../../../types/Role";
-interface AddForm {
-    name: string;
-    isActive: boolean;
-    permissions: number[];
-    isError: string;
-}
+import { Category, ActionForm } from "../../../../types/Role";
+
+
 
 function useAddRole() {
 
-  const [addForm, setAddForm] = useState<AddForm>({
+  const [addForm, setAddForm] = useState<ActionForm>({
     name: "",
     isActive: true,
     permissions: [],
@@ -51,7 +47,7 @@ function useAddRole() {
     }
   };
 
-  const toggleActive = async (checked: boolean) => {
+  const toggleActive =  (checked: boolean) => {
     setAddForm({
       ...addForm,
       isActive: checked,
