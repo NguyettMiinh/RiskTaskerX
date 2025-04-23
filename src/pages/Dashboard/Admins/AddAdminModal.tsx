@@ -20,112 +20,21 @@ import InputFormComponent from "@components/ui/InputFormComponent";
 import { adminFormFields } from "../../../utils/fieldConfigs";
 import renderFormItem from "./RenderFormItem";
 import { toast } from "react-toastify";
-
-type optionFilter = {
-  label: string;
-  value: string;
-};
+import useAdmin from "./hook/useAdmin";
 interface AddAdminModalProps {
   onSuccess: () => void;
 }
 const AddAdminModal: React.FC<AddAdminModalProps> = ({ onSuccess }) => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const visible = useModalStore((state) => state.visible);
-  const isEditMode = useModalStore((state) => state.isEditMode);
-  const editingUserId = useModalStore((state) => state.editingUserId);
-  const setVisible = useModalStore((state) => state.setVisible);
-  const setEditingUserId = useModalStore((state) => state.setEditingUserId);
-  const isActive = Form.useWatch("isActive", form);
-
-  const handleCancel = () => {
-    setVisible(false);
-    setEditingUserId(null);
-    form.resetFields();
-  };
-
-  const handleUpdateAdmin = useCallback(
-    async (values: AdminUpdateRequest) => {
-      console.log(values);
-      
-      const payload = {
-        ...values,
-        dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
-        role: {
-          id: values.role.id,
-          createAt: null,
-          updateAt: null,
-          name: null,
-          isActive: null,
-        },
-        lastLogin: dayjs().toISOString(),
-        name: values.fullName,
-      };
-      console.log(payload);
-      delete (payload as any).lastLogin;
-      await adminService.updateAdmin(payload);
-      toast.success("Changes have been saved successfully", {
-        className: "custom-toast",
-      });
-      onSuccess();
-    },
-    [isActive, form.getFieldValue]
-  );
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (isEditMode) {
-          handleUpdateAdmin(values);
-        } else {
-          console.log("Thêm dữ liệu mới:", values);
-        }
-        setVisible(false);
-        form.resetFields();
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
-
-  const showAdminDetail = async () => {
-    try {
-      if (editingUserId) {
-        setLoading(true);
-        const data = await adminService.getAdminById(editingUserId);
-        if (data && data.httpStatus == "OK") {
-          const formattedDate = data.results.dateOfBirth? dayjs(data.results.dateOfBirth): null;
-          form.setFieldsValue({
-            ...data.results,
-            dateOfBirth: formattedDate,
-            lastLogin: dayjs(data.results.lastLogin).format("HH:mm DD-MM-YYYY"),
-          });
-          console.log(data.results);
-        } else {
-          console.log("Lỗi");
-        }
-      } else {
-        form.resetFields();
-      }
-    } catch (error) {
-      console.log(error);
-      form.resetFields();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (visible && isEditMode) {
-      showAdminDetail();
-    }
-  }, [visible, isEditMode,form]);
-
-  const onFinish = (values: any) => {
-    console.log(values);
-    
-    console.log("Form submitted with values: ", values);
-  };
+  const {
+    handleCancel,
+    handleOk,
+    loading,
+    isEditMode,
+    isActive,
+    visible,
+    form,
+    onFinish
+  } = useAdmin();
   return (
     <Modal
       title={isEditMode ? "Admin Accound Details" : "Add New Admin"}
