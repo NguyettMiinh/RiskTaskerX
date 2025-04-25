@@ -1,18 +1,16 @@
-import { Col, Form, Input, Select, DatePicker} from "antd";
+import { Col, Form, Input, Select, DatePicker } from "antd";
 import { FormFieldConfig } from "../../../utils/fieldConfigs";
 import { PageName } from "../../../constants/Variable";
 
-const RenderFormItem = (
-  field: FormFieldConfig,
-  index: number,
-) => {
-   
+const RenderFormItem = (field: FormFieldConfig, index: number) => {
   const commonProps = {
     name: field.name,
     label: field.label,
     rules: field.rules,
     required: field.required ?? false,
     colon: false,
+    validateStatus: field.validateStatus,
+    help: field.help,
   };
 
   let inputComponent;

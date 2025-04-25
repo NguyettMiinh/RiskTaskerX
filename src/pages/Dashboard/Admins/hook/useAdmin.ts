@@ -8,17 +8,25 @@ import {
   SorterResult,
   TableCurrentDataSource,
 } from "antd/es/table/interface";
-import { PageName, SORTBYASC, SORTBYDESC, ToastNotif } from "../../../../constants/Variable";
+import {
+  ExceptionAdmin,
+  PageName,
+  SORTBYASC,
+  SORTBYDESC,
+  ToastNotif,
+} from "../../../../constants/Variable";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import adminService from "../../../../services/adminService";
 import {
   Admin,
+  AdminAddRequest,
   AdminSearchAndFilterRequest,
   AdminUpdateRequest,
 } from "../../../../types/Admin";
 import { Form } from "antd";
+import axios from "axios";
 
 function useAdmin() {
   const [form] = Form.useForm();
@@ -77,7 +85,7 @@ function useAdmin() {
       updateAdminStatus(id, !isActive);
     }
   };
-  
+
   // put isActive
   const toggleActive = (id: number, isActive: boolean) => {
     showConfirmModal({
@@ -179,12 +187,16 @@ function useAdmin() {
         const truncatedData = response.results.content.map((item: Admin) => ({
           ...item,
           fullName:
-            item.fullName.length > 12
-              ? item.fullName.substring(0, 12)
+            item.fullName.length > 2
+              ? item.fullName.substring(0, 2) + "*".repeat(12)
               : item.fullName,
           email:
-            item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-          lastLogin: dayjs(item.lastLogin).format(PageName.formatDateTime),
+            item.email.length > 2
+              ? item.email.substring(0, 2) + "*".repeat(12)
+              : item.email,
+          lastLogin: item.lastLogin
+            ? dayjs(item.lastLogin).format(PageName.formatDateTime)
+            : "00:00 00-00-0000",
         }));
         setAdmins(truncatedData);
         setOriginalAdmin(truncatedData);
@@ -232,26 +244,77 @@ function useAdmin() {
       toast.success(ToastNotif.toastUpdateAdmin, {
         className: ToastNotif.classNameToast,
       });
-      fetchData()
+      fetchData();
     },
     [isActive, form.getFieldValue]
   );
-  const handleOk = () => {
+  const handleAddAdmin = async (values: AdminAddRequest) => {
+    console.log(values);
+    try {
+      const payload = {
+        ...values,
+        dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
+        role: {
+          id: values.role.id,
+          createAt: null,
+          updateAt: null,
+          name: null,
+          isActive: true,
+        },
+        name: values.fullName,
+      };
+      await adminService.addAdmin(payload);
+      toast.success(ToastNotif.toastAddAdmin, {
+        className: ToastNotif.classNameToast,
+      });
+      fetchData();
+      setVisible(false);
+      form.resetFields();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const message = error.response?.data.message;
+        if (status === 400) {
+          if (message === ExceptionAdmin.email) {
+            form.setFields([
+              {
+                name: "email",
+                errors: !isEditMode? ["Email is existed."] : [],
+              },
+            ]);
+          }
+          if (message === ExceptionAdmin.phoneNumber) {
+            form.setFields([
+              {
+                name: "phoneNumber",
+                errors: ["Phone Number is existed."],
+              },
+            ]);
+          } else {
+            console.log("Unhandled message:", message);
+          }
+        }
+      } else {
+        console.log("Lỗi khác");
+      }
+    }
+  };
+  const handleOk = useCallback(() => {
     form
       .validateFields()
       .then((values) => {
         if (isEditMode) {
           handleUpdateAdmin(values);
+          setVisible(false);
+          form.resetFields();
         } else {
-          console.log("Thêm dữ liệu mới:", values);
+          handleAddAdmin(values);
         }
-        setVisible(false);
-        form.resetFields();
       })
       .catch((info) => {
-        console.log("Validate Failed:", info);
+        console.log("Validate failed with errors:", info);
       });
-  };
+  }, [form, isEditMode]);
 
   const showAdminDetail = async () => {
     try {
@@ -265,7 +328,9 @@ function useAdmin() {
           form.setFieldsValue({
             ...data.results,
             dateOfBirth: formattedDate,
-            lastLogin: dayjs(data.results.lastLogin).format(PageName.formatDateTime),
+            lastLogin: data.results.lastLogin
+              ? dayjs(data.results.lastLogin).format(PageName.formatDateTime)
+              : null,
           });
           console.log(data.results);
         } else {
