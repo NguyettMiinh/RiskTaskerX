@@ -49,7 +49,7 @@ export interface Role {
   createAt: string | undefined | null;
   updateAt: string | undefined | null;
   id: number | undefined;
-  name: string | undefined| null;
+  name: string | undefined | null;
   isActive: boolean | undefined | null;
 }
 type SortOrder = "ascend" | "descend" | null;
@@ -102,4 +102,19 @@ export interface AdminUpdateRequest {
   role: Role;
   departmentName: string | undefined;
   dateOfBirth: string | undefined;
+}
+export interface AdminAddRequest {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  isActive: boolean;
+  role: Role;
+  departmentName: string;
+  dateOfBirth: string;
+}
+export interface AdminSearchNoPagingRequest {
+  searchKey: string;
+  departmentName: string[];
+  isActive: boolean[];
 }

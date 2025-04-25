@@ -51,7 +51,7 @@ export default function AdminManagementList() {
     {
       title: "Actions",
       dataIndex: "actions",
-      align: "left",
+      align: "center",
       render: (_: Admin, record: Admin) => (
         <div
           style={{
