@@ -2,6 +2,7 @@ import { Form, FormInstance, Switch } from "antd";
 import { Rule } from "antd/es/form";
 import constants from "../constants/index";
 import dayjs, { Dayjs } from "dayjs";
+import useAdmin from "../pages/Dashboard/Admins/hook/useAdmin";
 type FieldType = "input" | "select" | "date" | "switch" | "custom" | "tel";
 export type RoleOption = {
   label: string;
@@ -28,12 +29,19 @@ export interface FormFieldConfig {
   options?: { label: string; value: string | number }[];
   render?: (form: FormInstance) => React.ReactNode;
   disabledDate?: (currentDay: Dayjs) => boolean;
+  validateStatus?: "success" | "warning" | "error" | "validating";
+  help?: string;
 }
 
-const disableFutureDates = (current: Dayjs) : boolean => {
+const disableFutureDates = (current: Dayjs): boolean => {
   return current && current.isAfter(dayjs(), "day");
 };
-export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
+type MyFormProps = {
+  handleCheck: () => void;
+};
+export const adminFormFields = (
+  isEditMode: boolean,
+): FormFieldConfig[] => [
   {
     name: isEditMode ? "id" : "fullName",
     label: isEditMode ? "Admin ID" : "Admin Name",
@@ -91,9 +99,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
     placeholder: isEditMode ? "Select Date" : undefined,
     disabled: isEditMode,
     rules: !isEditMode
-      ? [
-          { required: true, message: "Date of birth is required" },
-        ]
+      ? [{ required: true, message: "Date of birth is required" }]
       : [
           { required: true, message: "Email is required" },
           {
@@ -114,7 +120,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
     rules: [
       { required: true, message: "Phone number is required" },
       {
-        pattern: /^[0-9]{9,15}$/,
+        pattern: /^[0-9]{8,15}$/,
         message: "Invalid phone number",
       },
     ],
@@ -128,9 +134,7 @@ export const adminFormFields = (isEditMode: boolean): FormFieldConfig[] => [
           label: "Date of Birth",
           type: "date" as FieldType,
           placeholder: "Select Date",
-          rules: [
-            { required: true, message: "Date of birth is required" },
-          ],
+          rules: [{ required: true, message: "Date of birth is required" }],
           required: false,
           className: "font-normal",
         },

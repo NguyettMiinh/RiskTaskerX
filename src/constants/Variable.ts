@@ -21,4 +21,10 @@ export const ToastNotif = {
     active:"active",
     deactive:"deactive",
     toastUpdateAdmin:"Changes have been saved successfully",
+    toastAddAdmin:"Admin has been added successfully!",
+}
+
+export const ExceptionAdmin = {
+    email: "email-existed",
+    phoneNumber: "Phone-number-is-existed"
 }
