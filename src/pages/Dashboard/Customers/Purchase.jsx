@@ -4,7 +4,7 @@ import {
   EyeOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { Table, Button, Modal, Row, Col } from "antd";
+import { Table, Button, Modal, Row, Col, Pagination } from "antd";
 import { useSelector } from "react-redux";
 
 import {
@@ -36,13 +36,15 @@ const Purchase = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [paymentDetail, setPaymentDetail] = useState(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPurchase, setTotalPurchase] = useState(0);
 
   // Gọi API lấy danh sách mua hàng
-  const fetchPurchase = async () => {
+  const fetchPurchase = async (page) => {
     try {
-      const response = await getPurchase({ page: 0, customerId: id });
+      const response = await getPurchase({ page: page, customerId: id });
       const rawData = response.data.content || [];
-      console.log(rawData);
       const formatted = rawData.map((item) => ({
         ...item,
         key: item.id,
@@ -58,14 +60,15 @@ const Purchase = () => {
         startedDate: formatDate(item.warranty?.startedDate),
       }));
       setPurchase(formatted);
+      setTotalPurchase(response.data.totalElements);
     } catch (error) {
       console.error("Failed to fetch purchase history:", error);
     }
   };
 
   useEffect(() => {
-    fetchPurchase();
-  }, [id]);
+    fetchPurchase(currentPage);
+  }, [id, currentPage,pageSize]);
 
   const columnsDetail = [
     {
@@ -181,8 +184,21 @@ const Purchase = () => {
         dataSource={purchase}
         className="custom-table"
         style={{ marginTop: 16 }}
+        pagination={false}
       />
-
+       <Pagination
+        current={currentPage}
+        total={totalPurchase}
+        pageSize={pageSize}
+        showSizeChanger
+        pageSizeOptions={["5", "10", "20", "50"]}
+        onChange={(page, newPageSize) => {
+          setPageSize(newPageSize);
+          setCurrentPage(page);
+        }}
+        showTotal={(total) => `Total ${total} items`}
+        className="flex justify-end mt-2.5"
+      />
       {/* Detail Modal */}
       <Modal
         title={

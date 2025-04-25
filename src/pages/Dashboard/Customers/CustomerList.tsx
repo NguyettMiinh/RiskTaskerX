@@ -112,7 +112,7 @@ const CustomerList = () => {
           <Button
             type="link"
             icon={
-              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
+              <EyeOutlined style={{ fontSize: "25px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails(record.id)}
           />
@@ -123,7 +123,7 @@ const CustomerList = () => {
 
   return (
     <div className="flex justify-start min-h-screen p-2.5">
-      <div className="w-full bg-white p-[50px] rounded-lg shadow-custom">
+      <div className="w-full bg-white p-[33px] rounded-lg shadow-custom">
         <div className="mb-[20px]">
           <Breadcrumbs />
           <div className="text-[20px] font-bold">Customer List</div>

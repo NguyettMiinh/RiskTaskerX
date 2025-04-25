@@ -85,7 +85,7 @@ const Personal = () => {
                 span={24}
                 style={{
                   fontWeight: "bold",
-                  fontSize: "18px",
+                  fontSize: "16px",
                 }}
               >
                 {detail ? detail.customer.fullName : "Loading..."}

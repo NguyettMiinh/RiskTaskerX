@@ -6,7 +6,7 @@ import Breadcrumbs from "@components/ui/Breadcrumbs";
 import "@assets/styles/customTabs.css";
 
 const DetailCustomer = () => {
-  
+
   const items = [
     {
       key: "1",
@@ -19,45 +19,23 @@ const DetailCustomer = () => {
       children: <Warranty />,
     },
   ];
-  
+
   return (
-    <div  style={{
-      display: "flex",
-      minHeight: "100vh",
-      padding: "10px",
-    }}>
-      <div style={{
-          width: "100%",
-          background: "#fff",
-          paddingTop: "10px",
-          paddingBottom: "10px",
-          paddingRight: "10px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
-        }}>
-          <div style={{paddingLeft: "10px", marginBottom: "20px" }}>
-           <Breadcrumbs />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-            }}
-          >
-            <Personal />
-            
-            <div
-              style={{
-                paddingLeft: "20px",
-              }}
-            >
-              <Tabs defaultActiveKey="1" items={items} />
-            </div>
-          </div>
-
+    <div className="flex justify-start min-h-screen p-2.5">
+      <div className="w-full bg-white p-[33px] rounded-lg shadow-custom">
+        <div className="mb-[20px]">
+          <Breadcrumbs />
+          <div className="text-[20px] font-bold">Customer Details</div>
         </div>
+        <div className="flex">
+          <Personal />
+          <div className="pl-[40px]">
+            <Tabs defaultActiveKey="1" items={items} />
+          </div>
+        </div>
+      </div>
     </div>
-    
+
   );
 };
 
