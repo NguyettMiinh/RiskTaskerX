@@ -84,7 +84,7 @@ function RoleList() {
   
   return (
     <div className="flex justify-start min-h-screen p-2.5">
-      <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
+      <div className="w-full bg-white p-[33px] rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
         <div className="mb-5">
           <Breadcrumbs />
           <div className="text-[20px] font-bold"> Role List</div>

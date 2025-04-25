@@ -16,7 +16,7 @@ const userSlice = createSlice({
     setEmail: (state, action :  PayloadAction<string>) => {
       state.email = action.payload;
     },
-    setId: (state, action:  PayloadAction<string>) => {
+    setId: (state, action:  PayloadAction<string | number>) => {
       state.id = action.payload;
     }
 

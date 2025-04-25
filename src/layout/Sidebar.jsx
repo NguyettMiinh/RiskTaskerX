@@ -12,6 +12,7 @@ import {
   SafetyOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  ClusterOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
@@ -33,14 +34,13 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     getItem("Dashboard", "1", <BarChartOutlined />, null, () =>
       navigate("/layout/dashboard")
     ),
-    getItem("User Roles & Permissions", "ad", <SafetyOutlined />, [
-      getItem("Admin Management", "2", null, null, () =>
-        navigate("/layout/admin")
-      ),
-      getItem("Role Management", "3", null, null, () =>
-        navigate("/layout/role-list")
-      ),
-    ]),
+    getItem("Admin Management", "2", <ClusterOutlined />, null, () =>
+      navigate("/layout/admin")
+    ),
+    getItem("Role Management", "3", <SafetyOutlined/>, null, () =>
+      navigate("/layout/role-list")
+    ),
+
     getItem("Customer Management", "4", <UsergroupAddOutlined />, null, () =>
       navigate("/layout/customer")
     ),

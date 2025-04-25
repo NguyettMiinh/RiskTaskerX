@@ -17,11 +17,11 @@ import { OptionType} from "types/Select";
 
 
 const CUSTOMER_LIST: ColumnsType<Customer> = [
-  { title: "Customer ID", dataIndex: "id", align: "center" as AlignType },
-  { title: "Customer Name", dataIndex: "fullName", align: "center" as AlignType },
-  { title: "Phone Number", dataIndex: "phoneNumber", align: "center" as AlignType },
-  { title: "Address", dataIndex: "address", align: "center" as AlignType },
-  { title: "Email", dataIndex: "email", align: "center" as AlignType },
+  { title: "Customer ID", dataIndex: "id"},
+  { title: "Customer Name", dataIndex: "fullName" },
+  { title: "Phone Number", dataIndex: "phoneNumber" },
+  { title: "Address", dataIndex: "address" },
+  { title: "Email", dataIndex: "email" },
 ]
 
 const TIER_OPTIONS: OptionType[] = [
@@ -112,7 +112,7 @@ const CustomerList = () => {
           <Button
             type="link"
             icon={
-              <EyeOutlined style={{ fontSize: "20px", color: "#BFBFBF" }} />
+              <EyeOutlined style={{ fontSize: "25px", color: "#BFBFBF" }} />
             }
             onClick={() => viewDetails(record.id)}
           />
@@ -123,7 +123,7 @@ const CustomerList = () => {
 
   return (
     <div className="flex justify-start min-h-screen p-2.5">
-      <div className="w-full bg-white p-[50px] rounded-lg shadow-custom">
+      <div className="w-full bg-white p-[33px] rounded-lg shadow-custom">
         <div className="mb-[20px]">
           <Breadcrumbs />
           <div className="text-[20px] font-bold">Customer List</div>

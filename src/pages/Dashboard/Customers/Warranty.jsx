@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   exportWarranty,
   getWarranty,
@@ -13,6 +13,7 @@ import {
   Select,
   Typography,
   DatePicker,
+  Pagination,
 } from "antd";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import constants from "@/constants/index";
@@ -22,23 +23,30 @@ import { formatDate } from "@/utils/formatDate";
 import { formatMoney } from "@/utils/formatMoney";
 import { formatCenter } from "@/utils/formatCenter";
 import { toast } from "react-toastify";
+import moment from "moment";
+import { useForm, Controller, set } from "react-hook-form";
 
 const Warranty = () => {
-  const [warranty, setWarranty] = useState();
-  const warrantyData = useRef({
-    model: "",
-    license: "",
-    type: "",
-    center: "",
-    date: "",
-    cost: "",
-  });
-
+  const [warranty, setWarranty] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalWarranty, setTotalWarranty] = useState(0);
   const id = useSelector((state) => state.user.id);
-  const dataSource = warranty?.map((item) => ({ ...item, key: item.id }));
 
-  const fetchWarranty = async () => {
-    const response = await getWarranty({page: 0, customerId:  id});
+  const {
+    control,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({ mode: "onChange" });
+
+  const dataSource = warranty.map((item) => ({ ...item, key: item.id }));
+
+  console.log("warranty", warranty);
+  const fetchWarranty = async (page) => {
+    const response = await getWarranty({ page: page, customerId: id });
     const newResult = response.data.content;
     const result = newResult.map((item) => ({
       ...item,
@@ -47,13 +55,13 @@ const Warranty = () => {
       serviceCost: formatMoney(item.serviceCost),
     }));
     setWarranty(result);
+    setTotalWarranty(response.data.totalElements);
   };
-  useEffect(() => {
-    fetchWarranty();
-  }, [id]);
 
-  /// columns data
-  const columns = constants.WARRANTY_LIST;
+  useEffect(() => {
+    fetchWarranty(currentPage);
+  }, [id, currentPage, pageSize]);
+
   const exportHandle = async () => {
     try {
       const response = await exportWarranty(id);
@@ -64,23 +72,20 @@ const Warranty = () => {
     }
   };
 
-  const handleInputChange = (field, value) => {
-    warrantyData.current[field] = value;
-  };
-  // format datedate
-  function convertToISO(dateString) {
+  const convertToISO = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString();
-  }
-  const handleAddWarranty = async () => {
+  };
+
+  const onSubmit = async (formData) => {
     const payload = {
       customerId: id,
-      carModel: warrantyData.current.model,
-      licensePlate: warrantyData.current.license,
-      serviceType: warrantyData.current.type,
-      serviceCenter: warrantyData.current.center,
-      serviceDate: warrantyData.current.date,
-      serviceCost: warrantyData.current.cost,
+      carModel: formData.model,
+      licensePlate: formData.license,
+      serviceType: formData.type,
+      serviceCenter: formData.center,
+      serviceDate: convertToISO(formData.date),
+      serviceCost: formData.cost,
     };
 
     try {
@@ -89,104 +94,30 @@ const Warranty = () => {
         ...prev,
         {
           ...payload,
-          serviceCenter: formatCenter(warrantyData.current.center),
-          serviceDate: formatDate(warrantyData.current.date),
-          serviceCost: formatMoney(warrantyData.current.cost),
+          serviceCenter: formatCenter(payload.serviceCenter),
+          serviceDate: formatDate(payload.serviceDate),
+          serviceCost: formatMoney(payload.serviceCost),
         },
       ]);
       toast.success("New information added successfully!");
-      Modal.destroyAll();
+
+      setIsModalOpen(false);
+      reset();
     } catch (error) {
-      console.error("Error adding warranty:", error);
+      const message = error.response?.data?.message;
+      if (message === "license-plate-exists") {
+        setError("license", {
+          type: "manual",
+          message: "License plate already exists",
+        });
+      }
     }
   };
-  
-
-  const addHandle = () => {
-    Modal.confirm({
-      title: (
-        <div style={{ textAlign: "center", fontSize: "22px" }}>
-          Add Warranty Information
-        </div>
-      ),
-      icon: null,
-      content: (
-        <>
-          <div>
-            <Typography.Text strong>
-              Car model <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Select
-              placeholder="Choose the car model"
-              style={{ width: "100%" }}
-              options={constants.MODEL_OPTIONS}
-              onChange={(value) => handleInputChange("model", value)}
-            />
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              License Plate <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Input
-              placeholder="Enter the license plate"
-              onChange={(e) => handleInputChange("license", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Type <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Select
-              placeholder="Choose the service type"
-              style={{ width: "100%" }}
-              options={constants.TYPE_OPTIONS}
-              onChange={(value) => handleInputChange("type", value)}
-            />
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Center <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Select
-              placeholder="Choose the service center"
-              style={{ width: "100%" }}
-              options={constants.CENTER_OPTIONS}
-              onChange={(value) => handleInputChange("center", value)}
-            />
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Date <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <DatePicker
-              placeholder="Select date"
-              style={{ width: "100%" }}
-              format="YYYY-MM-DD"
-              onChange={(dateString) =>
-                handleInputChange("date", convertToISO(dateString))
-              }
-            />
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Cost <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Input
-              placeholder="Enter the service cost"
-              onChange={(e) => handleInputChange("cost", e.target.value)}
-            />
-          </div>
-        </>
-      ),
-      okText: "Add New Warranty",
-      cancelText: "Cancel",
-      onOk: handleAddWarranty,
-    });
+  const checkDuplicateLicense = (license) => {
+    const existingLicense = warranty.find(
+      (item) => item.licensePlate === license
+    );
+    return existingLicense ? "License plate already exists" : true;
   };
   return (
     <div>
@@ -194,25 +125,210 @@ const Warranty = () => {
         style={{
           display: "flex",
           justifyContent: "flex-end",
-          marginBottom: "10px",
+          marginBottom: 10,
         }}
       >
         <Button
           icon={<PlusOutlined style={{ color: "#6055F2" }} />}
-          style={{ height: "40px", borderColor: "#C9C6ED", marginRight: "5px" }}
-          onClick={() => addHandle(id)}
+          style={{ height: 40, borderColor: "#C9C6ED", marginRight: 5 }}
+          onClick={() => setIsModalOpen(true)}
         >
-          <span style={{ color: "#6055F2" }}> Add </span>
+          <span style={{ color: "#6055F2" }}> Add Warranty Information </span>
         </Button>
         <Button
           icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
-          style={{ height: "40px", borderColor: "#C9C6ED" }}
-          onClick={() => exportHandle(id)}
+          style={{ height: 40, borderColor: "#C9C6ED" }}
+          onClick={exportHandle}
         >
           <span style={{ color: "#6055F2" }}>Export</span>
         </Button>
       </div>
-      <Table columns={columns} dataSource={dataSource} className="custom-table" />
+
+      <Table
+        columns={constants.WARRANTY_LIST}
+        dataSource={dataSource}
+        className="custom-table"
+        pagination={false}
+      />
+      <Pagination
+        current={currentPage}
+        total={totalWarranty}
+        pageSize={pageSize}
+        showSizeChanger
+        pageSizeOptions={["5", "10", "20", "50"]}
+        onChange={(page, newPageSize) => {
+          setPageSize(newPageSize);
+          console.log(newPageSize);
+          console.log(warranty);
+          setCurrentPage(page);
+        }}
+        showTotal={(total) => `Total ${total} items`}
+        className="flex justify-end mt-2.5"
+      />
+      <Modal
+        title={
+          <div style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold" }}>
+            Add Warranty Information
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <Typography.Text strong>
+              Car model <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="model"
+              control={control}
+              rules={{ required: "Car model is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  style={{ width: "100%" }}
+                  options={constants.MODEL_OPTIONS}
+                  placeholder="Choose the car model"
+                />
+              )}
+            />
+            {errors.model && (
+              <p style={{ color: "red" }}>{errors.model.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Typography.Text strong>
+              License Plate <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="license"
+              control={control}
+              rules={{
+                required: "License plate is required",
+                pattern: {
+                  value: /^.{9}$/,
+                  message: "License plate must be up to 9 digits",
+                },
+                validate: {
+                  duplicate: (value) => checkDuplicateLicense(value),
+                },
+              }}
+              render={({ field }) => (
+                <Input {...field} placeholder="Enter the license plate" />
+              )}
+            />
+            {errors.license && (
+              <p style={{ color: "red" }}>{errors.license.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Typography.Text strong>
+              Service Type <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="type"
+              control={control}
+              rules={{ required: "Service type is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  style={{ width: "100%" }}
+                  options={constants.TYPE_OPTIONS}
+                  placeholder="Choose the service type"
+                />
+              )}
+            />
+            {errors.type && (
+              <p style={{ color: "red" }}>{errors.type.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Typography.Text strong>
+              Service Center <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="center"
+              control={control}
+              rules={{ required: "Service center is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  style={{ width: "100%" }}
+                  options={constants.CENTER_OPTIONS}
+                  placeholder="Choose the service center"
+                />
+              )}
+            />
+            {errors.center && (
+              <p style={{ color: "red" }}>{errors.center.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Typography.Text strong>
+              Service Date <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="date"
+              control={control}
+              rules={{ required: "Service date is required" }}
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  style={{ width: "100%" }}
+                  format="YYYY-MM-DD"
+                  disabledDate={(current) =>
+                    current && current > moment().endOf("day")
+                  }
+                  placeholder="Select the service date"
+                />
+              )}
+            />
+            {errors.date && (
+              <p style={{ color: "red" }}>{errors.date.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Typography.Text strong>
+              Service Cost <Typography.Text type="danger">*</Typography.Text>
+            </Typography.Text>
+            <Controller
+              name="cost"
+              control={control}
+              rules={{
+                required: "Service cost is required",
+                pattern: {
+                  value: /^[0-9]+(\.[0-9]{1,2})?$/,
+                  message: "Invalid cost format. Example: 1000 or 99.99",
+                },
+              }}
+              render={({ field }) => (
+                <Input {...field} placeholder="Enter the service cost" />
+              )}
+            />
+            {errors.cost && (
+              <p style={{ color: "red" }}>{errors.cost.message}</p>
+            )}
+          </div>
+
+          <div style={{ marginTop: 16, textAlign: "right" }}>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              style={{ marginRight: 8 }}
+            >
+              Cancel
+            </Button>
+            <Button type="primary" htmlType="submit" disabled={!isValid}>
+              Add New Warranty
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

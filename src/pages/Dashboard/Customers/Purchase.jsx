@@ -4,7 +4,7 @@ import {
   EyeOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { Table, Button, Modal, Row, Col } from "antd";
+import { Table, Button, Modal, Row, Col, Pagination } from "antd";
 import { useSelector } from "react-redux";
 
 import {
@@ -36,13 +36,15 @@ const Purchase = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [paymentDetail, setPaymentDetail] = useState(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPurchase, setTotalPurchase] = useState(0);
 
   // Gọi API lấy danh sách mua hàng
-  const fetchPurchase = async () => {
+  const fetchPurchase = async (page) => {
     try {
-      const response = await getPurchase({ page: 0, customerId: id });
+      const response = await getPurchase({ page: page, customerId: id });
       const rawData = response.data.content || [];
-      console.log(rawData);
       const formatted = rawData.map((item) => ({
         ...item,
         key: item.id,
@@ -58,14 +60,15 @@ const Purchase = () => {
         startedDate: formatDate(item.warranty?.startedDate),
       }));
       setPurchase(formatted);
+      setTotalPurchase(response.data.totalElements);
     } catch (error) {
       console.error("Failed to fetch purchase history:", error);
     }
   };
 
   useEffect(() => {
-    fetchPurchase();
-  }, [id]);
+    fetchPurchase(currentPage);
+  }, [id, currentPage,pageSize]);
 
   const columnsDetail = [
     {
@@ -113,7 +116,6 @@ const Purchase = () => {
     },
   ];
   const viewDetails = async (id) => {
-    console.log("hello");
     const purchaseItem = purchase.find((item) => item.key === id);
     const paymentId = purchaseItem?.paymentId;
     try {
@@ -124,10 +126,11 @@ const Purchase = () => {
         dueDate: formatDate(item.dueDate),
         paymentDate: formatDate(item.paymentDate),
         monthlyPayment: formatMoney(item.monthlyPayment),
-        paymentMethods: item.payment?.paymentMethod.replace(/_/g, " "),
+        paymentMethod: item.payment?.paymentMethod.replace(/_/g, " "),
         paymentOption: item.payment?.paymentOption.replace(/_/g, " "),
       }));
       setPaymentDetail(formattedData);
+      console.log("res", formattedData);
     } catch (err) {
       console.error("Error fetching payment detail:", err);
     }
@@ -145,7 +148,7 @@ const Purchase = () => {
       console.error("Error exporting file:", error);
     }
   };
-
+  console.log("D",paymentDetail);
   const columns = [
     ...constants.PURCHASE_LIST,
     {
@@ -181,8 +184,21 @@ const Purchase = () => {
         dataSource={purchase}
         className="custom-table"
         style={{ marginTop: 16 }}
+        pagination={false}
       />
-
+       <Pagination
+        current={currentPage}
+        total={totalPurchase}
+        pageSize={pageSize}
+        showSizeChanger
+        pageSizeOptions={["5", "10", "20", "50"]}
+        onChange={(page, newPageSize) => {
+          setPageSize(newPageSize);
+          setCurrentPage(page);
+        }}
+        showTotal={(total) => `Total ${total} items`}
+        className="flex justify-end mt-2.5"
+      />
       {/* Detail Modal */}
       <Modal
         title={
@@ -250,8 +266,8 @@ const Purchase = () => {
                 <DetailRow
                   label="Payment method"
                   value={
-                    paymentDetail?.paymentMethod ||
-                    selectedPurchase.payment?.paymentMethod
+                    (paymentDetail?.payment?.paymentMethod ||
+                    selectedPurchase.payment?.paymentMethod).replace(/_/g, " ")
                   }
                 />
               </div>

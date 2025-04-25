@@ -57,6 +57,7 @@ export default function AdminManagementList() {
           style={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
             gap: "10px",
           }}
         >
@@ -71,7 +72,7 @@ export default function AdminManagementList() {
             type="link"
             icon={
               <EyeOutlined
-                style={{ fontSize: "30px", color: COLOR.hexGray75 }}
+                style={{ fontSize: "25px", color: COLOR.hexGray75 }}
               />
             }
             onClick={() => viewDetails(record.id)}
@@ -84,7 +85,7 @@ export default function AdminManagementList() {
 
   return (
     <div className="flex justify-start min-h-screen p-2.5">
-      <div className="w-full bg-white p-12 rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
+      <div className="w-full bg-white p-[33px] rounded-[8px] shadow-[0px_4px_10px_rgba(0,_0,_0,_0.15)]">
         <div className="mb-5">
           <Breadcrumbs />
           <div className="text-[20px] font-bold">{PageName.accountList}</div>
@@ -94,7 +95,7 @@ export default function AdminManagementList() {
           <div className="flex items-center gap-2.5 w-full">
             <Input
               placeholder="Search admin by Name, Admin ID"
-              className="w-full sm:w-72 h-10"
+              className="w-[450px] h-10 "
               onChange={(e) => {
                 setSearch(e.target.value);
                 if (!e.target.value.trim()) {
@@ -153,7 +154,6 @@ export default function AdminManagementList() {
             dataSource={admins}
             loading={loading}
             pagination={false}
-            locale={{ emptyText: "No admin matched your search. Try again." }}
             onChange={handleTable}
             className="table-admin-list border-b-0"
             scroll={{ x: "max-content" }}
