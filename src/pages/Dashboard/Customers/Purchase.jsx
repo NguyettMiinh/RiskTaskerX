@@ -113,7 +113,6 @@ const Purchase = () => {
     },
   ];
   const viewDetails = async (id) => {
-    console.log("hello");
     const purchaseItem = purchase.find((item) => item.key === id);
     const paymentId = purchaseItem?.paymentId;
     try {
@@ -124,10 +123,11 @@ const Purchase = () => {
         dueDate: formatDate(item.dueDate),
         paymentDate: formatDate(item.paymentDate),
         monthlyPayment: formatMoney(item.monthlyPayment),
-        paymentMethods: item.payment?.paymentMethod.replace(/_/g, " "),
+        paymentMethod: item.payment?.paymentMethod.replace(/_/g, " "),
         paymentOption: item.payment?.paymentOption.replace(/_/g, " "),
       }));
       setPaymentDetail(formattedData);
+      console.log("res", formattedData);
     } catch (err) {
       console.error("Error fetching payment detail:", err);
     }
@@ -145,7 +145,7 @@ const Purchase = () => {
       console.error("Error exporting file:", error);
     }
   };
-
+  console.log("D",paymentDetail);
   const columns = [
     ...constants.PURCHASE_LIST,
     {
@@ -250,8 +250,8 @@ const Purchase = () => {
                 <DetailRow
                   label="Payment method"
                   value={
-                    paymentDetail?.paymentMethod ||
-                    selectedPurchase.payment?.paymentMethod
+                    (paymentDetail?.payment?.paymentMethod ||
+                    selectedPurchase.payment?.paymentMethod).replace(/_/g, " ")
                   }
                 />
               </div>
