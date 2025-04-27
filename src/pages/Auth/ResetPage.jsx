@@ -119,16 +119,8 @@ const onSubmit = async (data) => {
               disabled={isSubmitting}
             />
           </Form.Item>
-          <Form.Item style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxSizing: "border-box",
-          }}>
-            <div style={{
-              color: "#636364",
-              fontSize: 14,
-            }}>Do you remember the password?
+          <Form.Item className="flex justify-center items-center box-border">
+            <div className="text-gray-600 text-sm">Do you remember the password?
                <span>
                 <ButtonComponent 
                 className="sub-btn"

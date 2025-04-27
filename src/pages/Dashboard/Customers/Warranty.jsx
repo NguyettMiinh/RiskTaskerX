@@ -84,7 +84,6 @@ const Warranty = () => {
       serviceDate: convertToISO(formData.date),
       serviceCost: formData.cost,
     };
-    console.log("Payload:", payload);
     try {
       await addWarrantyData(payload);
       setWarranty((prev) => [
@@ -103,16 +102,11 @@ const Warranty = () => {
     } catch (error) {
       console.error("Error adding warranty data:", error);
     }
+  }
 
     return (
       <div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: 10,
-          }}
-        >
+        <div className="flex justify-end mb-2.5">
           <Button
             icon={<PlusOutlined style={{ color: "#6055F2" }} />}
             style={{ height: 40, borderColor: "#C9C6ED", marginRight: 5 }}
@@ -321,6 +315,6 @@ const Warranty = () => {
       </div>
     );
   };
-};
+
 
 export default Warranty;

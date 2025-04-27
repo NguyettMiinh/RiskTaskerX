@@ -11,6 +11,9 @@ export default {
         2: '2px',
         3: '3px',
       },
+      fontFamily: {
+        russo: ["'Russo One'", "sans-serif"],
+      },
     },
   },
   plugins: [

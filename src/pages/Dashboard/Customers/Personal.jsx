@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Row, Col, Card, Switch, Modal } from "antd";
 import avt from "@assets/images/maomao.jpg";
 import { getWarranty, isActiveApi } from "@/services/customerService";
@@ -11,12 +11,12 @@ import { toast } from "react-toastify";
 const Personal = () => {
   const [detail, setDetail] = useState(null);
   const id = useSelector((state) => state.user.id);
-  
+
   const fetchDetail = async () => {
     if (!id) return;
     try {
-      const response = await getWarranty({page: 0, customerId:  id});
-      console.log("hi",response);
+      const response = await getWarranty({ page: 0, customerId: id });
+      console.log("hi", response);
       if (response.data.content && response.data.content.length > 0) {
         setDetail(response.data.content[0]);
       }
@@ -50,54 +50,45 @@ const Personal = () => {
     }
   };
   // put isActive
-    const toggleActive = (id, isActive) => {
-      showConfirmModal({ onConfirm:
-        async () => {
-          updateDetail(isActive);
-          await handleDetail(id, isActive);
-          if (isActive) {
-            toast.success("Customer successfully activated");
-          } else {
-            toast.success("Customer successfully deactivated");
-          }
-        },
-        name: "customer", action: isActive ? "activate" : "deactivate"
+  const toggleActive = (id, isActive) => {
+    showConfirmModal({
+      onConfirm: async () => {
+        updateDetail(isActive);
+        await handleDetail(id, isActive);
+        if (isActive) {
+          toast.success("Customer successfully activated");
+        } else {
+          toast.success("Customer successfully deactivated");
+        }
+      },
+      name: "customer",
+      action: isActive ? "activate" : "deactivate",
     });
-    };
-  
+  };
+
   return (
-    <div>
+    <div className="min-h-screen">
       <Card
         title="Personal Information"
         styles={{ header: { background: "#1E4C8F", color: "white" } }}
-        style={{
-          width: 385,
-          background: "white",
-          height: "1000px",
-          filter: "drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.25))",
-          minHeight: "100vh",
-        }}
+        className="w-[385px] bg-white drop-shadow-lg h-full"
       >
         {/* Image & Basic Info */}
         <Row gutter={[16, 16]} style={{ marginBottom: "30px" }}>
           <Col span={8}>
             <img
               src={avt}
-              style={{ width: 100, height: 100, borderRadius: "50%" }}
+              className="h-[100px] w-[100px] rounded-full"
             />
           </Col>
-          <Col span={16} style={{ display: "flex" }}>
+
+          <Col span={16} className="flex">
             <Row
-              style={{
-                color: "#5A607F",
-              }}
+              className="text-[#5A607F]"
             >
               <Col
                 span={24}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "16px",
-                }}
+                className="text-[16px] font-bold"
               >
                 {detail ? detail.customer.fullName : "Loading..."}
               </Col>
@@ -108,13 +99,11 @@ const Personal = () => {
               </Col>
               <Col span={24}>
                 <TrophyOutlined
-                  style={{
-                    color: "#ABABAB",
-                    paddingRight: "10px",
-                  }}
+                  className="text-[#ABABAB] pr-[10px]"
                 />
                 {detail ? detail.customer.tier : "Loading..."} member
               </Col>
+
               <Col span={24}>
                 <Switch
                   checked={detail?.customer?.isActive}
@@ -139,9 +128,7 @@ const Personal = () => {
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <div
-              style={{
-                color: "#5A607F",
-              }}
+              className="text-[#5A607F]"
             >
               Date of birth
             </div>
@@ -151,9 +138,7 @@ const Personal = () => {
           </Col>
           <Col span={24}>
             <div
-              style={{
-                color: "#5A607F",
-              }}
+              className="text-[#5A607F]"
             >
               Phone number
             </div>
@@ -161,9 +146,7 @@ const Personal = () => {
           </Col>
           <Col span={24}>
             <div
-              style={{
-                color: "#5A607F",
-              }}
+              className="text-[#5A607F]"
             >
               Email address
             </div>
@@ -171,9 +154,7 @@ const Personal = () => {
           </Col>
           <Col span={24}>
             <div
-              style={{
-                color: "#5A607F",
-              }}
+              className="text-[#5A607F]"
             >
               Address
             </div>

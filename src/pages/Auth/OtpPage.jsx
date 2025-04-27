@@ -10,7 +10,7 @@ import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
 import { otpApi, verifyOtpApi } from "@/services/userService";
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 
 // Schema validation
 const otpSchema = yup.object().shape({
@@ -29,11 +29,10 @@ export default function OtpPage() {
   const email = useSelector((state) => state.user.email);
 
   let navigate = useNavigate();
-  
+
   useEffect(() => {
     if (!email) {
-      navigate("/login"); 
-      
+      navigate("/login");
     }
   }, [email, navigate]);
 
@@ -59,7 +58,6 @@ export default function OtpPage() {
     }
   }, [timer]);
 
-  
   const handleResend = async () => {
     setResend(false);
     setTimer(10);
@@ -68,9 +66,9 @@ export default function OtpPage() {
     console.log("Resending OTP...");
     try {
       await otpApi(email);
-     } catch (error) {
-       console.error("Error:", error.response?.data || error.message);
-     }
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+    }
   };
 
   const {
@@ -80,39 +78,30 @@ export default function OtpPage() {
   } = useForm({
     resolver: yupResolver(otpSchema),
   });
- 
-  const handleLogin = () => {
-    navigate("/login");   
-};
 
-  const onSubmit = async (data) => {  
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  const onSubmit = async (data) => {
     setLoginError("");
     await new Promise((resolve) => setTimeout(resolve, 1000));
     try {
-     const response = await verifyOtpApi(email, data.otp);
-     if (response.data?.results?.success) {
-      navigate("/reset");
+      const response = await verifyOtpApi(email, data.otp);
+      if (response.data?.results?.success) {
+        navigate("/reset");
       } else {
-
-
         setLoginError("OTP is incorrect!");
       }
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   return (
-    <Flex
-      justify="center"
-      align="center"
-      style={{
-        height: "100vh",
-      }}
-      className="cm-bg"
-    >
+    <Flex justify="center" align="center" className="cm-bg h-screen">
       {isSubmitting && <div className="overlay"></div>}
-      
+
       <div className="common-form">
         <Form
           className="login-form "
@@ -128,69 +117,54 @@ export default function OtpPage() {
           </div>
 
           <div className="ct-title">
-            <div className="cm-title">
-              OTP Verification
-            </div>
-            <div className="sub-title">
-              Enter the OTP sent to your email
-            </div>
+            <div className="cm-title">OTP Verification</div>
+            <div className="sub-title">Enter the OTP sent to your email</div>
           </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <InputField
-                name="otp"
-                control={control}
-                className="otp-input"
-                error={errors.otp}
-                length={4}
-              />
-            </div>
+          <div className="flex justify-center items-center">
+            <InputField
+              name="otp"
+              control={control}
+              className="otp-input"
+              error={errors.otp}
+              length={4}
+            />
+          </div>
 
           <div className="resend-otp">
             {resend && (
               <div className="sub-resend">
                 Didn't receive the code?
-                <a onClick={handleResend} style={{
-                  paddingLeft: "5px",
-                }}>Re-send</a>
+                <a onClick={handleResend} className="pl-[5px]">
+                  Re-send
+                </a>
               </div>
             )}
 
-            {timeResend && <div style={{
-                paddingBottom: "20px"
-            }}>Resend in {timer}s...</div>}
+            {timeResend && (
+              <div className="pb-[20px]">Resend in {timer}s...</div>
+            )}
           </div>
-          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
+          {loginError && (
+            <p className="text-red-500 mb-2 text-center">{loginError}</p>
+          )}
           <Form.Item className="cn-btn">
             <ButtonComponent
               className="cm-btn otp-btn"
               disabled={isSubmitting}
               content={isSubmitting ? "Verifying..." : "Continue"}
               htmlType="submit"
-  
             />
           </Form.Item>
-          <Form.Item style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxSizing: "border-box",
-          }}>
-            <div style={{
-              color: "#636364",
-              fontSize: 14,
-            }}>Do you remember the password?
-               <span>
-                <ButtonComponent 
-                className="sub-btn"
-                onClick={handleLogin}
-                content="Login" />
+          <Form.Item className="flex justify-center items-center box-border">
+            <div className="text-gray-600 text-sm">
+              Do you remember the password?
+              <span>
+                <ButtonComponent
+                  className="sub-btn"
+                  onClick={handleLogin}
+                  content="Login"
+                />
               </span>
             </div>
           </Form.Item>

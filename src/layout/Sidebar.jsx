@@ -75,7 +75,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         theme="dark"
         mode="inline"
         items={items}
-        style={{ background: "inherit", paddingTop: 10 }}
+        className="bg-inherit pt-[10px]"
       />
     </Sider>
   );

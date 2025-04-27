@@ -75,14 +75,8 @@ const CustomerList = () => {
         return (
           <Tag
             color={colorB}
-            style={{
-              color: colorF,
-              borderRadius: "16px",
-              fontSize: 15,
-              boxSizing: "border-box",
-              lineHeight: 1,
-              padding: "5px 9px",
-            }}
+            style={{color: colorF}}
+            className="rounded-[16px] text-[15px] box-border leading-[1] py-[5px] px-[9px]"
           >
             {tier}
           </Tag>
@@ -95,12 +89,8 @@ const CustomerList = () => {
       align: "center" as AlignType,
       render: (_: Customer, record: Customer) => (
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-          }}
+        className="flex items-center justify-center gap-[10px]"
+
         >
           <Switch
             checked={record.isActive}
@@ -108,6 +98,8 @@ const CustomerList = () => {
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
             }}
+            
+
           />
           <Button
             type="link"
