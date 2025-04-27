@@ -108,9 +108,9 @@ const useCustomer = () => {
         updateCustomerStatus(id, isActive);
         await handleApiUpdate(id, isActive);
         if (isActive) {
-          toast.success("Role successfully activated");
+          toast.success("Customer successfully activated");
         } else {
-          toast.success("Role successfully deactivated");
+          toast.success("Customer successfully deactivated");
         }
       },
       name: "customer", action: isActive ? "activate" : "deactivate"

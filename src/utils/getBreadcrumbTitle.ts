@@ -11,7 +11,7 @@ export const getBreadcrumbTitle = (pathname: string) => {
     return currentPath;
   }, "");
 
-  const fullPaths = ["/", ...breadcrumbPaths];
+  const fullPaths = [ ...breadcrumbPaths];
 
   const breadcrumbs = fullPaths
     .map((path) => {

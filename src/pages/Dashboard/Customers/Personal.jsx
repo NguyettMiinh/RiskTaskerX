@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { TrophyOutlined } from "@ant-design/icons";
 import { showConfirmModal } from "@/utils/showConfimModal";
 import { formatDate } from "@/utils/formatDate";
+import { toast } from "react-toastify";
 
 const Personal = () => {
   const [detail, setDetail] = useState(null);
@@ -15,6 +16,7 @@ const Personal = () => {
     if (!id) return;
     try {
       const response = await getWarranty({page: 0, customerId:  id});
+      console.log("hi",response);
       if (response.data.content && response.data.content.length > 0) {
         setDetail(response.data.content[0]);
       }
@@ -36,24 +38,33 @@ const Personal = () => {
       },
     }));
   };
-  const handleDetail = async (id, isActive, setDetail) => {
+  const handleDetail = async (id, isActive) => {
     try {
       const response = await isActiveApi(id, isActive);
       if (!response) {
-        updateDetail(!isActive, setDetail);
+        updateDetail(!isActive);
       }
     } catch (error) {
       console.error("Error updating customer status:", error);
-      updateDetail(!isActive, setDetail);
+      updateDetail(!isActive);
     }
   };
   // put isActive
-  const toggleActive = (id, isActive, setCustomers) => {
-    showConfirmModal(isActive, async () => {
-      updateDetail(isActive, setCustomers);
-      await handleDetail(id, isActive, setCustomers);
+    const toggleActive = (id, isActive) => {
+      showConfirmModal({ onConfirm:
+        async () => {
+          updateDetail(isActive);
+          await handleDetail(id, isActive);
+          if (isActive) {
+            toast.success("Customer successfully activated");
+          } else {
+            toast.success("Customer successfully deactivated");
+          }
+        },
+        name: "customer", action: isActive ? "activate" : "deactivate"
     });
-  };
+    };
+  
   return (
     <div>
       <Card

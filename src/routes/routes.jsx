@@ -12,10 +12,16 @@ import DetailRole from "@/pages/Dashboard/Roles/DetailRole";
 import RoleList from "@/pages/Dashboard/Roles/RoleList";
 import ChangePassword from "@/pages/Dashboard/Customers/ChangePasswordPage";
 import AdminManagementList from "@/pages/Dashboard/Admins/AdminManagementList";
+import Home from "@/pages/Home/Home";
 
 
 
 const routes = [
+    {
+        path: "/",
+        element: <Home />
+
+    },
     {
         path: "/login",
         element: <LoginPage />,
