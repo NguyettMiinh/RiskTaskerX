@@ -224,7 +224,6 @@ function useAdmin() {
 
   const handleUpdateAdmin = useCallback(
     async (values: AdminUpdateRequest) => {
-      console.log(values);
       const payload = {
         ...values,
         dateOfBirth: dayjs(values.dateOfBirth).toISOString(),

@@ -25,6 +25,7 @@ import { formatCenter } from "@/utils/formatCenter";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useForm, Controller, set } from "react-hook-form";
+import {  useMutation } from "@tanstack/react-query";
 
 const Warranty = () => {
   const [warranty, setWarranty] = useState([]);
@@ -42,6 +43,7 @@ const Warranty = () => {
   } = useForm({ mode: "onChange" });
 
   const dataSource = warranty.map((item) => ({ ...item, key: item.id }));
+
   const fetchWarranty = async (page) => {
     const response = await getWarranty({ page: page, customerId: id });
     const newResult = response.data.content;
@@ -58,6 +60,7 @@ const Warranty = () => {
   useEffect(() => {
     fetchWarranty(currentPage);
   }, [id, currentPage, pageSize]);
+
 
   const exportHandle = async () => {
     try {
@@ -86,6 +89,7 @@ const Warranty = () => {
     };
     try {
       await addWarrantyData(payload);
+
       setWarranty((prev) => [
         ...prev,
         {
@@ -95,8 +99,8 @@ const Warranty = () => {
           serviceCost: formatMoney(payload.serviceCost),
         },
       ]);
+      
       toast.success("New information added successfully!");
-
       setIsModalOpen(false);
       reset();
     } catch (error) {
@@ -137,8 +141,6 @@ const Warranty = () => {
           pageSizeOptions={["5", "10", "20", "50"]}
           onChange={(page, newPageSize) => {
             setPageSize(newPageSize);
-            console.log(newPageSize);
-            console.log(warranty);
             setCurrentPage(page);
           }}
           showTotal={(total) => `Total ${total} items`}

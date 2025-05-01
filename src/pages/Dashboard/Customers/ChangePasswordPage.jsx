@@ -49,7 +49,6 @@ const ChangePassword = () => {
 
     try {
       const response = await changePasswordApi(payload);
-      console.log(response);
       if (response.data.message === "success") {
         showSuccess();
       }

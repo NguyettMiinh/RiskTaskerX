@@ -1,4 +1,5 @@
 import "../../assets/styles/global.css";
+
 export default function Home() {
     return (
         <div className="bg-custom-gradient w-full h-screen">
@@ -14,7 +15,7 @@ export default function Home() {
                     </div>
                 </nav>
             </header>
-            <div className=" text-transparent text-[70px] font-bold text-center pt-60 text-stroke ">
+            <div className=" text-transparent text-[80px] font-bold text-center pt-60 text-stroke animate-strokeGrow ">
                 WELCOME TO RISKTASKERX
             </div>
         </div>

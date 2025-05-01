@@ -63,7 +63,6 @@ export default function OtpPage() {
     setTimer(10);
     setTimeResend(true);
     setTime(20);
-    console.log("Resending OTP...");
     try {
       await otpApi(email);
     } catch (error) {

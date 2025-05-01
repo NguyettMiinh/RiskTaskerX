@@ -15,12 +15,21 @@ export default {
         russo: ["'Russo One'", "sans-serif"],
       },
     },
+    keyframes: {
+      strokeGrow: {
+        '0%': { fontWeight: '400' },
+        '100%': { fontWeight: '900' },
+      },
+    },
+    animation: {
+      strokeGrow: 'strokeGrow 2s ease-in-out forwards',
+    },
   },
   plugins: [
     function ({ addUtilities }) {
       addUtilities({
         '.text-stroke': {
-          '-webkit-text-stroke': '1px #C9C6ED',  // Sử dụng stroke cho chữ
+          '-webkit-text-stroke': '1px #C9C6ED',  
           'textStroke': '1px #C9C6ED',
         }
       })},

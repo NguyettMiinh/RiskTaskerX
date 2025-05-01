@@ -16,7 +16,6 @@ const Personal = () => {
     if (!id) return;
     try {
       const response = await getWarranty({ page: 0, customerId: id });
-      console.log("hi", response);
       if (response.data.content && response.data.content.length > 0) {
         setDetail(response.data.content[0]);
       }

@@ -87,7 +87,6 @@ function useRole() {
       if (!response) {
         updateRoleStatus(id, !isActive);
       }
-      console.log("....render2");
     } catch (error) {
       console.error("Error updating customer status:", error);
       updateRoleStatus(id, !isActive);
