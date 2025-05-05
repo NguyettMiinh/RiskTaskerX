@@ -10,14 +10,14 @@ import SelectComponent from "@components/ui/SelectComponent";
 import Breadcrumbs from "@components/ui/Breadcrumbs";
 import "@assets/styles/list.css";
 import "@assets/styles/filter.css";
-import { Customer} from "types/Customer";
-import { ColumnsType} from "antd/es/table";
+import { Customer } from "types/Customer";
+import { ColumnsType } from "antd/es/table";
 import { AlignType } from 'rc-table/lib/interface';
-import { OptionType} from "types/Select";
+import { OptionType } from "types/Select";
 
 
 const CUSTOMER_LIST: ColumnsType<Customer> = [
-  { title: "Customer ID", dataIndex: "id"},
+  { title: "Customer ID", dataIndex: "id" },
   { title: "Customer Name", dataIndex: "fullName" },
   { title: "Phone Number", dataIndex: "phoneNumber" },
   { title: "Address", dataIndex: "address" },
@@ -33,21 +33,26 @@ const TIER_OPTIONS: OptionType[] = [
 
 const CustomerList = () => {
   const {
+    search,
+    pageSize,
+    totalCustomers,
     currentPage,
-    formData,
     dataSource,
+    totalPages,
+    originalCustomers,
+    setPageSize,
+    statusHandle,
+    setSearch,
+    setCustomers,
+    setTotalCustomers,
     setCurrentPage,
-    setFormData,
     searchHandle,
     tierHandle,
-    statusHandle,
-    handleOnChangeSearch,
     exportHandle,
     viewDetails,
     toggleActive,
   } = useCustomer();
 
-  const { search, pageSize, totalCustomers } = formData;
 
   const columns = [
     ...CUSTOMER_LIST,
@@ -75,7 +80,7 @@ const CustomerList = () => {
         return (
           <Tag
             color={colorB}
-            style={{color: colorF}}
+            style={{ color: colorF }}
             className="rounded-[16px] text-[15px] box-border leading-[1] py-[5px] px-[9px]"
           >
             {tier}
@@ -89,7 +94,7 @@ const CustomerList = () => {
       align: "center" as AlignType,
       render: (_: Customer, record: Customer) => (
         <div
-        className="flex items-center justify-center gap-[10px]"
+          className="flex items-center justify-center gap-[10px]"
 
         >
           <Switch
@@ -98,7 +103,7 @@ const CustomerList = () => {
             style={{
               backgroundColor: record.isActive ? "#6055F2" : "#d9d9d9",
             }}
-            
+
 
           />
           <Button
@@ -127,10 +132,17 @@ const CustomerList = () => {
               placeholder="Search customer by Name, Customer ID"
               className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
-              onChange={(e) => handleOnChangeSearch(e)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (!e.target.value.trim()) {
+                  setCustomers(originalCustomers);
+                  setTotalCustomers(originalCustomers.length);
+                }
+              }}
+
             />
             <Button
-             className="h-[40px] w-[56px] bg-[#6055F2] text-white rounded-[0_6px_6px_0] border-none -ml-[10px]"
+              className="h-[40px] w-[56px] bg-[#6055F2] text-white rounded-[0_6px_6px_0] border-none -ml-[10px]"
               onClick={() => searchHandle(search)}
             >
               <SearchOutlined style={{ fontSize: "24px" }} />
@@ -163,19 +175,20 @@ const CustomerList = () => {
           className="custom-table break-words whitespace-normal"
         />
 
-        <Pagination
-          current={currentPage}
-          total={totalCustomers}
-          pageSize={pageSize}
-          showSizeChanger
-          pageSizeOptions={["5", "10", "20", "50"]}
-          onChange={(page: number, pageSize: number) => {
-            setFormData({ ...formData, pageSize: pageSize });
-            setCurrentPage(page);
-          }}
-          showTotal={(total) => `Total ${total} items`}
-          className="flex justify-end mt-2.5"
-        />
+        {totalPages > 0 &&
+          <Pagination
+            current={currentPage}
+            total={totalCustomers}
+            pageSize={pageSize}
+            showSizeChanger
+            pageSizeOptions={["5", "10", "20", "50"]}
+            onChange={(page: number, pageSize: number) => {
+              setPageSize(pageSize);
+              setCurrentPage(page);
+            }}
+            showTotal={(total) => `Total ${total} items`}
+            className="flex justify-end mt-2.5"
+          />}
       </div>
     </div>
   );
