@@ -14,6 +14,7 @@ import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
 import {OptionValue} from "../../../../types/Select";
 import { set } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 
 
 function useRole() {
@@ -34,19 +35,16 @@ function useRole() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    
-
-  const fetchRoles = async () => {
-    try {
-      const response = await roleSearchFilter({
-        sortKey: sortField,
-        sortBy: sortOrder,
-        searchKey: search,
-        isActive: status,
-        page: currentPage,
-        size: pageSize,
-      });
-      // cấu trúc ko xác định rõ
+  const {mutate} = useMutation({
+    mutationFn: () => roleSearchFilter({
+      sortKey: sortField,
+      sortBy: sortOrder,
+      searchKey: search,
+      isActive: status,
+      page: currentPage,
+      size: pageSize,
+    }),
+    onSuccess: (response) => {
       const results = response.data.results;
       const newResult = results?.content.map((item: Role) => ({
         ...item,
@@ -55,16 +53,18 @@ function useRole() {
       setRoles(newResult);
       setOriginalRoles(newResult);
       setTotalRoles(results.totalElements);
-    } catch (error) {
-      console.error("Error fetching customers:", error);
+    },
+    onError: (error) => {
+      toast.error(" Unable to retrieve roles. Please try again later.");
     }
-    
-  };
+
+  }) 
+
   useEffect(() => {
     if (currentPage > totalPages && currentPage > 1) {
       setCurrentPage(0);
     }
-    fetchRoles();
+    mutate();
   }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
   const viewDetails = (id: string | number) => {

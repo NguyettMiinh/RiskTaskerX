@@ -13,7 +13,7 @@ import constants from "../../../constants";
 import useRole from "./hook/useRole";
 import { Role } from "../../../types/Role";
 import { ColumnsType } from "antd/es/table";
-import { set } from "react-hook-form";
+
 
 
 function RoleList() {
@@ -21,6 +21,7 @@ function RoleList() {
   const {
     search,
     totalRoles,
+    totalPages,
     originalRoles,
     dataSource,
     currentPage,
@@ -143,7 +144,7 @@ function RoleList() {
           className="custom-table break-words whitespace-normal"
         />
 
-        <Pagination
+        { totalPages > 0 && <Pagination
           current={currentPage}
           total={totalRoles}
           pageSize={pageSize}
@@ -155,7 +156,7 @@ function RoleList() {
           }}
           showTotal={(total) => `Total ${total} items`}
           className="flex justify-end mt-2.5"
-        />
+        />}
       </div>
     </div>
   );
