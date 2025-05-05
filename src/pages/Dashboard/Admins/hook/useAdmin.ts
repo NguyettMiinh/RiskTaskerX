@@ -24,9 +24,12 @@ import {
   AdminAddRequest,
   AdminSearchAndFilterRequest,
   AdminUpdateRequest,
+  RoleListActive,
 } from "../../../../types/Admin";
 import { Form } from "antd";
 import axios from "axios";
+import { RoleOption } from "@utils/fieldConfigs";
+import { roleActive } from "services/roleService";
 
 function useAdmin() {
   const [form] = Form.useForm();
@@ -196,7 +199,7 @@ function useAdmin() {
               : item.email,
           lastLogin: item.lastLogin
             ? dayjs(item.lastLogin).format(PageName.formatDateTime)
-            : "00:00 00-00-0000",
+            : "",
         }));
         setAdmins(truncatedData);
         setOriginalAdmin(truncatedData);
@@ -279,7 +282,7 @@ function useAdmin() {
             form.setFields([
               {
                 name: "email",
-                errors: !isEditMode? ["Email is existed."] : [],
+                errors: !isEditMode ? ["Email is existed."] : [],
               },
             ]);
           }
@@ -346,10 +349,25 @@ function useAdmin() {
       setLoading(false);
     }
   };
+  const [roleOption, setRoleOption] = useState<RoleOption[]>();
+  const getRoleActiveOption = async () => {
+    try {
+      const response = await adminService.getRoleListActive();
+      const result = response.results.map((item: RoleListActive) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      setRoleOption(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (visible && isEditMode) {
       showAdminDetail();
+    }else{
+      getRoleActiveOption();
     }
   }, [visible, isEditMode, form]);
 
@@ -385,6 +403,7 @@ function useAdmin() {
     currentPage,
     originalAdmin,
     search,
+    roleOption,
   };
 }
 

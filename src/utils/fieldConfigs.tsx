@@ -1,13 +1,12 @@
-import { Form, FormInstance, Switch } from "antd";
+import { FormInstance } from "antd";
 import { Rule } from "antd/es/form";
 import constants from "../constants/index";
 import dayjs, { Dayjs } from "dayjs";
-import useAdmin from "../pages/Dashboard/Admins/hook/useAdmin";
 type FieldType = "input" | "select" | "date" | "switch" | "custom" | "tel";
-export type RoleOption = {
+export interface RoleOption {
   label: string;
   value: number | string;
-};
+}
 
 const roleOptions: RoleOption[] = [
   { label: "IT Suport", value: 4 },
@@ -26,7 +25,7 @@ export interface FormFieldConfig {
   className?: string;
   fieldNames?: { label: "label"; value: "value" };
   rules?: Rule[];
-  options?: { label: string; value: string | number }[];
+  options?: RoleOption[];
   render?: (form: FormInstance) => React.ReactNode;
   disabledDate?: (currentDay: Dayjs) => boolean;
   validateStatus?: "success" | "warning" | "error" | "validating";
@@ -36,12 +35,8 @@ export interface FormFieldConfig {
 const disableFutureDates = (current: Dayjs): boolean => {
   return current && current.isAfter(dayjs(), "day");
 };
-type MyFormProps = {
-  handleCheck: () => void;
-};
-export const adminFormFields = (
-  isEditMode: boolean,
-): FormFieldConfig[] => [
+
+export const adminFormFields = (isEditMode: boolean, role: RoleOption[]  | undefined): FormFieldConfig[] => [
   {
     name: isEditMode ? "id" : "fullName",
     label: isEditMode ? "Admin ID" : "Admin Name",
@@ -62,7 +57,7 @@ export const adminFormFields = (
     required: false,
     placeholder: "Search to select",
     className: "font-normal",
-    options: roleOptions,
+    options: role,
     fieldNames: { label: "label", value: "value" },
   },
   {

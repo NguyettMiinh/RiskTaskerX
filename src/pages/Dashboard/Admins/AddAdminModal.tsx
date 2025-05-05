@@ -20,6 +20,7 @@ const AddAdminModal= () => {
     isActive,
     visible,
     form,
+    roleOption
   } = useAdmin();
   return (
     <Modal
@@ -50,7 +51,7 @@ const AddAdminModal= () => {
           validateTrigger={["onChange", "onBlur"]}
         >
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            {adminFormFields(isEditMode).map((field, index) =>
+            {adminFormFields(isEditMode, roleOption).map((field, index) =>
               renderFormItem(field, index)
             )}
           </Row>

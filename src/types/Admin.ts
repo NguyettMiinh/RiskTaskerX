@@ -113,8 +113,8 @@ export interface AdminAddRequest {
   departmentName: string;
   dateOfBirth: string;
 }
-export interface AdminSearchNoPagingRequest {
-  searchKey: string;
-  departmentName: string[];
-  isActive: boolean[];
+
+export interface RoleListActive {
+  id: number;
+  name: string;
 }
