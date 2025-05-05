@@ -164,7 +164,7 @@ function useAdmin() {
 
   useEffect(() => {
     if (currentPage > totalPages && currentPage > 1) {
-      setCurrentPage(totalPages);
+      setCurrentPage(0);
     }
     fetchData();
   }, [
