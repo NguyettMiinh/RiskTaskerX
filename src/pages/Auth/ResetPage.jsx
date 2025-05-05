@@ -17,6 +17,7 @@ import { resetSchema } from "@/validations/resetSchema";
 const ResetPage = () => {
   const email = useSelector((state) => state.user.email);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  let navigate = useNavigate();
   
   const {
     handleSubmit,
@@ -40,17 +41,14 @@ const ResetPage = () => {
     navigate("/login");   
 };
 
-let navigate = useNavigate();
 
 const onSubmit = async (data) => {
   try {
     await resetPassWordApi(email, data.password, data.confirmPassword);
     navigate("/login");
-    console.log("Password reset successful");
   } catch (error) {
     console.error("Error:", error.response?.data || error.message);
   }
-  console.log(email,data);
 };
 
   return (
@@ -119,16 +117,8 @@ const onSubmit = async (data) => {
               disabled={isSubmitting}
             />
           </Form.Item>
-          <Form.Item style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxSizing: "border-box",
-          }}>
-            <div style={{
-              color: "#636364",
-              fontSize: 14,
-            }}>Do you remember the password?
+          <Form.Item className="flex justify-center items-center box-border">
+            <div className="text-gray-600 text-sm">Do you remember the password?
                <span>
                 <ButtonComponent 
                 className="sub-btn"

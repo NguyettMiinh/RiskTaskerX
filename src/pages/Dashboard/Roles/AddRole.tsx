@@ -10,6 +10,7 @@ import {
   Collapse,
 } from "antd";
 import useAddRole from "./hook/useAddRole";
+import { CloseCircleFilled } from "@ant-design/icons";
 const { Panel } = Collapse;
 
 function AddRole() {
@@ -26,7 +27,7 @@ function AddRole() {
   const { name, isActive, permissions, isError } = addForm;
   return (
     <div className="flex justify-start min-h-screen p-[10px]">
-      <div className="w-full bg-white p-[50px] rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.15)]">
+      <div className="w-full bg-white p-[33px] rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.15)]">
         {/* Breadcrumb & Title */}
         <div className="mb-5">
           <Breadcrumbs />
@@ -48,7 +49,18 @@ function AddRole() {
               onChange={(e) => {
                 setAddForm({ ...addForm, name: e.target.value });
               }}
+              suffix={
+                isError && name ? (
+                  <CloseCircleFilled
+                    style={{ color: "rgba(255, 77, 79, 0.8)", cursor: "pointer" }}
+                    onClick={() => {
+                      setAddForm({ ...addForm, name: "" });
+                    }}
+                  />
+                ) : null
+              }
             />
+            
             {isError && <div style={{ color: "red" }}>{isError}</div>}
           </Col>
           <Col span={6} offset={2}>

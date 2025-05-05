@@ -13,27 +13,32 @@ import constants from "../../../constants";
 import useRole from "./hook/useRole";
 import { Role } from "../../../types/Role";
 import { ColumnsType } from "antd/es/table";
+import { set } from "react-hook-form";
 
 
 function RoleList() {
 
   const {
+    search,
+    totalRoles,
+    originalRoles,
     dataSource,
     currentPage,
-    formData,
+    pageSize,
     handleRole,
+    setSearch,
     handleTable,
     searchHandle,
     statusHandle,
-    handleOnChangeSearch,
+    setRoles,
+    setPageSize,
+    setTotalRoles,
     setCurrentPage,
-    setFormData,
     toggleActive,
     viewDetails,
     handleDelete
   } = useRole();
 
-  const { search, pageSize, totalRoles } = formData;
 
   const columns: ColumnsType<Role> = [
     { title: "No", dataIndex: "id", width: "400px" },
@@ -96,9 +101,13 @@ function RoleList() {
               placeholder="Search role by Name"
               className="w-[450px] h-[40px] rounded-[6px_0_0_6px] border border-[#ccc]"
               value={search}
-              onChange={(e) =>
-                handleOnChangeSearch(e)
-              }
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (!e.target.value.trim()) {
+                  setRoles(originalRoles);
+                  setTotalRoles(originalRoles.length);
+                }
+              }}
             />
             <Button
               type="primary"
@@ -141,7 +150,7 @@ function RoleList() {
           showSizeChanger
           pageSizeOptions={["5", "10", "20", "50"]}
           onChange={(page, pageSize) => {
-            setFormData({ ...formData, pageSize: pageSize });
+            setPageSize(pageSize);
             setCurrentPage(page);
           }}
           showTotal={(total) => `Total ${total} items`}

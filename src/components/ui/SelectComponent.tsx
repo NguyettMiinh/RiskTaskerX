@@ -6,7 +6,6 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {OptionValue,SelectType} from "../../types/Select";
 
 const SelectComponent = <T extends OptionValue>({options, allLabel, className, onChange}: SelectType<T>) => {
-
   // tra ve mang cac option value
   const [value, setValue] = useState<OptionValue[]>(options.map((option) => option.value));
   const indeterminate = value.length > 0 && value.length < options.length;
@@ -14,7 +13,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
   const tagRender = (props: CustomTagProps) => {
     const { label } = props;
     return (
-      <div style={{ paddingLeft: "10px" }}>
+      <div className="pl-[10px]">
         {label}
       </div>
     );
@@ -53,7 +52,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
           return (
             <div
               key={String(option.value)}
-              style={{ display: "flex", alignItems: "center", padding: "8px" }}
+              className="flex items-center p-[8px]"
             >
               <Checkbox
                 onChange={(e) => handleCheckBox(option.value, e.target.checked)}
@@ -65,7 +64,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
             </div>
           );
         })}
-        <div style={{ display: "flex", alignItems: "center", padding: "8px" }}>
+        <div className="flex items-center p-[8px]">
           <Checkbox
             indeterminate={indeterminate}
             onChange={onCheckAllChange}
@@ -76,7 +75,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
           </Checkbox>
         </div>
 
-        <div style={{ display: "flex", padding: "8px" }}>
+        <div className="flex items-center p-[8px]">
           <Button onClick={handleReset} className="btn-1">
             Reset
           </Button>
@@ -91,10 +90,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
     <div>
       <Select
         mode="multiple"
-        style= {{
-          fontSize: "15px"
-        }}
-        className={`${className}`}
+        className={`${className} text-[15px]`}
         size="large"
         value={value.length === options.length ? [allLabel] : value}
         options={options}

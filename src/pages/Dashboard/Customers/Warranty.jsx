@@ -25,6 +25,7 @@ import { formatCenter } from "@/utils/formatCenter";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useForm, Controller, set } from "react-hook-form";
+import {  useMutation } from "@tanstack/react-query";
 
 const Warranty = () => {
   const [warranty, setWarranty] = useState([]);
@@ -37,14 +38,12 @@ const Warranty = () => {
   const {
     control,
     handleSubmit,
-    setError,
     reset,
     formState: { errors, isValid },
   } = useForm({ mode: "onChange" });
 
   const dataSource = warranty.map((item) => ({ ...item, key: item.id }));
 
-  console.log("warranty", warranty);
   const fetchWarranty = async (page) => {
     const response = await getWarranty({ page: page, customerId: id });
     const newResult = response.data.content;
@@ -61,6 +60,7 @@ const Warranty = () => {
   useEffect(() => {
     fetchWarranty(currentPage);
   }, [id, currentPage, pageSize]);
+
 
   const exportHandle = async () => {
     try {
@@ -87,9 +87,9 @@ const Warranty = () => {
       serviceDate: convertToISO(formData.date),
       serviceCost: formData.cost,
     };
-
     try {
       await addWarrantyData(payload);
+
       setWarranty((prev) => [
         ...prev,
         {
@@ -99,238 +99,224 @@ const Warranty = () => {
           serviceCost: formatMoney(payload.serviceCost),
         },
       ]);
+      
       toast.success("New information added successfully!");
-
       setIsModalOpen(false);
       reset();
     } catch (error) {
-      const message = error.response?.data?.message;
-      if (message === "license-plate-exists") {
-        setError("license", {
-          type: "manual",
-          message: "License plate already exists",
-        });
-      }
+      console.error("Error adding warranty data:", error);
     }
-  };
-  const checkDuplicateLicense = (license) => {
-    const existingLicense = warranty.find(
-      (item) => item.licensePlate === license
-    );
-    return existingLicense ? "License plate already exists" : true;
-  };
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 10,
-        }}
-      >
-        <Button
-          icon={<PlusOutlined style={{ color: "#6055F2" }} />}
-          style={{ height: 40, borderColor: "#C9C6ED", marginRight: 5 }}
-          onClick={() => setIsModalOpen(true)}
-        >
-          <span style={{ color: "#6055F2" }}> Add Warranty Information </span>
-        </Button>
-        <Button
-          icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
-          style={{ height: 40, borderColor: "#C9C6ED" }}
-          onClick={exportHandle}
-        >
-          <span style={{ color: "#6055F2" }}>Export</span>
-        </Button>
-      </div>
+  }
 
-      <Table
-        columns={constants.WARRANTY_LIST}
-        dataSource={dataSource}
-        className="custom-table"
-        pagination={false}
-      />
-      <Pagination
-        current={currentPage}
-        total={totalWarranty}
-        pageSize={pageSize}
-        showSizeChanger
-        pageSizeOptions={["5", "10", "20", "50"]}
-        onChange={(page, newPageSize) => {
-          setPageSize(newPageSize);
-          console.log(newPageSize);
-          console.log(warranty);
-          setCurrentPage(page);
-        }}
-        showTotal={(total) => `Total ${total} items`}
-        className="flex justify-end mt-2.5"
-      />
-      <Modal
-        title={
-          <div style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold" }}>
-            Add Warranty Information
-          </div>
-        }
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={null}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <Typography.Text strong>
-              Car model <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="model"
-              control={control}
-              rules={{ required: "Car model is required" }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  style={{ width: "100%" }}
-                  options={constants.MODEL_OPTIONS}
-                  placeholder="Choose the car model"
-                />
-              )}
-            />
-            {errors.model && (
-              <p style={{ color: "red" }}>{errors.model.message}</p>
-            )}
-          </div>
+    return (
+      <div>
+        <div className="flex justify-end mb-2.5">
+          <Button
+            icon={<PlusOutlined style={{ color: "#6055F2" }} />}
+            style={{ height: 40, borderColor: "#C9C6ED", marginRight: 5 }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <span style={{ color: "#6055F2" }}> Add Warranty Information </span>
+          </Button>
+          <Button
+            icon={<DownloadOutlined style={{ color: "#6055F2" }} />}
+            style={{ height: 40, borderColor: "#C9C6ED" }}
+            onClick={exportHandle}
+          >
+            <span style={{ color: "#6055F2" }}>Export</span>
+          </Button>
+        </div>
 
-          <div>
-            <Typography.Text strong>
-              License Plate <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="license"
-              control={control}
-              rules={{
-                required: "License plate is required",
-                pattern: {
-                  value: /^.{9}$/,
-                  message: "License plate must be up to 9 digits",
-                },
-                validate: {
-                  duplicate: (value) => checkDuplicateLicense(value),
-                },
+        <Table
+          columns={constants.WARRANTY_LIST}
+          dataSource={dataSource}
+          className="custom-table"
+          pagination={false}
+        />
+        <Pagination
+          current={currentPage}
+          total={totalWarranty}
+          pageSize={pageSize}
+          showSizeChanger
+          pageSizeOptions={["5", "10", "20", "50"]}
+          onChange={(page, newPageSize) => {
+            setPageSize(newPageSize);
+            setCurrentPage(page);
+          }}
+          showTotal={(total) => `Total ${total} items`}
+          className="flex justify-end mt-2.5"
+        />
+        <Modal
+          title={
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "20px",
+                fontWeight: "bold",
               }}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter the license plate" />
-              )}
-            />
-            {errors.license && (
-              <p style={{ color: "red" }}>{errors.license.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Type <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="type"
-              control={control}
-              rules={{ required: "Service type is required" }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  style={{ width: "100%" }}
-                  options={constants.TYPE_OPTIONS}
-                  placeholder="Choose the service type"
-                />
-              )}
-            />
-            {errors.type && (
-              <p style={{ color: "red" }}>{errors.type.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Center <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="center"
-              control={control}
-              rules={{ required: "Service center is required" }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  style={{ width: "100%" }}
-                  options={constants.CENTER_OPTIONS}
-                  placeholder="Choose the service center"
-                />
-              )}
-            />
-            {errors.center && (
-              <p style={{ color: "red" }}>{errors.center.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Date <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="date"
-              control={control}
-              rules={{ required: "Service date is required" }}
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  style={{ width: "100%" }}
-                  format="YYYY-MM-DD"
-                  disabledDate={(current) =>
-                    current && current > moment().endOf("day")
-                  }
-                  placeholder="Select the service date"
-                />
-              )}
-            />
-            {errors.date && (
-              <p style={{ color: "red" }}>{errors.date.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Typography.Text strong>
-              Service Cost <Typography.Text type="danger">*</Typography.Text>
-            </Typography.Text>
-            <Controller
-              name="cost"
-              control={control}
-              rules={{
-                required: "Service cost is required",
-                pattern: {
-                  value: /^[0-9]+(\.[0-9]{1,2})?$/,
-                  message: "Invalid cost format. Example: 1000 or 99.99",
-                },
-              }}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter the service cost" />
-              )}
-            />
-            {errors.cost && (
-              <p style={{ color: "red" }}>{errors.cost.message}</p>
-            )}
-          </div>
-
-          <div style={{ marginTop: 16, textAlign: "right" }}>
-            <Button
-              onClick={() => setIsModalOpen(false)}
-              style={{ marginRight: 8 }}
             >
-              Cancel
-            </Button>
-            <Button type="primary" htmlType="submit" disabled={!isValid}>
-              Add New Warranty
-            </Button>
-          </div>
-        </form>
-      </Modal>
-    </div>
-  );
-};
+              Add Warranty Information
+            </div>
+          }
+          open={isModalOpen}
+          onCancel={() => setIsModalOpen(false)}
+          footer={null}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <Typography.Text strong>
+                Car model <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="model"
+                control={control}
+                rules={{ required: "Car model is required" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    style={{ width: "100%" }}
+                    options={constants.MODEL_OPTIONS}
+                    placeholder="Choose the car model"
+                  />
+                )}
+              />
+              {errors.model && (
+                <p style={{ color: "red" }}>{errors.model.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Typography.Text strong>
+                License Plate <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="license"
+                control={control}
+                rules={{
+                  required: "License plate is required",
+                  pattern: {
+                    value: /^.{9}$/,
+                    message: "License plate must be up to 9 digits",
+                  },
+                }}
+                render={({ field }) => (
+                  <Input {...field} placeholder="Enter the license plate" />
+                )}
+              />
+              {errors.license && (
+                <p style={{ color: "red" }}>{errors.license.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Typography.Text strong>
+                Service Type <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="type"
+                control={control}
+                rules={{ required: "Service type is required" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    style={{ width: "100%" }}
+                    options={constants.TYPE_OPTIONS}
+                    placeholder="Choose the service type"
+                  />
+                )}
+              />
+              {errors.type && (
+                <p style={{ color: "red" }}>{errors.type.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Typography.Text strong>
+                Service Center{" "}
+                <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="center"
+                control={control}
+                rules={{ required: "Service center is required" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    style={{ width: "100%" }}
+                    options={constants.CENTER_OPTIONS}
+                    placeholder="Choose the service center"
+                  />
+                )}
+              />
+              {errors.center && (
+                <p style={{ color: "red" }}>{errors.center.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Typography.Text strong>
+                Service Date <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="date"
+                control={control}
+                rules={{ required: "Service date is required" }}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    style={{ width: "100%" }}
+                    format="YYYY-MM-DD"
+                    disabledDate={(current) =>
+                      current && current.isAfter(moment(), "day")
+                    }
+                    placeholder="Select the service date"
+                  />
+                )}
+              />
+              {errors.date && (
+                <p style={{ color: "red" }}>{errors.date.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Typography.Text strong>
+                Service Cost <Typography.Text type="danger">*</Typography.Text>
+              </Typography.Text>
+              <Controller
+                name="cost"
+                control={control}
+                rules={{
+                  required: "Service cost is required",
+                  pattern: {
+                    value: /^[0-9]+(\.[0-9]{1,2})?$/,
+                    message: "Invalid cost format. Example: 1000 or 99.99",
+                  },
+                }}
+                render={({ field }) => (
+                  <Input {...field} placeholder="Enter the service cost" />
+                )}
+              />
+              {errors.cost && (
+                <p style={{ color: "red" }}>{errors.cost.message}</p>
+              )}
+            </div>
+
+            <div style={{ marginTop: 16, textAlign: "right" }}>
+              <Button
+                onClick={() => setIsModalOpen(false)}
+                style={{ marginRight: 8 }}
+              >
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" disabled={!isValid}>
+                Add New Warranty
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      </div>
+    );
+  };
+
 
 export default Warranty;

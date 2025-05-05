@@ -1,5 +1,6 @@
 import { Modal, Input, Button } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
+import "../assets/styles/modal.css";
 
 export const showExportModal = (password) => {
   setTimeout(() => {
@@ -12,19 +13,19 @@ export const showExportModal = (password) => {
               fontSize: "15px",
               paddingBottom: "10px",
             }}
+            
           >
             Export password
           </div>
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "space-between"}}>
             <Input.Password
               value={password}
               readOnly
               style={{
-                width: "270px",
                 borderRadius: "6px 0 0 6px",
                 border: "1px solid #ccc",
-                height: "40px",
-                fontWeight: 400,
+                width: "380px",
+  
               }}
             />
             <Button
@@ -46,7 +47,7 @@ export const showExportModal = (password) => {
                 borderRadius: "0 6px 6px 0",
                 border: "1px solid #ccc",
                 height: "40px",
-                width: "80px",
+                width: "100px",
               }}
             ></Button>
           </div>
@@ -59,7 +60,6 @@ export const showExportModal = (password) => {
           borderColor: "#6055F2",
           color: "white",
           position: "relative",
-          left: "-18px",
           borderRadius: "3px",
         },
       },

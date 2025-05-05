@@ -17,7 +17,6 @@ const { confirm } = Modal;
 const HeaderCommon = () => {
   const [userProfile, setUserProfile] = useState(null);
   const navigate = useNavigate();
-  
 
   const fetchUserProfile = async () => {
     try {
@@ -68,42 +67,22 @@ const HeaderCommon = () => {
       <Header className="header-layout">
         <Row align="middle" justify="space-between" gutter={[12, 12]}>
           <Col>
-            <div
-              style={{
-                color: "#6055F2",
-                fontFamily: "'Russo One', sans-serif",
-                fontSize: 25,
-              }}
-            >
+            <div className="text-[25px] font-russo text-[#6055F2]">
               RISTASKERX
             </div>
           </Col>
-          <Col style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Col className="flex items-center gap-[12px]">
             <Avatar size="default" icon={<UserOutlined />} />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                lineHeight: 1,
-              }}
-            >
-              <span style={{ fontWeight: "bold" }}>
+            <div className="flex flex-col leading-[1] ">
+              <span className="font-bold">
                 {userProfile?.results?.email || "Loading..."}
               </span>
-              <span
-                style={{ fontSize: "12px", color: "gray", paddingTop: "5px" }}
-              >
-                Admin
-              </span>
+              <span className="text-[12px] text-gray-500 pt-[5px]">Admin</span>
             </div>
             <Dropdown menu={{ items: itemsUser }} placement="bottom">
               <Button
                 icon={<CaretDownFilled />}
-                style={{
-                  outline: "none",
-                  background: "transparent",
-                  border: "none",
-                }}
+                className="outline-none bg-transparent border-none"
               />
             </Dropdown>
           </Col>

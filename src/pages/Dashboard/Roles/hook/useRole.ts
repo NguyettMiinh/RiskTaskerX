@@ -1,5 +1,5 @@
 // Import thư viện ngoài
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
 import {OptionValue} from "../../../../types/Select";
+import { set } from "react-hook-form";
 
 
 function useRole() {
@@ -20,34 +21,29 @@ function useRole() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [originalRoles, setOriginalRoles] = useState<Role[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<boolean[]>([]);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [totalRoles, setTotalRoles] = useState<number>(0);
+  const totalPages = Math.ceil(totalRoles / pageSize);
+  const [sortField, setSortField] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const dataSource: RoleTable[]  = roles?.map((item) => ({ ...item, key: item.id }));
-  const [formData, setFormData] = useState<RoleForm>({
-    search: "",
-    status: [],
-    sortField: "",
-    sortOrder: "ASC",
-    pageSize: 10,
-    totalRoles: 0,
-  });
+
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { search, status, sortField, sortOrder, pageSize} =
-    formData;
     
-  useEffect(() => {
-    fetchRoles(currentPage);
-  }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
-  const fetchRoles = async (page: number) => {
+  const fetchRoles = async () => {
     try {
       const response = await roleSearchFilter({
         sortKey: sortField,
         sortBy: sortOrder,
         searchKey: search,
         isActive: status,
-        page: page,
+        page: currentPage,
         size: pageSize,
       });
       // cấu trúc ko xác định rõ
@@ -56,19 +52,20 @@ function useRole() {
         ...item,
         updateAt: formatTime(item.updateAt),
       }));
-
       setRoles(newResult);
       setOriginalRoles(newResult);
-      setFormData({
-        ...formData,
-        totalRoles: results.totalElements,
-      });
+      setTotalRoles(results.totalElements);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
     
   };
-
+  useEffect(() => {
+    if (currentPage > totalPages && currentPage > 1) {
+      setCurrentPage(0);
+    }
+    fetchRoles();
+  }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
   const viewDetails = (id: string | number) => {
     dispatch(setId(id));
@@ -87,7 +84,6 @@ function useRole() {
       if (!response) {
         updateRoleStatus(id, !isActive);
       }
-      console.log("....render2");
     } catch (error) {
       console.error("Error updating customer status:", error);
       updateRoleStatus(id, !isActive);
@@ -116,38 +112,28 @@ function useRole() {
     sorter: SorterResult<Role> | SorterResult<Role>[],  extra: TableCurrentDataSource<Role>) => {
     const sort = Array.isArray(sorter) ? sorter[0] : sorter;
     if (sort.order) {
-      setFormData({
-        ...formData,
-        sortField: sort.field as string,
-        sortOrder: sort.order === "ascend" ? "ASC" : "DESC",
-      });
+      setSortField(sort.field as string);
+      setSortOrder(sort.order === "ascend" ? "ASC" : "DESC");
+
     } else {
-      setFormData({ ...formData, sortField: "", sortOrder: "ASC" });
+      setSortField("");
+      setSortOrder("ASC");
     }
   };
   /// search customer
-  const searchHandle = (value: string) => {
-    setFormData({ ...formData, search: value });
-    setCurrentPage(0);
-  };
+
+  const searchHandle = 
+    (value: string) => {
+      setSearch(value);
+      setCurrentPage(0);
+    };
+
   //status filter
-  const statusHandle = (value: OptionValue[]) => {
-    const booleanValues = value as boolean[];
-    setFormData({ ...formData, status: booleanValues });
+  const statusHandle = (value: boolean[]) => {
+    setStatus(value);
     setCurrentPage(0);
   };
-  // onChange input search
-  const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => {
-      const updated = { ...prev, search: value };
-      if (!value.trim()) {
-        setRoles(originalRoles);
-        updated.totalRoles = originalRoles.length;
-      }
-      return updated;
-    });
-  };
+  
 
   function handleRole() {
     navigate("/layout/role-list/add-role");
@@ -177,16 +163,27 @@ function useRole() {
   };
   
   return {
+    search,
+    status,
+    totalPages,
+    originalRoles,
+    pageSize,
+    totalRoles,
     dataSource,
     currentPage,
-    formData,
+    setSearch,
+    setRoles,
+    setOriginalRoles,
+    setStatus,
+    setTotalRoles,
+    setPageSize,
+    setSortField,
+    setSortOrder,
     handleRole,
     handleTable,
     searchHandle,
     statusHandle,
-    handleOnChangeSearch,
     setCurrentPage,
-    setFormData,
     toggleActive,
     viewDetails,
     handleDelete

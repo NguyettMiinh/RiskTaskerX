@@ -1,13 +1,13 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Flex, Form } from "antd";
-import "@assets/styles/common.css"
+import "@assets/styles/common.css";
 import Logo from "@assets/images/logo.png";
-import { UserOutlined} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import ButtonComponent from "@components/ui/ButtonComponent";
-import InputField from "@components/ui/InputField"
+import InputField from "@components/ui/InputField";
 import { useNavigate } from "react-router";
 import { otpApi } from "@/services/userService";
 import { useDispatch } from "react-redux";
@@ -22,8 +22,8 @@ const forgotPasswordSchema = yup.object().shape({
 });
 
 export default function ForgotPasswordForm() {
-   const [loginError, setLoginError] = useState("");
-   const dispatch = useDispatch();
+  const [loginError, setLoginError] = useState("");
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
@@ -32,12 +32,11 @@ export default function ForgotPasswordForm() {
   } = useForm({
     resolver: yupResolver(forgotPasswordSchema),
   });
-  let navigate = useNavigate();;
-
+  let navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate("/login");   
-};
+    navigate("/login");
+  };
   //---------Redux----------------------
   const emailValue = watch("email");
   React.useEffect(() => {
@@ -45,22 +44,24 @@ export default function ForgotPasswordForm() {
       dispatch(setEmail(emailValue));
     }
   }, [emailValue, dispatch]);
-    ///---------API----------------------
-    const onSubmit = async (data) => {
-
-      setLoginError("");
-      try {
-        await otpApi(data.email);
-        navigate("/otp");         
-      } catch (error) {
-          console.error("Error:", error.response?.data || error.message);
-          setLoginError("Invalid email. Please try again.");
-
-      }
-    };
+  ///---------API----------------------
+  const onSubmit = async (data) => {
+    setLoginError("");
+    try {
+      await otpApi(data.email);
+      navigate("/otp");
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      setLoginError("Invalid email. Please try again.");
+    }
+  };
 
   return (
-    <Flex justify="center" align="center" style={{ height: "100vh" }} className="cm-bg">
+    <Flex
+      justify="center"
+      align="center"
+      className="cm-bg h-screen"
+    >
       {isSubmitting && <div className="overlay"></div>}
       <div className="common-form">
         <Form
@@ -72,11 +73,10 @@ export default function ForgotPasswordForm() {
           onFinish={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-
           <div className="cm-image">
             <img src={Logo} alt="Logo" className="cm-img" />
           </div>
-          
+
           <div className="ct-title">
             <div className="cm-title">Forgot password</div>
             <div className="sub-title">
@@ -93,7 +93,14 @@ export default function ForgotPasswordForm() {
             className="cm-input"
             error={errors.email}
           />
-          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
+          {loginError && (
+            <p
+              className="text-red-500 mb-2 text-center"
+
+            >
+              {loginError}
+            </p>
+          )}
           <Form.Item className="cn-btn">
             <ButtonComponent
               disabled={isSubmitting}
@@ -104,26 +111,19 @@ export default function ForgotPasswordForm() {
             />
           </Form.Item>
 
-          <Form.Item style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxSizing: "border-box",
-          }}>
-            <div style={{
-              color: "#636364",
-              fontSize: 14,
-            }}>Do you remember the password?
-               <span>
-                <ButtonComponent 
-                className="sub-btn"
-                onClick={handleLogin}
-                content="Login" />
+          <Form.Item className="flex justify-center items-center box-border">
+            <div className="text-gray-600 text-sm">
+              Do you remember the password?
+              <span>
+                <ButtonComponent
+                  className="sub-btn"
+                  onClick={handleLogin}
+                  content="Login"
+                />
               </span>
             </div>
           </Form.Item>
         </Form>
-        
       </div>
     </Flex>
   );

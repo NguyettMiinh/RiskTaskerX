@@ -26,7 +26,7 @@ function DetailRole() {
   const { name, isActive, permissions, isError } = editForm;
   return (
     <div className="flex justify-start min-h-screen p-[10px]">
-      <div className="w-full bg-white p-[50px] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
+      <div className="w-full bg-white p-[33px] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
         <div className="mb-[20px]">
           <Breadcrumbs />
           <div className="text-[20px] font-bold pt-2">Role Details</div>

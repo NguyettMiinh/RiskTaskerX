@@ -167,7 +167,7 @@ function useAdmin() {
 
   useEffect(() => {
     if (currentPage > totalPages && currentPage > 1) {
-      setCurrentPage(totalPages);
+      setCurrentPage(0);
     }
     fetchData();
   }, [
@@ -227,7 +227,6 @@ function useAdmin() {
 
   const handleUpdateAdmin = useCallback(
     async (values: AdminUpdateRequest) => {
-      console.log(values);
       const payload = {
         ...values,
         dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
