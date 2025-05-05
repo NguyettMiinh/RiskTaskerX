@@ -124,8 +124,6 @@ const useCustomer = () => {
         setCurrentPage(0);
   };
   
-  
-
   const tierHandle = (value: string[]) => {
     setFormData({ ...formData, tiers: value });
     setCurrentPage(0); 

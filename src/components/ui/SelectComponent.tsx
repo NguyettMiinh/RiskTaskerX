@@ -1,4 +1,4 @@
-import { useState,memo } from "react";
+import { useState } from "react";
 import { Checkbox, Select, Button } from "antd";
 import "@assets/styles/filter.css";
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
@@ -6,7 +6,6 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {OptionValue,SelectType} from "../../types/Select";
 
 const SelectComponent = <T extends OptionValue>({options, allLabel, className, onChange}: SelectType<T>) => {
-  console.log("helooo");
   // tra ve mang cac option value
   const [value, setValue] = useState<OptionValue[]>(options.map((option) => option.value));
   const indeterminate = value.length > 0 && value.length < options.length;
@@ -105,7 +104,7 @@ const SelectComponent = <T extends OptionValue>({options, allLabel, className, o
   );
 };
 
-export default memo(SelectComponent);
+export default SelectComponent;
 
 //  onChang(value) = filterHandle(value)
 // e: checkbox dung type : import type { CheckboxChangeEvent } from 'antd/es/checkbox';
