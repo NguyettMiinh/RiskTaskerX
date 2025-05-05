@@ -1,4 +1,4 @@
-import { useState, useEffect , useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "../../../../redux/userSlice";
@@ -10,7 +10,11 @@ import {
 import { downloadFile } from "../../../../utils/exportUtils";
 import { showExportModal } from "../../../../utils/modalUtils";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
-import { Customer, CustomerForm, CustomerTable} from "../../../../types/Customer";
+import {
+  Customer,
+  CustomerForm,
+  CustomerTable,
+} from "../../../../types/Customer";
 import { toast } from "react-toastify";
 import { set } from "react-hook-form";
 
@@ -28,7 +32,6 @@ const useCustomer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   const fetchCustomers = async () => {
     try {
       const response = await getCustomer({
@@ -38,27 +41,27 @@ const useCustomer = () => {
         page: currentPage,
         size: pageSize,
       });
-      console.log("search", search);
-      console.log("response", response);
       if (response && response.results) {
-        const truncatedData = response.results.content.map((item: Customer) => ({
-          ...item,
-          id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
-          fullName:
-            item.fullName.length > 12
-              ? item.fullName.substring(0, 12)
-              : item.fullName,
-          phoneNumber:
-            item.phoneNumber.length > 12
-              ? item.phoneNumber.substring(0, 12)
-              : item.phoneNumber,
-          address:
-            item.address.length > 12
-              ? item.address.substring(0, 12)
-              : item.address,
-          email:
-            item.email.length > 12 ? item.email.substring(0, 12) : item.email,
-        }));
+        const truncatedData = response.results.content.map(
+          (item: Customer) => ({
+            ...item,
+            id: item.id.length > 12 ? item.id.substring(0, 12) : item.id,
+            fullName:
+              item.fullName.length > 12
+                ? item.fullName.substring(0, 12)
+                : item.fullName,
+            phoneNumber:
+              item.phoneNumber.length > 12
+                ? item.phoneNumber.substring(0, 12)
+                : item.phoneNumber,
+            address:
+              item.address.length > 12
+                ? item.address.substring(0, 12)
+                : item.address,
+            email:
+              item.email.length > 12 ? item.email.substring(0, 12) : item.email,
+          })
+        );
         setCustomers(truncatedData);
         setOriginalCustomers(truncatedData);
         setTotalCustomers(response.results.totalElements);
@@ -83,7 +86,6 @@ const useCustomer = () => {
   };
 
   const updateCustomerStatus = (id: string | number, isActive: boolean) => {
-
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
         customer.id === id ? { ...customer, isActive } : customer
@@ -103,10 +105,9 @@ const useCustomer = () => {
     }
   };
 
-
   const toggleActive = (id: string | number, isActive: boolean) => {
-    showConfirmModal({ onConfirm:
-      async () => {
+    showConfirmModal({
+      onConfirm: async () => {
         updateCustomerStatus(id, isActive);
         await handleApiUpdate(id, isActive);
         if (isActive) {
@@ -115,27 +116,25 @@ const useCustomer = () => {
           toast.success("Customer successfully deactivated");
         }
       },
-      name: "customer", action: isActive ? "activate" : "deactivate"
-  });
+      name: "customer",
+      action: isActive ? "activate" : "deactivate",
+    });
   };
 
-
-   const searchHandle = (value: string) => {
-        setSearch(value);
-        setCurrentPage(0);
+  const searchHandle = (value: string) => {
+    setSearch(value);
+    setCurrentPage(0);
   };
-  
+
   const tierHandle = (value: string[]) => {
     setTiers(value);
-    setCurrentPage(0); 
+    setCurrentPage(0);
   };
 
   const statusHandle = (value: boolean[]) => {
     setStatus(value);
-    setCurrentPage(0); 
+    setCurrentPage(0);
   };
-
-
 
   const exportHandle = async () => {
     try {
@@ -153,7 +152,10 @@ const useCustomer = () => {
     }
   };
 
-  const dataSource: CustomerTable[] = customer?.map((item) => ({ ...item, key: item.id }));
+  const dataSource: CustomerTable[] = customer?.map((item) => ({
+    ...item,
+    key: item.id,
+  }));
 
   return {
     search,
@@ -162,6 +164,9 @@ const useCustomer = () => {
     totalCustomers,
     currentPage,
     dataSource,
+    status,
+    tiers,
+    pageSize,
     setCurrentPage,
     searchHandle,
     tierHandle,
@@ -173,12 +178,8 @@ const useCustomer = () => {
     setSearch,
     setTotalCustomers,
     setPageSize,
-    status,
-    tiers,
-    pageSize,
     setStatus,
     setTiers,
-
   };
 };
 
