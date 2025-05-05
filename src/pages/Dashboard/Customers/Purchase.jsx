@@ -141,7 +141,7 @@ const Purchase = () => {
     try {
       const response = await exportPurchase(id);
       const password = downloadFile(response.data);
-      showExportModal(password);
+      showExportModal(password,"Purchase History");
     } catch (error) {
       console.error("Error exporting file:", error);
     }

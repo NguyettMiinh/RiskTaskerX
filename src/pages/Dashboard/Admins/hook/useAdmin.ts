@@ -139,7 +139,7 @@ function useAdmin() {
     try {
       const response = await adminService.exportAdmin(payload);
       const password = downloadFile(response);
-      showExportModal(password);
+      showExportModal(password, "Admin Account List");
     } catch (error) {
       console.error("Error exporting file:", error);
     }

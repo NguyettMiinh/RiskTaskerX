@@ -146,7 +146,7 @@ const useCustomer = () => {
         size: pageSize,
       });
       const password = downloadFile(response);
-      showExportModal(password);
+      showExportModal(password, "Customer List");
     } catch (error) {
       console.error("Error exporting file:", error);
     }

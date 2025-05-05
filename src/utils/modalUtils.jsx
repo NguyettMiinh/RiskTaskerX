@@ -2,10 +2,10 @@ import { Modal, Input, Button } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import "../assets/styles/modal.css";
 
-export const showExportModal = (password) => {
+export const showExportModal = (password, name) => {
   setTimeout(() => {
     Modal.info({
-      title: "Export Customer List",
+      title: `Export ${name}`,
       content: (
         <div>
           <div
