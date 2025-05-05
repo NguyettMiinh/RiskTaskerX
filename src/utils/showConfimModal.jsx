@@ -9,7 +9,7 @@ export const showConfirmModal = ( {onConfirm, name, action}) => {
           <ExclamationCircleFilled
             style={{ color: "#FAAD14", fontSize: "40px", marginBottom: "10px" }}
           />
-          <div style={{ fontSize: "15px" }}>
+          <div className="text-[15px]">
             {`Are you sure you want to ${action} this ${name}?`}
           </div>
         </div>

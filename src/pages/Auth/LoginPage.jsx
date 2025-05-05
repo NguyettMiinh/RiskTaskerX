@@ -64,7 +64,6 @@ const LoginPage = () => {
           <div className="title">
             Log In
           </div>
-
             <InputField
               name="email"
               control={control}
@@ -102,7 +101,8 @@ const LoginPage = () => {
               </Link>
             </Flex>
           </Form.Item>
-          {loginError && <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>{loginError}</p>}
+          {loginError && <p className="text-red-500 mb-2 text-center"
+            >{loginError}</p>}
           <Form.Item className="cn-btn">
             <ButtonComponent
              htmlType="submit" 

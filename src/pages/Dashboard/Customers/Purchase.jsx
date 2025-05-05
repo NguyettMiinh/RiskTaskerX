@@ -120,7 +120,6 @@ const Purchase = () => {
     const paymentId = purchaseItem?.paymentId;
     try {
       const res = await getPayment(paymentId);
-      console.log("res", res);
       const formattedData = res.data.map((item) => ({
         ...item,
         dueDate: formatDate(item.dueDate),
@@ -130,7 +129,6 @@ const Purchase = () => {
         paymentOption: item.payment?.paymentOption.replace(/_/g, " "),
       }));
       setPaymentDetail(formattedData);
-      console.log("res", formattedData);
     } catch (err) {
       console.error("Error fetching payment detail:", err);
     }
@@ -148,7 +146,6 @@ const Purchase = () => {
       console.error("Error exporting file:", error);
     }
   };
-  console.log("D",paymentDetail);
   const columns = [
     ...constants.PURCHASE_LIST,
     {

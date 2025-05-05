@@ -1,5 +1,5 @@
 // Import thư viện ngoài
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -20,6 +20,7 @@ function useRole() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [originalRoles, setOriginalRoles] = useState<Role[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  
   const dataSource: RoleTable[]  = roles?.map((item) => ({ ...item, key: item.id }));
   const [formData, setFormData] = useState<RoleForm>({
     search: "",
@@ -56,7 +57,6 @@ function useRole() {
         ...item,
         updateAt: formatTime(item.updateAt),
       }));
-
       setRoles(newResult);
       setOriginalRoles(newResult);
       setFormData({
@@ -87,7 +87,6 @@ function useRole() {
       if (!response) {
         updateRoleStatus(id, !isActive);
       }
-      console.log("....render2");
     } catch (error) {
       console.error("Error updating customer status:", error);
       updateRoleStatus(id, !isActive);
@@ -126,18 +125,23 @@ function useRole() {
     }
   };
   /// search customer
-  const searchHandle = (value: string) => {
-    setFormData({ ...formData, search: value });
-    setCurrentPage(0);
-  };
+
+  const searchHandle = 
+    (value: string) => {
+      setFormData({ ...formData, search: value });
+      setCurrentPage(0);
+    };
+
   //status filter
-  const statusHandle = (value: OptionValue[]) => {
+  const statusHandle = useCallback((value: OptionValue[]) => {
     const booleanValues = value as boolean[];
-    setFormData({ ...formData, status: booleanValues });
+    setFormData(prev => ({ ...prev, status: booleanValues }));
     setCurrentPage(0);
-  };
+  }, []);
+  
   // onChange input search
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // khi ko nhap gi, nhan button search, data ko giu nguyen thi ko can re-render lai
     const value = e.target.value;
     setFormData((prev) => {
       const updated = { ...prev, search: value };

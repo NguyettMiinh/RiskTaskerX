@@ -14,7 +14,6 @@ export interface CustomerTable extends Customer {
 }
 
 export interface CustomerForm {
-  search: string;
   tiers: string[];
   status: boolean[];
   pageSize: number;

@@ -16,7 +16,6 @@ const InputField = ({
   onBlur,
 }) => {
   let InputOption;
-  //return thẳng lun, ko gán giá trị
   switch (name) {
     case "password":
       InputOption = Input.Password;

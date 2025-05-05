@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect , useCallback} from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "../../../../redux/userSlice";
@@ -12,37 +12,34 @@ import { showExportModal } from "../../../../utils/modalUtils";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { Customer, CustomerForm, CustomerTable} from "../../../../types/Customer";
 import { toast } from "react-toastify";
+import { set } from "react-hook-form";
 
 const useCustomer = () => {
   const [customer, setCustomers] = useState<Customer[]>([]);
   const [originalCustomers, setOriginalCustomers] = useState<Customer[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [formData, setFormData] = useState<CustomerForm>({
-    search: "",
-    tiers: [],
-    status: [],
-    pageSize: 10,
-    totalCustomers: 0,
-  });
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<boolean[]>([]);
+  const [tiers, setTiers] = useState<string[]>([]);
+  const [pageSize, setPageSize] = useState<number>(10);
 
+  const [totalCustomers, setTotalCustomers] = useState<number>(0);
+  const totalPages = Math.ceil(totalCustomers / pageSize);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { search, tiers, status, pageSize,totalCustomers } = formData;
 
-  useEffect(() => {
-    fetchCustomers(currentPage);
-  }, [currentPage, search, tiers, status, pageSize]);
-
-  const fetchCustomers = async (page:number) => {
+  const fetchCustomers = async () => {
     try {
       const response = await getCustomer({
         searchKey: search,
         tier: tiers,
         isActive: status,
-        page: page,
+        page: currentPage,
         size: pageSize,
       });
+      console.log("search", search);
+      console.log("response", response);
       if (response && response.results) {
         const truncatedData = response.results.content.map((item: Customer) => ({
           ...item,
@@ -64,15 +61,19 @@ const useCustomer = () => {
         }));
         setCustomers(truncatedData);
         setOriginalCustomers(truncatedData);
-        setFormData({
-          ...formData,
-          totalCustomers: response.results.totalElements,
-        });
+        setTotalCustomers(response.results.totalElements);
       }
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
+
+  useEffect(() => {
+    if (currentPage > totalPages && currentPage > 1) {
+      setCurrentPage(totalPages);
+    }
+    fetchCustomers();
+  }, [currentPage, search, tiers, status, pageSize]);
 
   const viewDetails = (id: string) => {
     dispatch(setId(id));
@@ -82,6 +83,7 @@ const useCustomer = () => {
   };
 
   const updateCustomerStatus = (id: string | number, isActive: boolean) => {
+
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
         customer.id === id ? { ...customer, isActive } : customer
@@ -108,41 +110,32 @@ const useCustomer = () => {
         updateCustomerStatus(id, isActive);
         await handleApiUpdate(id, isActive);
         if (isActive) {
-          toast.success("Role successfully activated");
+          toast.success("Customer successfully activated");
         } else {
-          toast.success("Role successfully deactivated");
+          toast.success("Customer successfully deactivated");
         }
       },
       name: "customer", action: isActive ? "activate" : "deactivate"
   });
   };
 
-  const searchHandle = (value: string) => {
-    setFormData({ ...formData, search: value });
-    setCurrentPage(0); 
-  };
 
+   const searchHandle = (value: string) => {
+        setSearch(value);
+        setCurrentPage(0);
+  };
+  
   const tierHandle = (value: string[]) => {
-    setFormData({ ...formData, tiers: value });
+    setTiers(value);
     setCurrentPage(0); 
   };
 
   const statusHandle = (value: boolean[]) => {
-    setFormData({ ...formData, status: value });
+    setStatus(value);
     setCurrentPage(0); 
   };
 
-  const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => {
-      const updated = { ...prev, search: value };
-      if (!value.trim()) {
-        setCustomers(originalCustomers);
-        updated.totalCustomers = originalCustomers.length;
-      }
-      return updated;
-    });
-  };
+
 
   const exportHandle = async () => {
     try {
@@ -163,19 +156,29 @@ const useCustomer = () => {
   const dataSource: CustomerTable[] = customer?.map((item) => ({ ...item, key: item.id }));
 
   return {
+    search,
+    totalPages,
+    originalCustomers,
     totalCustomers,
     currentPage,
-    formData,
     dataSource,
     setCurrentPage,
-    setFormData,
     searchHandle,
     tierHandle,
     statusHandle,
-    handleOnChangeSearch,
     exportHandle,
     viewDetails,
     toggleActive,
+    setCustomers,
+    setSearch,
+    setTotalCustomers,
+    setPageSize,
+    status,
+    tiers,
+    pageSize,
+    setStatus,
+    setTiers,
+
   };
 };
 

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { usePermissions } from "@components/hook/usePermissions";
 import { Category, ActionForm } from "../../../../types/Role";
+import { useMutation } from "@tanstack/react-query";
 
 
 
@@ -15,36 +16,36 @@ function useAddRole() {
     permissions: [],
     isError: "",
   });
-
   const { name, isActive, permissions, isError } = addForm;
 
   const { data } = usePermissions();
   const categories: Category[] = data?.data.results;
 
-
-
   const navigate = useNavigate();
-
-  const handleAdd = async () => {
-    try {
-      await addRoles(name, isActive, permissions);
-      navigate("/layout/role-list");
-      toast.success("New role has been added successfully!");
-      setAddForm({
-        name: "",
-        isActive: true,
-        permissions: [],
-        isError: "",
-      });
-    } catch (error: any) {
-      const message = error.response?.data?.message;
-      if (message === "role-already-exists") {
-        setAddForm({ ...addForm, isError: "This role name is already taken." });
-      }
-      if (message === "invalid-role-name") {
-        setAddForm({ ...addForm, isError: "Role name is required." });
-      }
+  const {mutate} = useMutation({
+  mutationFn: () => addRoles(name, isActive, permissions),
+  onSuccess: () => {
+    navigate("/layout/role-list");
+    toast.success("New role has been added successfully!");
+    setAddForm({
+      name: "",
+      isActive: true,
+      permissions: [],
+      isError: "",
+    });
+  },
+  onError: (error: any) => {
+    const message = error.response?.data?.message;
+    if (message === "role-already-exists") {
+      setAddForm({ ...addForm, isError: "This role name is already taken." });
     }
+    if (message === "invalid-role-name") {
+      setAddForm({ ...addForm, isError: "Role name is required." });
+    }
+  },
+});
+  const handleAdd = async () => {
+    mutate();
   };
 
   const toggleActive =  (checked: boolean) => {

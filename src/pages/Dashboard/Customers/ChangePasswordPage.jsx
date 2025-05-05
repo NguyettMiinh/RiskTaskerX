@@ -13,7 +13,6 @@ import ButtonComponent from "@components/ui/ButtonComponent";
 import InputField from "@components/ui/InputField";
 import "@assets/styles/common.css";
 
-
 const ChangePassword = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const storedPassword = useSelector((state) => state.user.password);
@@ -50,7 +49,6 @@ const ChangePassword = () => {
 
     try {
       const response = await changePasswordApi(payload);
-      console.log(response);
       if (response.data.message === "success") {
         showSuccess();
       }
@@ -64,15 +62,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <div
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-    >
+    <div className="flex items-center justify-center flex-col h-full">
       <Flex justify="center" align="center" style={{ width: "100%" }}>
         <div className="common-form">
           <Form
