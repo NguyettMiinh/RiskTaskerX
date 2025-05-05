@@ -21,11 +21,11 @@ const InputField = ({
       InputOption = Input.Password;
       break;
     case "confirmPassword":
-        InputOption = Input.Password;
-        break;
+      InputOption = Input.Password;
+      break;
     case "currentPassword":
-        InputOption = Input.Password;
-        break;
+      InputOption = Input.Password;
+      break;
     case "otp":
       InputOption = Input.OTP;
       break;
@@ -36,15 +36,20 @@ const InputField = ({
     <Form.Item
       validateStatus={error ? "error" : ""}
       help={error?.message}
-      style={{paddingBottom: 4}}
+      style={{ paddingBottom: 4 }}
     >
       <Controller
         name={name}
         control={control}
         render={({ field }) => (
           <InputOption
-            prefix={prefix}
             {...field}
+            value={field.value ?? ""}
+            onChange={(e) => {
+              const value = e?.target?.value ?? e;
+              field.onChange(value);
+            }}
+            prefix={prefix}
             placeholder={placeholder}
             className={className}
             autoComplete={autoComplete}

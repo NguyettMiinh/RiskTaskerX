@@ -73,11 +73,19 @@ export default function OtpPage() {
   const {
     handleSubmit,
     control,
+    watch,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(otpSchema),
   });
-
+  const watchOtp = watch("otp");
+  useEffect(() => {
+    if (watchOtp) {
+      clearErrors("otp");
+      setLoginError("");
+    }
+  }, [watchOtp, clearErrors]);
   const handleLogin = () => {
     navigate("/login");
   };

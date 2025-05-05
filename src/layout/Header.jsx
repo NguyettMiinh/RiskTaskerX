@@ -79,12 +79,19 @@ const HeaderCommon = () => {
               </span>
               <span className="text-[12px] text-gray-500 pt-[5px]">Admin</span>
             </div>
-            <Dropdown menu={{ items: itemsUser }} placement="bottom">
-              <Button
-                icon={<CaretDownFilled />}
-                className="outline-none bg-transparent border-none"
-              />
-            </Dropdown>
+            <div>
+              <Dropdown
+                menu={{ items: itemsUser }}
+                trigger={["click"]}
+                arrow
+                overlayStyle={{ minWidth: 160 }}
+              >
+                <Button
+                  icon={<CaretDownFilled />}
+                  className="outline-none bg-transparent border-none"
+                />
+              </Dropdown>
+            </div>
           </Col>
         </Row>
       </Header>
