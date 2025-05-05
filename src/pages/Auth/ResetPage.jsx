@@ -17,6 +17,7 @@ import { resetSchema } from "@/validations/resetSchema";
 const ResetPage = () => {
   const email = useSelector((state) => state.user.email);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  let navigate = useNavigate();
   
   const {
     handleSubmit,
@@ -40,17 +41,14 @@ const ResetPage = () => {
     navigate("/login");   
 };
 
-let navigate = useNavigate();
 
 const onSubmit = async (data) => {
   try {
     await resetPassWordApi(email, data.password, data.confirmPassword);
     navigate("/login");
-    console.log("Password reset successful");
   } catch (error) {
     console.error("Error:", error.response?.data || error.message);
   }
-  console.log(email,data);
 };
 
   return (

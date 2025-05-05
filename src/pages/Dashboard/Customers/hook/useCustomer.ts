@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect , useCallback} from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setId } from "../../../../redux/userSlice";
@@ -82,6 +82,7 @@ const useCustomer = () => {
   };
 
   const updateCustomerStatus = (id: string | number, isActive: boolean) => {
+
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
         customer.id === id ? { ...customer, isActive } : customer
@@ -117,10 +118,13 @@ const useCustomer = () => {
   });
   };
 
-  const searchHandle = (value: string) => {
-    setFormData({ ...formData, search: value });
-    setCurrentPage(0); 
+
+   const searchHandle = (value: string) => {
+        setFormData({ ...formData, search: value });
+        setCurrentPage(0);
   };
+  
+  
 
   const tierHandle = (value: string[]) => {
     setFormData({ ...formData, tiers: value });

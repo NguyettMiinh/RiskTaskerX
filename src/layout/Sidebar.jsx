@@ -34,10 +34,10 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     getItem("Dashboard", "1", <BarChartOutlined />, null, () =>
       navigate("/layout/dashboard")
     ),
-    getItem("Admin Management", "2", <ClusterOutlined />, null, () =>
+    getItem("Admin Management", "2", <SafetyOutlined/>, null, () =>
       navigate("/layout/admin")
     ),
-    getItem("Role Management", "3", <SafetyOutlined/>, null, () =>
+    getItem("Role Management", "3",  <ClusterOutlined />, null, () =>
       navigate("/layout/role-list")
     ),
 
