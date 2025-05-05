@@ -1,5 +1,5 @@
 // Import thư viện ngoài
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -7,13 +7,11 @@ import type { TablePaginationConfig } from 'antd/es/table';
 import type { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface';
 
 // Import nội bộ
-import { Role, RoleForm, RoleTable } from "../../../../types/Role";
+import { Role, RoleTable } from "../../../../types/Role";
 import { roleSearchFilter, roleActive, deleteRole } from "../../../../services/roleService";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
-import {OptionValue} from "../../../../types/Select";
-import { set } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 
 
@@ -26,7 +24,9 @@ function useRole() {
   const [status, setStatus] = useState<boolean[]>([]);
   const [pageSize, setPageSize] = useState<number>(10);
   const [totalRoles, setTotalRoles] = useState<number>(0);
-  const totalPages = Math.ceil(totalRoles / pageSize);
+  // tinh lai tong so trang moi khi co thay doi
+  const totalPages = useMemo(() => Math.ceil(totalRoles / pageSize), [totalRoles, pageSize]);
+
   const [sortField, setSortField] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const dataSource: RoleTable[]  = roles?.map((item) => ({ ...item, key: item.id }));
@@ -54,7 +54,7 @@ function useRole() {
       setOriginalRoles(newResult);
       setTotalRoles(results.totalElements);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error(" Unable to retrieve roles. Please try again later.");
     }
 
@@ -85,7 +85,7 @@ function useRole() {
         updateRoleStatus(id, !isActive);
       }
     } catch (error) {
-      console.error("Error updating customer status:", error);
+      toast.error("Failed to update role status. Please try again.");
       updateRoleStatus(id, !isActive);
     }
     
