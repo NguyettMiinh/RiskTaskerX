@@ -139,14 +139,16 @@ function useRole() {
     navigate("/layout/role-list/add-role");
   }
 
+
   
   const handleDelete = async (id: string | number) => {
     showConfirmModal({
       onConfirm: async () => {
         try {
-          await deleteRole(id);
+         const results = await deleteRole(id);
           setRoles((prev) => prev.filter((role) => role.id !== id));
           setOriginalRoles((prev) => prev.filter((role) => role.id !== id));
+          setTotalRoles(results.data.resultstotalElements);
           toast.success("Role deleted successfully!");
         } catch (error: any) {
           const message = error.response?.data?.message;

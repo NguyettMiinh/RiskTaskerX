@@ -42,6 +42,10 @@ function useAddRole() {
     if (message === "invalid-role-name") {
       setAddForm({ ...addForm, isError: "Role name is required." });
     }
+
+    setTimeout(() => {
+      setAddForm({ ...addForm, isError: "" }); 
+    }, 10000);
   },
 });
   const handleAdd = async () => {

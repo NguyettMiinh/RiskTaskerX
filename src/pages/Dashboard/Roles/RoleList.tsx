@@ -144,7 +144,8 @@ function RoleList() {
           className="custom-table break-words whitespace-normal"
         />
 
-        { totalPages > 0 && <Pagination
+        { totalPages > 0 &&
+         <Pagination
           current={currentPage}
           total={totalRoles}
           pageSize={pageSize}
@@ -155,6 +156,7 @@ function RoleList() {
             setCurrentPage(page);
           }}
           showTotal={(total) => `Total ${total} items`}
+          hideOnSinglePage={false}
           className="flex justify-end mt-2.5"
         />}
       </div>

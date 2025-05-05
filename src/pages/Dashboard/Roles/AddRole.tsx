@@ -10,7 +10,6 @@ import {
   Collapse,
 } from "antd";
 import useAddRole from "./hook/useAddRole";
-import { CloseCircleFilled } from "@ant-design/icons";
 const { Panel } = Collapse;
 
 function AddRole() {
@@ -49,16 +48,6 @@ function AddRole() {
               onChange={(e) => {
                 setAddForm({ ...addForm, name: e.target.value });
               }}
-              suffix={
-                isError && name ? (
-                  <CloseCircleFilled
-                    style={{ color: "rgba(255, 77, 79, 0.8)", cursor: "pointer" }}
-                    onClick={() => {
-                      setAddForm({ ...addForm, name: "" });
-                    }}
-                  />
-                ) : null
-              }
             />
             
             {isError && <div style={{ color: "red" }}>{isError}</div>}
