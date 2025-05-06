@@ -2,11 +2,11 @@ import {
   Admin,
   AdminAddRequest,
   AdminSearchAndFilterRequest,
-  AdminSearchNoPagingRequest,
   AdminUpdateRequest,
   APIResponse,
   APIResponseExport,
   PagingResult,
+  RoleListActive,
 } from "types/Admin";
 import axios from "../api/axios";
 
@@ -42,24 +42,15 @@ const updateAdmin = async (
   const response = await axios.put(`/admin`, data);
   return response.data;
 };
-const addAdmin = async (
-  data: AdminAddRequest
-) => {
+const addAdmin = async (data: AdminAddRequest): Promise<APIResponse<Admin>> => {
   const response = await axios.post(`/admin`, data);
-  const resData = response.data;
-  if (resData.status === "BAD_REQUEST") {
-    throw new Error(resData.message);
-  }
-
-  return response.data;
-};
-const getAllAdminNoPaging = async (
-  data: AdminSearchNoPagingRequest
-): Promise<APIResponse<Admin[]>> => {
-  const response = await axios.post(`/admin/search-and-filter/no-paging`, data);
   return response.data;
 };
 
+const getRoleListActive = async (): Promise<APIResponse<RoleListActive[]>> => {
+  const response = await axios.get(`/roles/active`);
+  return response.data;
+};
 const adminService = {
   searchAndFilterAdmin,
   exportAdmin,
@@ -67,7 +58,7 @@ const adminService = {
   setIsActiveAdmin,
   updateAdmin,
   addAdmin,
-  getAllAdminNoPaging
+  getRoleListActive
 };
 
 export default adminService;

@@ -1,26 +1,21 @@
-import {
-  Col,
-  Form,
-  Modal,
-  Row,
-  Spin,
-  Switch,
-} from "antd";
+import { Col, Form, Modal, Row, Spin, Switch } from "antd";
 import { adminFormFields } from "../../../utils/fieldConfigs";
 import renderFormItem from "./RenderFormItem";
-import useAdmin from "./hook/useAdmin";
 import { PageName } from "../../../constants/Variable";
+import useUpdateAndAddAdmin from "./hook/useUpdateAndAddAdmin";
 
-const AddAdminModal= () => {
+const AddAdminModal = () => {
   const {
     handleCancel,
     handleOk,
-    loading,
-    isEditMode,
-    isActive,
-    visible,
+    roleOption,
     form,
-  } = useAdmin();
+    isActive,
+    isEditMode,
+    visible,
+    loading,
+  } = useUpdateAndAddAdmin();
+
   return (
     <Modal
       title={isEditMode ? PageName.adminDetail : PageName.addNewAdmin}
@@ -50,7 +45,7 @@ const AddAdminModal= () => {
           validateTrigger={["onChange", "onBlur"]}
         >
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            {adminFormFields(isEditMode).map((field, index) =>
+            {adminFormFields(isEditMode, roleOption).map((field, index) =>
               renderFormItem(field, index)
             )}
           </Row>
