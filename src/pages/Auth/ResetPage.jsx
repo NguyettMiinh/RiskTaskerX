@@ -12,6 +12,7 @@ import { resetPassWordApi } from "@/services/userService";
 import { useSelector } from "react-redux"; 
 import { getPasswordRules } from "@/utils/passwordRules";
 import { resetSchema } from "@/validations/resetSchema";
+import { toast } from "react-toastify";
 
 
 const ResetPage = () => {
@@ -47,7 +48,7 @@ const onSubmit = async (data) => {
     await resetPassWordApi(email, data.password, data.confirmPassword);
     navigate("/login");
   } catch (error) {
-    console.error("Error:", error.response?.data || error.message);
+    toast.error("OTP verification failed. Please try again.");
   }
 };
 

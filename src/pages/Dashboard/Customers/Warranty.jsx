@@ -66,7 +66,7 @@ const Warranty = () => {
     try {
       const response = await exportWarranty(id);
       const password = downloadFile(response.data);
-      showExportModal(password);
+      showExportModal(password, "Warranty History");
     } catch (error) {
       console.error("Error exporting file:", error);
     }

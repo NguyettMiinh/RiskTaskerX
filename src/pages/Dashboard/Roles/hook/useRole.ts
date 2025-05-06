@@ -1,5 +1,5 @@
 // Import thư viện ngoài
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -7,13 +7,12 @@ import type { TablePaginationConfig } from 'antd/es/table';
 import type { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface';
 
 // Import nội bộ
-import { Role, RoleForm, RoleTable } from "../../../../types/Role";
+import { Role, RoleTable } from "../../../../types/Role";
 import { roleSearchFilter, roleActive, deleteRole } from "../../../../services/roleService";
 import { showConfirmModal } from "../../../../utils/showConfimModal";
 import { formatTime } from "../../../../utils/formatTime";
 import { setId } from "../../../../redux/userSlice";
-import {OptionValue} from "../../../../types/Select";
-import { set } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 
 
 function useRole() {
@@ -25,7 +24,9 @@ function useRole() {
   const [status, setStatus] = useState<boolean[]>([]);
   const [pageSize, setPageSize] = useState<number>(10);
   const [totalRoles, setTotalRoles] = useState<number>(0);
-  const totalPages = Math.ceil(totalRoles / pageSize);
+  // tinh lai tong so trang moi khi co thay doi
+  const totalPages = useMemo(() => Math.ceil(totalRoles / pageSize), [totalRoles, pageSize]);
+
   const [sortField, setSortField] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const dataSource: RoleTable[]  = roles?.map((item) => ({ ...item, key: item.id }));
@@ -34,19 +35,16 @@ function useRole() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    
-
-  const fetchRoles = async () => {
-    try {
-      const response = await roleSearchFilter({
-        sortKey: sortField,
-        sortBy: sortOrder,
-        searchKey: search,
-        isActive: status,
-        page: currentPage,
-        size: pageSize,
-      });
-      // cấu trúc ko xác định rõ
+  const {mutate} = useMutation({
+    mutationFn: () => roleSearchFilter({
+      sortKey: sortField,
+      sortBy: sortOrder,
+      searchKey: search,
+      isActive: status,
+      page: currentPage,
+      size: pageSize,
+    }),
+    onSuccess: (response) => {
       const results = response.data.results;
       const newResult = results?.content.map((item: Role) => ({
         ...item,
@@ -55,16 +53,18 @@ function useRole() {
       setRoles(newResult);
       setOriginalRoles(newResult);
       setTotalRoles(results.totalElements);
-    } catch (error) {
-      console.error("Error fetching customers:", error);
+    },
+    onError: () => {
+      toast.error(" Unable to retrieve roles. Please try again later.");
     }
-    
-  };
+
+  }) 
+
   useEffect(() => {
     if (currentPage > totalPages && currentPage > 1) {
       setCurrentPage(0);
     }
-    fetchRoles();
+    mutate();
   }, [currentPage, search, status, pageSize, sortField, sortOrder]);
 
   const viewDetails = (id: string | number) => {
@@ -85,7 +85,7 @@ function useRole() {
         updateRoleStatus(id, !isActive);
       }
     } catch (error) {
-      console.error("Error updating customer status:", error);
+      toast.error("Failed to update role status. Please try again.");
       updateRoleStatus(id, !isActive);
     }
     
@@ -139,14 +139,16 @@ function useRole() {
     navigate("/layout/role-list/add-role");
   }
 
+
   
   const handleDelete = async (id: string | number) => {
     showConfirmModal({
       onConfirm: async () => {
         try {
-          await deleteRole(id);
+         const results = await deleteRole(id);
           setRoles((prev) => prev.filter((role) => role.id !== id));
           setOriginalRoles((prev) => prev.filter((role) => role.id !== id));
+          setTotalRoles(results.data.resultstotalElements);
           toast.success("Role deleted successfully!");
         } catch (error: any) {
           const message = error.response?.data?.message;
