@@ -1,27 +1,21 @@
-import {
-  Col,
-  Form,
-  Modal,
-  Row,
-  Spin,
-  Switch,
-} from "antd";
+import { Col, Form, Modal, Row, Spin, Switch } from "antd";
 import { adminFormFields } from "../../../utils/fieldConfigs";
 import renderFormItem from "./RenderFormItem";
-import useAdmin from "./hook/useAdmin";
 import { PageName } from "../../../constants/Variable";
+import useUpdateAndAddAdmin from "./hook/useUpdateAndAddAdmin";
 
-const AddAdminModal= () => {
+const AddAdminModal = () => {
   const {
     handleCancel,
     handleOk,
-    loading,
-    isEditMode,
-    isActive,
-    visible,
+    roleOption,
     form,
-    roleOption
-  } = useAdmin();
+    isActive,
+    isEditMode,
+    visible,
+    loading,
+  } = useUpdateAndAddAdmin();
+
   return (
     <Modal
       title={isEditMode ? PageName.adminDetail : PageName.addNewAdmin}

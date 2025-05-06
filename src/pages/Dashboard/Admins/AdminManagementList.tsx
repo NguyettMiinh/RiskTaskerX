@@ -18,27 +18,27 @@ import { PageName } from "../../../constants/Variable";
 
 export default function AdminManagementList() {
   const {
+    pageSize,
+    totalAdmins,
+    setAdmins,
+    admins,
+    setPageSize,
+    setTotalAdmins,
     viewDetails,
     exportHandle,
     filterDepartmentHandle,
     filterStatusHandle,
-    handleAdd,
     handleTable,
     searchHandle,
     toggleActive,
-    setAdmins,
-    setSearch,
-    setTotalAdmins,
-    setCurrentPage,
-    setPageSize,
-    totalAdmins,
-    pageSize,
-    totalPages,
-    currentPage,
-    loading,
+    handleAdd,
     originalAdmin,
+    currentPage,
+    setCurrentPage,
+    setSearch,
     search,
-    admins,
+    loading,
+    totalPages
   } = useAdmin();
   /// columns data
   const columns: ColumnsType<Admin> = [
@@ -145,7 +145,7 @@ export default function AdminManagementList() {
             >
               <span style={{ color: "#fff" }}>{PageName.addAdminText}</span>
             </Button>
-            <AddAdminModal/>
+            <AddAdminModal />
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -164,7 +164,6 @@ export default function AdminManagementList() {
           <Pagination
             current={currentPage}
             total={totalAdmins}
-            showTotal={(total) => `Total ${total} items`}
             pageSize={pageSize}
             showSizeChanger
             pageSizeOptions={["5", "10", "20", "50"]}
@@ -172,6 +171,7 @@ export default function AdminManagementList() {
               setPageSize(pageSize);
               setCurrentPage(page);
             }}
+            showTotal={(total) => `Total ${total} items`}
             className="flex justify-end mt-[10px]"
           />
         )}

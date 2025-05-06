@@ -46,11 +46,11 @@ export interface APIResponse<T> {
 }
 
 export interface Role {
-  createAt: string | undefined | null;
-  updateAt: string | undefined | null;
+  createAt?: string | undefined | null;
+  updateAt?: string | undefined | null;
   id: number | undefined;
-  name: string | undefined | null;
-  isActive: boolean | undefined | null;
+  name?: string | undefined | null;
+  isActive?: boolean | undefined | null;
 }
 type SortOrder = "ascend" | "descend" | null;
 export type FieldColumn = {

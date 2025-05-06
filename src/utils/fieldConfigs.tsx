@@ -132,6 +132,7 @@ export const adminFormFields = (isEditMode: boolean, role: RoleOption[]  | undef
           rules: [{ required: true, message: "Date of birth is required" }],
           required: false,
           className: "font-normal",
+          disabledDate: disableFutureDates,
         },
         {
           name: "lastLogin",
